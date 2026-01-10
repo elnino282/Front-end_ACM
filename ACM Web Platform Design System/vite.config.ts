@@ -113,13 +113,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes('date-fns') || id.includes('react-day-picker')) {
               return 'date-vendor';
             }
-            // Charts - keep recharts separate from d3 to avoid circular deps
-            if (id.includes('recharts')) {
+            // Charts and D3 libraries - MUST be in same chunk to avoid circular dependency issues
+            if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-vendor')) {
               return 'chart-vendor';
-            }
-            // D3 libraries
-            if (id.includes('d3-')) {
-              return 'd3-vendor';
             }
             // Icons
             if (id.includes('lucide-react')) {
