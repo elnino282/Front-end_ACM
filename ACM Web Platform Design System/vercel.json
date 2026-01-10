@@ -2,7 +2,7 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "buildCommand": "npm run build",
     "outputDirectory": "build",
-    "framework": null,
+    "framework": "vite",
     "rewrites": [
         {
             "source": "/((?!api|assets|favicon|static).*)",
