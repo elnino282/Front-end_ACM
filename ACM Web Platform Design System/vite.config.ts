@@ -77,7 +77,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      target: 'esnext',
+      target: 'modules',
       outDir: 'build',
       sourcemap: false, // Disable sourcemaps for production to reduce bundle size
       rollupOptions: {
