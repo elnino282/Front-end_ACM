@@ -1,29 +1,68 @@
+# ================================
 # Dependencies
+# ================================
 node_modules/
-/.pnp
+.pnp/
 .pnp.js
-.yarn/install-state.gz
 
+# ================================
+# Build & Distribution
+# ================================
+build/
+dist/
+out/
+*.local
+
+# ================================
 # Testing
-/coverage
+# ================================
+coverage/
 *.lcov
-.nyc_output
+.nyc_output/
 
-# Production build
-/dist
-/build
-/out
+# ================================
+# IDE & Editors
+# ================================
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
 
-# Environment variables
+# ================================
+# OS Generated Files
+# ================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ================================
+# Environment & Secrets
+# ================================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 .env*.local
+*.pem
+*.key
 
-# Logs
-logs
+# ================================
+# Logs & Debug
+# ================================
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -31,171 +70,69 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-*.swp
-*.swo
-*~
-
-# IDEs
-.fleet
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-.history/
-
-# OS
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-Desktop.ini
-$RECYCLE.BIN/
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
+# ================================
 # Vite
-.vite
+# ================================
+*.local
+vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Optional npm cache directory
-.npm
+# ================================
+# TypeScript
+# ================================
+*.tsbuildinfo
 
-# Optional eslint cache
-.eslintcache
-
-# Optional stylelint cache
-.stylelintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn
-.yarn-integrity
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
-
-# parcel-bundler cache
-.cache
-.parcel-cache
-
-# Next.js
-.next/
-
-# Nuxt.js
-.nuxt
-
-# Gatsby files
+# ================================
+# Caching
+# ================================
 .cache/
-public
+.parcel-cache/
+.eslintcache
+.stylelintcache
+*.cache
 
-# Serverless directories
-.serverless/
+# ================================
+# Vercel
+# ================================
+.vercel/
 
-# FuseBox cache
-.fusebox/
+# ================================
+# Docker
+# ================================
+.docker/
 
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# Temporary folders
+# ================================
+# Temporary Files
+# ================================
 tmp/
 temp/
+*.tmp
+*.temp
+*.bak
+*.backup
 
-# Docker
-.dockerignore
+# ================================
+# Optional npm cache directory
+# ================================
+.npm/
 
-# Misc
-*.seed
-*.pid
-*.pid.lock
-.lock-wscript
-lib-cov
+# ================================
+# Package manager lock files (optional - uncomment if using different package managers)
+# ================================
+# yarn.lock
+# pnpm-lock.yaml
 
-# MacOS
-._*
-.Spotlight-V100
-.Trashes
+# ================================
+# Miscellaneous
+# ================================
+*.gz
+*.zip
+*.tar.gz
+*.rar
 
-# Windows
-[Dd]esktop.ini
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-*.lnk
-
-# Linux
-.fuse_hidden*
-.directory
-.Trash-*
-.nfs*
-
-# Bundle analyzer
-.bundle-analyzer/
-
-# Storybook
+# Storybook builds (if used)
 storybook-static/
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Local Netlify folder
-.netlify
-
-# Sentry
-.sentryclirc
-
-# Turborepo
-.turbo
-
-# Vercel
-.vercel
-
 # PWA files
-**/public/workbox-*.js
-**/public/sw.js
-**/public/worker-*.js
-
-# Generated files
-tsc_errors.txt
+sw.*
+workbox-*
