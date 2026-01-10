@@ -56,11 +56,11 @@ export function useAppShell(props: AppShellProps) {
   const [searchDebounced, setSearchDebounced] = useState('');
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  
+
   // User Preferences
   const [theme, setTheme] = useState<Theme>(() => getStoredTheme());
   const [language, setLanguage] = useState<Language>(() => getStoredLanguage());
-  
+
   // Data State
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
 
@@ -125,7 +125,7 @@ export function useAppShell(props: AppShellProps) {
    * Implements cross-entity search logic
    */
   const handleSearch = (query: string) => {
-    console.log('Searching for:', query);
+    // console.log('Searching for:', query);
     // TODO: Implement actual cross-entity search logic
   };
 
@@ -182,18 +182,18 @@ export function useAppShell(props: AppShellProps) {
     searchQuery,
     aiDrawerOpen,
     notificationsOpen,
-    
+
     // User Preferences
     theme,
     language,
-    
+
     // Data
     notifications,
-    
+
     // Computed Values
     config,
     unreadCount,
-    
+
     // Handlers
     setSearchQuery,
     handleToggleSidebar,

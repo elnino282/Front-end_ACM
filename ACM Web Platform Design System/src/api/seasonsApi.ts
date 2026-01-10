@@ -1,4 +1,4 @@
-import { httpClient } from '../shared/api/httpClient';
+import httpClient from '@/shared/api/http';
 import type {
   Season,
   SeasonDetail,

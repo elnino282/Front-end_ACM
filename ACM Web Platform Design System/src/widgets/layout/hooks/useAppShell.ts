@@ -110,7 +110,7 @@ export function useAppShell(props: AppShellProps) {
      * Implements cross-entity search logic
      */
     const handleSearch = (query: string) => {
-        console.log('Searching for:', query);
+        // console.log('Searching for:', query);
         // TODO: Implement actual cross-entity search logic
     };
 
@@ -118,7 +118,7 @@ export function useAppShell(props: AppShellProps) {
      * Handler: Toggle Sidebar
      */
     const handleToggleSidebar = () => {
-        setSidebarCollapsed((prev) => !prev);
+        setSidebarCollapsed((prev: boolean) => !prev);
     };
 
     /**

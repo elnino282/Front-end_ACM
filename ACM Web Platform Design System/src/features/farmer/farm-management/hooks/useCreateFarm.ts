@@ -11,21 +11,21 @@ export function useCreateFarm(onSuccessCallback?: (farm: FarmDetailResponse) => 
         resolver: zodResolver(FarmCreateRequestSchema),
         defaultValues: {
             name: '',
-            provinceId: null,
-            wardId: null,
-            area: null,
+            provinceId: undefined,
+            wardId: undefined,
+            area: undefined,
         },
     });
 
     const mutation = useCreateFarmEntity({
         onSuccess: (data) => {
-            console.log('[useCreateFarm] Success! Created farm:', data);
+            // console.log('[useCreateFarm] Success! Created farm:', data);
             toast.success('Farm created successfully');
             form.reset({
                 name: '',
-                provinceId: null,
-                wardId: null,
-                area: null,
+                provinceId: undefined,
+                wardId: undefined,
+                area: undefined,
             }, {
                 keepErrors: false,
                 keepDirty: false,
@@ -69,7 +69,7 @@ export function useCreateFarm(onSuccessCallback?: (farm: FarmDetailResponse) => 
     });
 
     const handleSubmit = form.handleSubmit((data) => {
-        console.log('[useCreateFarm] Submitting farm data:', data);
+        // console.log('[useCreateFarm] Submitting farm data:', data);
         mutation.mutate(data);
     });
 

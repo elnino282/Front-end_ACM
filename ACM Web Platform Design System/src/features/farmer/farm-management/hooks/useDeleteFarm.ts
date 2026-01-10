@@ -38,8 +38,8 @@ export function useDeleteFarm() {
     };
 
     const handleDeleteConfirm = () => {
-        console.log('[useDeleteFarm Feature] handleDeleteConfirm called');
-        console.log('[useDeleteFarm Feature] farmToDelete:', farmToDelete);
+        // console.log('[useDeleteFarm Feature] handleDeleteConfirm called');
+        // console.log('[useDeleteFarm Feature] farmToDelete:', farmToDelete);
         if (farmToDelete) {
             // Pass the entire farm object { id, name } to mutation
             mutation.mutate(farmToDelete);
