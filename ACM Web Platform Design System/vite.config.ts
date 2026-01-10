@@ -113,10 +113,10 @@ export default defineConfig(({ mode }) => {
             if (id.includes('date-fns') || id.includes('react-day-picker')) {
               return 'date-vendor';
             }
-            // Charts and D3 libraries - MUST be in same chunk to avoid circular dependency issues
-            if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-vendor')) {
-              return 'chart-vendor';
-            }
+            // NOTE: recharts, d3-*, and victory-vendor are intentionally NOT included in manual chunks
+            // due to complex internal circular dependencies that cause "Cannot access X before initialization" errors.
+            // Let Rollup handle these automatically.
+
             // Icons
             if (id.includes('lucide-react')) {
               return 'icons-vendor';
