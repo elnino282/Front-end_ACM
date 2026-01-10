@@ -82,23 +82,57 @@ export default defineConfig(({ mode }) => {
       sourcemap: false, // Disable sourcemaps for production to reduce bundle size
       rollupOptions: {
         output: {
-          manualChunks: {
+          manualChunks(id) {
             // Core React libraries - cached separately
-            'react-vendor': ['react', 'react-dom'],
+            if (id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/react/') ||
+              id.includes('node_modules/scheduler')) {
+              return 'react-vendor';
+            }
             // State management
-            'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
+            if (id.includes('@reduxjs/toolkit') || id.includes('react-redux') || id.includes('immer')) {
+              return 'redux-vendor';
+            }
             // Data fetching
-            'query-vendor': ['@tanstack/react-query'],
+            if (id.includes('@tanstack/react-query') || id.includes('@tanstack/query-core')) {
+              return 'query-vendor';
+            }
             // Routing
-            'router-vendor': ['react-router-dom'],
-            // Most used UI components
-            'ui-vendor': [
-              '@radix-ui/react-dialog',
-              '@radix-ui/react-dropdown-menu',
-              '@radix-ui/react-select',
-              '@radix-ui/react-popover',
-              '@radix-ui/react-tooltip',
-            ],
+            if (id.includes('react-router')) {
+              return 'router-vendor';
+            }
+            // Form handling
+            if (id.includes('react-hook-form') || id.includes('@hookform')) {
+              return 'form-vendor';
+            }
+            // Validation
+            if (id.includes('node_modules/zod')) {
+              return 'zod-vendor';
+            }
+            // Date utilities
+            if (id.includes('date-fns') || id.includes('react-day-picker')) {
+              return 'date-vendor';
+            }
+            // Charts
+            if (id.includes('recharts') || id.includes('d3-')) {
+              return 'chart-vendor';
+            }
+            // Icons
+            if (id.includes('lucide-react')) {
+              return 'icons-vendor';
+            }
+            // All Radix UI components
+            if (id.includes('@radix-ui')) {
+              return 'ui-vendor';
+            }
+            // HTTP client
+            if (id.includes('axios')) {
+              return 'http-vendor';
+            }
+            // Other utilities
+            if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
+              return 'utils-vendor';
+            }
           },
         },
       },

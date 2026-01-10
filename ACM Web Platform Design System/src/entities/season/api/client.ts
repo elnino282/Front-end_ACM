@@ -11,6 +11,8 @@ import {
     SeasonStartRequestSchema,
     SeasonCompleteRequestSchema,
     SeasonCancelRequestSchema,
+    MySeasonSchema,
+    type MySeason,
 } from '../model/schemas';
 import type {
     SeasonListParams,
@@ -148,8 +150,7 @@ export const seasonApi = {
      * Get my seasons (minimal for dropdown)
      * GET /api/v1/seasons/my
      */
-    getMySeasons: async (): Promise<import('../model/schemas').MySeason[]> => {
-        const { MySeasonSchema } = await import('../model/schemas');
+    getMySeasons: async (): Promise<MySeason[]> => {
         const response = await httpClient.get('/api/v1/seasons/my');
         return parseApiResponse(response.data, z.array(MySeasonSchema));
     },

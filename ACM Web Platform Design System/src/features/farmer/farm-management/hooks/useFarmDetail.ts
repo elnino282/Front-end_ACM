@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useFarmById, type FarmDetailResponse } from '@/entities/farm';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/features/auth/context/AuthContext';
 
 /**
  * Feature hook for farm detail with permission checks
