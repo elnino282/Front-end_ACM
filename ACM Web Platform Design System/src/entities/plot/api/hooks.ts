@@ -16,6 +16,73 @@ import type {
     PlotRequest,
 } from '../model/types';
 
+// ═══════════════════════════════════════════════════════════════
+// TYPE-SAFE HELPERS FOR OPTIMISTIC UPDATES
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Union type representing both plot list data structures:
+ * - PlotArrayResponse: Array of plots from /api/v1/plots (listAll)
+ * - PlotResponse: Paginated response from /api/v1/farms/{farmId}/plots (byFarm)
+ */
+type PlotListData = PlotArrayResponse | PlotResponse;
+
+/**
+ * Type guard to check if the data is a paginated response
+ */
+const isPaginatedResponse = (data: PlotListData): data is PlotResponse => {
+    return data !== null && typeof data === 'object' && 'items' in data && Array.isArray(data.items);
+};
+
+/**
+ * Helper function to filter a plot from list data (handles both array and paginated responses)
+ */
+const filterPlotFromListData = (data: PlotListData | undefined, plotId: number): PlotListData | undefined => {
+    if (!data) return data;
+
+    // Handle paginated response (from byFarm)
+    if (isPaginatedResponse(data)) {
+        return {
+            ...data,
+            items: data.items.filter((item) => item.id !== plotId),
+            totalElements: Math.max(0, data.totalElements - 1),
+        };
+    }
+
+    // Handle array response (from listAll)
+    if (Array.isArray(data)) {
+        return data.filter((item) => item.id !== plotId);
+    }
+
+    return data;
+};
+
+/**
+ * Helper function to update a plot in list data (handles both array and paginated responses)
+ */
+const updatePlotInListData = (
+    data: PlotListData | undefined,
+    plotId: number,
+    updateFn: (item: Plot) => Plot
+): PlotListData | undefined => {
+    if (!data) return data;
+
+    // Handle paginated response (from byFarm)
+    if (isPaginatedResponse(data)) {
+        return {
+            ...data,
+            items: data.items.map((item) => (item.id === plotId ? updateFn(item) : item)),
+        };
+    }
+
+    // Handle array response (from listAll)
+    if (Array.isArray(data)) {
+        return data.map((item) => (item.id === plotId ? updateFn(item) : item));
+    }
+
+    return data;
+};
+
 // Context types for optimistic updates
 type CreatePlotContext = {
     previousPlots: PlotArrayResponse | undefined;
@@ -26,10 +93,10 @@ type CreatePlotInFarmContext = {
 };
 type UpdatePlotContext = {
     previousDetail: Plot | undefined;
-    previousLists: [readonly unknown[], PlotArrayResponse | undefined][];
+    previousLists: [readonly unknown[], PlotListData | undefined][];
 };
 type DeletePlotContext = {
-    previousPlots: [readonly unknown[], PlotArrayResponse | undefined][];
+    previousPlots: [readonly unknown[], PlotListData | undefined][];
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -190,7 +257,7 @@ export const useUpdatePlot = (
             await queryClient.cancelQueries({ queryKey: plotKeys.lists() });
 
             const previousDetail = queryClient.getQueryData<Plot>(plotKeys.detail(id));
-            const previousLists = queryClient.getQueriesData<PlotArrayResponse>({
+            const previousLists = queryClient.getQueriesData<PlotListData>({
                 queryKey: plotKeys.lists(),
             });
 
@@ -201,11 +268,9 @@ export const useUpdatePlot = (
                 });
             }
 
-            queryClient.setQueriesData<PlotArrayResponse>(
+            queryClient.setQueriesData<PlotListData>(
                 { queryKey: plotKeys.lists() },
-                (old) => old?.map((item) =>
-                    item.id === id ? { ...item, ...data } : item
-                )
+                (old) => updatePlotInListData(old, id, (item) => ({ ...item, ...data }))
             );
 
             return { previousDetail, previousLists };
@@ -240,13 +305,13 @@ export const useDeletePlot = (
         onMutate: async (id) => {
             await queryClient.cancelQueries({ queryKey: plotKeys.lists() });
 
-            const previousPlots = queryClient.getQueriesData<PlotArrayResponse>({
+            const previousPlots = queryClient.getQueriesData<PlotListData>({
                 queryKey: plotKeys.lists(),
             });
 
-            queryClient.setQueriesData<PlotArrayResponse>(
+            queryClient.setQueriesData<PlotListData>(
                 { queryKey: plotKeys.lists() },
-                (old) => old?.filter((item) => item.id !== id)
+                (old) => filterPlotFromListData(old, id)
             );
 
             return { previousPlots };

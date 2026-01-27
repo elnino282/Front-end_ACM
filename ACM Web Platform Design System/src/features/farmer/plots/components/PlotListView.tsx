@@ -116,15 +116,14 @@ export function PlotListView({
             <div className="hidden md:block bg-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full table-fixed">
-                        {/* Define column widths: Checkbox(12px), Plot Name(20%), Crop(22%), Area(12%), pH(10%), Soil Type(14%), Status(14%), Actions(12px) */}
+                        {/* Define column widths: Checkbox(12px), Plot Name(30%), Area(15%), pH(12%), Soil Type(18%), Status(17%), Actions(12px) */}
                         <colgroup>
                             <col className="w-12" />
-                            <col className="w-[20%]" />
-                            <col className="w-[22%]" />
+                            <col className="w-[30%]" />
+                            <col className="w-[15%]" />
                             <col className="w-[12%]" />
-                            <col className="w-[10%]" />
-                            <col className="w-[14%]" />
-                            <col className="w-[14%]" />
+                            <col className="w-[18%]" />
+                            <col className="w-[17%]" />
                             <col className="w-12" />
                         </colgroup>
 
@@ -151,11 +150,6 @@ export function PlotListView({
                                         Plot Name
                                         {renderSortIcon("name")}
                                     </button>
-                                </th>
-
-                                {/* Crop */}
-                                <th className="px-4 py-3 text-left">
-                                    <span className="text-xs font-medium text-slate-600 uppercase tracking-wider">Crop</span>
                                 </th>
 
                                 {/* Area - Sortable, Right-aligned */}
@@ -237,22 +231,6 @@ export function PlotListView({
                                             <div className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
                                                 {plot.name}
                                             </div>
-                                        </td>
-
-                                        {/* Crop */}
-                                        <td className="px-4 py-3.5">
-                                            {plot.crop ? (
-                                                <div className="min-w-0">
-                                                    <div className="text-sm text-slate-700 truncate">{plot.crop}</div>
-                                                    {plot.cropVariety && (
-                                                        <div className="text-xs text-slate-500 mt-0.5 truncate">
-                                                            {plot.cropVariety}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <span className="text-slate-400 text-sm italic">Unassigned</span>
-                                            )}
                                         </td>
 
                                         {/* Area - Right-aligned, Monospace */}
