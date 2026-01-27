@@ -1,31 +1,59 @@
-import { useState, useEffect } from 'react';
-import { Users, Shield, Search, RefreshCw, AlertCircle, Plus, Edit2, Lock, Unlock, Trash2, UserPlus, UserMinus, MoreVertical } from 'lucide-react';
-import { adminUsersApi, adminRoleApi, type Role, type AdminUser } from '@/services/api.admin';
-import { toast } from 'sonner';
-import { UserFormModal } from './components/UserFormModal';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useI18n } from "@/hooks/useI18n";
+import {
+    adminRoleApi,
+    adminUsersApi,
+    type AdminUser,
+    type Role,
+} from "@/services/api.admin";
+import {
+    AlertCircle,
+    AlertTriangle,
+    Edit2,
+    Lock,
+    MoreVertical,
+    Plus,
+    RefreshCw,
+    Search,
+    Shield,
+    Trash2,
+    Unlock,
+    UserMinus,
+    UserPlus,
+    Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import { RoleFormModal } from "./components/RoleFormModal";
+import { UserFormModal } from "./components/UserFormModal";
+import { UserWarningModal } from "./components/UserWarningModal";
 
 // Re-export AdminUser as User for local usage
 type User = AdminUser;
 
 const STATUS_COLORS: Record<string, string> = {
-  ACTIVE: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  LOCKED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-  INACTIVE: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
-  PENDING: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  ACTIVE:
+    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  LOCKED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+  INACTIVE: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+  PENDING:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
 };
 
 export function UsersRolesPage() {
-  const [activeTab, setActiveTab] = useState<'users' | 'roles'>('users');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { t } = useI18n();
+  const [activeTab, setActiveTab] = useState<"users" | "roles">("users");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [page, setPage] = useState(0);
@@ -34,18 +62,45 @@ export function UsersRolesPage() {
   const [showUserDetail, setShowUserDetail] = useState(false);
   const [showUserFormModal, setShowUserFormModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [warningUser, setWarningUser] = useState<User | null>(null);
+  const [showRoleFormModal, setShowRoleFormModal] = useState(false);
+  const [editingRole, setEditingRole] = useState<Role | null>(null);
 
-  const fetchUsers = async () => {
+  const tabParam = searchParams.get("tab");
+  const qParam = searchParams.get("q") ?? "";
+  const userIdParam = Number(searchParams.get("userId"));
+  const parsedUserId = Number.isFinite(userIdParam) ? userIdParam : null;
+
+  const handleUserFormOpenChange = (open: boolean) => {
+    // If the modal was opened via deep-link (?userId=...), clear it so closing stays closed.
+    if (!open && searchParams.get("userId")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("userId");
+      setSearchParams(next, { replace: true });
+    }
+    setShowUserFormModal(open);
+    if (!open) {
+      setEditingUser(null);
+    }
+  };
+
+  const fetchUsers = async (keywordOverride?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await adminUsersApi.list({ page, size: 20, keyword: searchTerm || undefined });
+      const keyword = keywordOverride ?? searchTerm;
+      const response = await adminUsersApi.list({
+        page,
+        size: 20,
+        keyword: keyword || undefined,
+      });
       if (response?.items) {
         setUsers(response.items);
         setTotalPages(response.totalPages || 0);
       }
     } catch (err) {
-      setError('Failed to load users');
+      setError("Failed to load users");
       console.error(err);
     } finally {
       setLoading(false);
@@ -59,7 +114,7 @@ export function UsersRolesPage() {
       const rolesList = await adminRoleApi.list();
       setRoles(rolesList || []);
     } catch (err) {
-      setError('Failed to load roles');
+      setError("Failed to load roles");
       console.error(err);
     } finally {
       setLoading(false);
@@ -67,12 +122,48 @@ export function UsersRolesPage() {
   };
 
   useEffect(() => {
-    if (activeTab === 'users') {
+    if (activeTab === "users") {
       fetchUsers();
     } else {
       fetchRoles();
     }
   }, [activeTab, page]);
+
+  useEffect(() => {
+    if (tabParam === "users" || tabParam === "roles") {
+      setActiveTab(tabParam);
+      setPage(0);
+    }
+  }, [tabParam]);
+
+  useEffect(() => {
+    if (qParam === searchTerm || activeTab !== "users") return;
+    setSearchTerm(qParam);
+    setPage(0);
+    fetchUsers(qParam);
+  }, [qParam, activeTab, searchTerm]);
+
+  useEffect(() => {
+    if (!parsedUserId || activeTab !== "users") return;
+    if (editingUser?.id === parsedUserId && showUserFormModal) return;
+
+    const match = users.find((user) => Number(user.id) === parsedUserId);
+    if (match) {
+      setEditingUser(match);
+      setShowUserFormModal(true);
+      return;
+    }
+
+    adminUsersApi
+      .getById(parsedUserId)
+      .then((detail) => {
+        if (detail) {
+          setEditingUser(detail);
+          setShowUserFormModal(true);
+        }
+      })
+      .catch(() => {});
+  }, [parsedUserId, activeTab, users, editingUser?.id, showUserFormModal]);
 
   const handleSearch = () => {
     setPage(0);
@@ -94,33 +185,56 @@ export function UsersRolesPage() {
     setEditingUser(null);
   };
 
+  const handleWarningUser = (user: User) => {
+    setWarningUser(user);
+    setShowWarningModal(true);
+  };
+
+  const handleWarningOpenChange = (open: boolean) => {
+    setShowWarningModal(open);
+    if (!open) {
+      setWarningUser(null);
+    }
+  };
+
+  const handleWarningSuccess = () => {
+    fetchUsers();
+    setWarningUser(null);
+  };
+
   const handleToggleStatus = async (user: User) => {
-    const newStatus = user.status === 'ACTIVE' ? 'LOCKED' : 'ACTIVE';
+    const newStatus = user.status === "ACTIVE" ? "LOCKED" : "ACTIVE";
     try {
       await adminUsersApi.updateStatus(Number(user.id), { status: newStatus });
-      toast.success(`User ${newStatus === 'ACTIVE' ? 'activated' : 'locked'} successfully`);
+      toast.success(
+        newStatus === "ACTIVE" ? t('admin.users.toast.activated') : t('admin.users.toast.locked'),
+      );
       fetchUsers();
     } catch (err) {
-      console.error('Failed to update status:', err);
-      toast.error('Failed to update user status');
+      console.error("Failed to update status:", err);
+      toast.error(t('admin.users.toast.statusError'));
     }
   };
 
   const handleDeleteUser = async (user: User) => {
-    if (!window.confirm(`Are you sure you want to delete user "${user.username}"?`)) {
+    if (
+      !window.confirm(
+        t('admin.users.confirm.delete', { username: user.username }),
+      )
+    ) {
       return;
     }
     try {
       await adminUsersApi.delete(Number(user.id));
-      toast.success('User deleted successfully');
+      toast.success(t('admin.users.toast.deleteSuccess'));
       fetchUsers();
     } catch (err: any) {
-      console.error('Failed to delete user:', err);
+      console.error("Failed to delete user:", err);
       const errorCode = err?.response?.data?.code;
-      if (errorCode === 'ERR_USER_HAS_ASSOCIATED_DATA') {
-        toast.error('Cannot delete: User has associated farms. Lock the user instead.');
+      if (errorCode === "ERR_USER_HAS_ASSOCIATED_DATA") {
+        toast.error(t('admin.users.toast.deleteHasData'));
       } else {
-        toast.error('Failed to delete user');
+        toast.error(t('admin.users.toast.deleteFailed'));
       }
     }
   };
@@ -131,9 +245,9 @@ export function UsersRolesPage() {
       let newRoles: string[];
 
       if (hasRole) {
-        newRoles = currentRoles.filter(r => r !== 'FARMER' && r !== 'farmer');
+        newRoles = currentRoles.filter((r) => r !== "FARMER" && r !== "farmer");
       } else {
-        newRoles = [...currentRoles, 'FARMER'];
+        newRoles = [...currentRoles, "FARMER"];
       }
 
       await adminUsersApi.update(userId, { roles: newRoles });
@@ -142,10 +256,10 @@ export function UsersRolesPage() {
       const detail = await adminUsersApi.getById(userId);
       setSelectedUser(detail || selectedUser);
       fetchUsers();
-      toast.success('Roles updated successfully');
+      toast.success(t('admin.users.toast.rolesUpdated'));
     } catch (err) {
-      console.error('Failed to update roles:', err);
-      toast.error('Failed to update roles');
+      console.error("Failed to update roles:", err);
+      toast.error(t('admin.users.toast.rolesFailed'));
     }
   };
 
@@ -157,10 +271,10 @@ export function UsersRolesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder={t('admin.users.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               className="pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-sm w-64"
             />
           </div>
@@ -169,7 +283,7 @@ export function UsersRolesPage() {
             className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm hover:bg-muted/50"
           >
             <Search className="h-4 w-4" />
-            Search
+            {t('admin.users.searchButton')}
           </button>
         </div>
         <div className="flex items-center gap-2">
@@ -178,14 +292,14 @@ export function UsersRolesPage() {
             className="inline-flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90"
           >
             <Plus className="h-4 w-4" />
-            Add User
+            {t('admin.users.addUser')}
           </button>
           <button
             onClick={fetchUsers}
             className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm hover:bg-muted/50"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            {t('admin.users.refresh')}
           </button>
         </div>
       </div>
@@ -194,19 +308,32 @@ export function UsersRolesPage() {
         <table className="w-full">
           <thead className="bg-muted/50 border-b border-border">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Username</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Email</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Roles</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Actions</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.users.table.username')}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.users.table.email')}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.users.table.status')}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.users.table.roles')}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.users.table.actions')}
+              </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={5}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                  Loading...
+                  {t('admin.users.loading')}
                 </td>
               </tr>
             ) : error ? (
@@ -215,35 +342,50 @@ export function UsersRolesPage() {
                   <div className="flex flex-col items-center gap-2 text-destructive">
                     <AlertCircle className="h-6 w-6" />
                     {error}
-                    <button onClick={fetchUsers} className="text-sm text-primary hover:underline">
-                      Try again
+                    <button
+                      onClick={fetchUsers}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {t('admin.users.tryAgain')}
                     </button>
                   </div>
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={5}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  No users found
+                  {t('admin.users.noUsers')}
                 </td>
               </tr>
             ) : (
               users.map((user) => (
-                <tr key={user.id} className="border-b border-border hover:bg-muted/30">
+                <tr
+                  key={user.id}
+                  className="border-b border-border hover:bg-muted/30"
+                >
                   <td className="px-4 py-3">
                     <div className="font-medium text-sm">{user.username}</div>
                     {user.fullName && (
-                      <div className="text-xs text-muted-foreground">{user.fullName}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {user.fullName}
+                      </div>
                     )}
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {user.email || '—'}
+                    {user.email || "—"}
                   </td>
                   <td className="px-4 py-3 text-sm">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${STATUS_COLORS[user.status || 'ACTIVE'] || 'bg-gray-100 text-gray-800'
-                      }`}>
-                      {user.status || 'ACTIVE'}
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
+                        STATUS_COLORS[user.status || "ACTIVE"] ||
+                        "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {user.status || "ACTIVE"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm">
@@ -274,21 +416,28 @@ export function UsersRolesPage() {
                           className="cursor-pointer"
                         >
                           <Edit2 className="mr-2 h-4 w-4" />
-                          Edit User
+                          {t('admin.users.actions.editUser')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleWarningUser(user)}
+                          className="cursor-pointer"
+                        >
+                          <AlertTriangle className="mr-2 h-4 w-4 text-amber-500" />
+                          {t('admin.users.actions.warningUser')}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleToggleStatus(user)}
                           className="cursor-pointer"
                         >
-                          {user.status === 'LOCKED' ? (
+                          {user.status === "LOCKED" ? (
                             <>
                               <Unlock className="mr-2 h-4 w-4 text-green-500" />
-                              Activate User
+                              {t('admin.users.actions.activateUser')}
                             </>
                           ) : (
                             <>
                               <Lock className="mr-2 h-4 w-4 text-amber-500" />
-                              Lock User
+                              {t('admin.users.actions.lockUser')}
                             </>
                           )}
                         </DropdownMenuItem>
@@ -298,7 +447,7 @@ export function UsersRolesPage() {
                           className="cursor-pointer text-destructive focus:text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete User
+                          {t('admin.users.actions.deleteUser')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -317,32 +466,76 @@ export function UsersRolesPage() {
             disabled={page === 0}
             className="px-3 py-1 border border-border rounded text-sm disabled:opacity-50"
           >
-            Previous
+            {t('admin.users.pagination.previous')}
           </button>
           <span className="text-sm text-muted-foreground">
-            Page {page + 1} of {totalPages}
+            {t('admin.users.pagination.page', { current: page + 1, total: totalPages })}
           </span>
           <button
             onClick={() => setPage(page + 1)}
             disabled={page >= totalPages - 1}
             className="px-3 py-1 border border-border rounded text-sm disabled:opacity-50"
           >
-            Next
+            {t('admin.users.pagination.next')}
           </button>
         </div>
       )}
     </div>
   );
 
+  // Role CRUD handlers
+  const handleAddRole = () => {
+    setEditingRole(null);
+    setShowRoleFormModal(true);
+  };
+
+  const handleEditRole = (role: Role) => {
+    setEditingRole(role);
+    setShowRoleFormModal(true);
+  };
+
+  const handleDeleteRole = async (role: Role) => {
+    if (
+      !window.confirm(t('admin.roles.confirm.delete', { name: role.name }))
+    ) {
+      return;
+    }
+    try {
+      await adminRoleApi.delete(role.code || "");
+      toast.success(t('admin.roles.toast.deleteSuccess'));
+      fetchRoles();
+    } catch (err: any) {
+      console.error("Failed to delete role:", err);
+      const errorCode = err?.response?.data?.code;
+      if (errorCode === "ROLE_NOT_FOUND") {
+        toast.error(t('admin.roles.toast.deleteNotFound'));
+      } else {
+        toast.error(t('admin.roles.toast.deleteFailed'));
+      }
+    }
+  };
+
+  const handleRoleFormSuccess = () => {
+    fetchRoles();
+    setEditingRole(null);
+  };
+
   const renderRoles = () => (
     <div className="space-y-4">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-2">
+        <button
+          onClick={handleAddRole}
+          className="inline-flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90"
+        >
+          <Plus className="h-4 w-4" />
+          {t('admin.roles.addRole')}
+        </button>
         <button
           onClick={fetchRoles}
           className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm hover:bg-muted/50"
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
+          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          {t('admin.roles.refresh')}
         </button>
       </div>
 
@@ -350,44 +543,96 @@ export function UsersRolesPage() {
         <table className="w-full">
           <thead className="bg-muted/50 border-b border-border">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Code</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Description</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.roles.table.code')}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.roles.table.name')}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.roles.table.description')}
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                {t('admin.roles.table.actions')}
+              </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={4}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                  Loading...
+                  {t('admin.roles.loading')}
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center">
+                <td colSpan={4} className="px-4 py-8 text-center">
                   <div className="flex flex-col items-center gap-2 text-destructive">
                     <AlertCircle className="h-6 w-6" />
                     {error}
-                    <button onClick={fetchRoles} className="text-sm text-primary hover:underline">
-                      Try again
+                    <button
+                      onClick={fetchRoles}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {t('admin.users.tryAgain')}
                     </button>
                   </div>
                 </td>
               </tr>
             ) : roles.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={4}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <Shield className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  No roles found
+                  {t('admin.roles.noRoles')}
                 </td>
               </tr>
             ) : (
               roles.map((role, idx) => (
-                <tr key={role.id || idx} className="border-b border-border hover:bg-muted/30">
+                <tr
+                  key={role.id || idx}
+                  className="border-b border-border hover:bg-muted/30"
+                >
                   <td className="px-4 py-3 text-sm font-medium">{role.code}</td>
                   <td className="px-4 py-3 text-sm">{role.name}</td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{role.description || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                    {role.description || "-"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className="p-2 rounded-lg hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          aria-label="Actions menu"
+                        >
+                          <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuItem
+                          onClick={() => handleEditRole(role)}
+                          className="cursor-pointer"
+                        >
+                          <Edit2 className="mr-2 h-4 w-4" />
+                          {t('admin.roles.actions.edit')}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteRole(role)}
+                          className="cursor-pointer text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          {t('admin.roles.actions.delete')}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
                 </tr>
               ))
             )}
@@ -398,43 +643,53 @@ export function UsersRolesPage() {
   );
 
   const userHasFarmerRole = selectedUser?.roles?.some(
-    r => r === 'FARMER' || r === 'farmer'
+    (r) => r === "FARMER" || r === "farmer",
   );
 
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-1">Users & Roles</h1>
-        <p className="text-muted-foreground">Manage users and their roles across the system</p>
+        <h1 className="text-2xl font-bold mb-1">{t('admin.users.title')}</h1>
+        <p className="text-muted-foreground">
+          {t('admin.users.subtitle')}
+        </p>
       </div>
 
       {/* Tab Navigation */}
       <div className="flex border-b border-border mb-6">
         <button
-          onClick={() => { setActiveTab('users'); setPage(0); }}
-          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${activeTab === 'users'
-            ? 'border-primary text-primary'
-            : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+          onClick={() => {
+            setActiveTab("users");
+            setPage(0);
+          }}
+          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+            activeTab === "users"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
         >
           <Users className="inline-block h-4 w-4 mr-2" />
-          Users
+          {t('admin.users.tabs.users')}
         </button>
         <button
-          onClick={() => { setActiveTab('roles'); setPage(0); }}
-          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${activeTab === 'roles'
-            ? 'border-primary text-primary'
-            : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+          onClick={() => {
+            setActiveTab("roles");
+            setPage(0);
+          }}
+          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+            activeTab === "roles"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
         >
           <Shield className="inline-block h-4 w-4 mr-2" />
-          Roles
+          {t('admin.users.tabs.roles')}
         </button>
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'users' && renderUsers()}
-      {activeTab === 'roles' && renderRoles()}
+      {activeTab === "users" && renderUsers()}
+      {activeTab === "roles" && renderRoles()}
 
       {/* User Detail Drawer */}
       {showUserDetail && selectedUser && (
@@ -442,7 +697,7 @@ export function UsersRolesPage() {
           <div className="fixed right-0 top-0 h-full w-full max-w-md bg-card border-l border-border shadow-lg overflow-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold">User Details</h2>
+                <h2 className="text-lg font-semibold">{t('admin.users.detail.title')}</h2>
                 <button
                   onClick={() => setShowUserDetail(false)}
                   className="p-2 hover:bg-muted rounded"
@@ -453,29 +708,41 @@ export function UsersRolesPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Username</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    {t('admin.users.detail.username')}
+                  </label>
                   <p className="text-sm">{selectedUser.username}</p>
                 </div>
 
                 {selectedUser.email && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Email</label>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      {t('admin.users.detail.email')}
+                    </label>
                     <p className="text-sm">{selectedUser.email}</p>
                   </div>
                 )}
 
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Status</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    {t('admin.users.detail.status')}
+                  </label>
                   <p className="text-sm">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${STATUS_COLORS[selectedUser.status || 'ACTIVE'] || 'bg-gray-100 text-gray-800'
-                      }`}>
-                      {selectedUser.status || 'ACTIVE'}
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
+                        STATUS_COLORS[selectedUser.status || "ACTIVE"] ||
+                        "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {selectedUser.status || "ACTIVE"}
                     </span>
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Roles</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    {t('admin.users.detail.roles')}
+                  </label>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {selectedUser.roles?.map((role, idx) => (
                       <span
@@ -484,30 +751,42 @@ export function UsersRolesPage() {
                       >
                         {role}
                       </span>
-                    )) || <span className="text-muted-foreground text-sm">No roles assigned</span>}
+                    )) || (
+                      <span className="text-muted-foreground text-sm">
+                        {t('admin.users.detail.noRoles')}
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Role Management */}
                 <div className="pt-4 border-t border-border">
-                  <label className="text-sm font-medium text-muted-foreground">Role Management</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    {t('admin.users.detail.roleManagement')}
+                  </label>
                   <div className="mt-2">
                     <button
-                      onClick={() => handleToggleFarmerRole(Number(selectedUser.id), !!userHasFarmerRole)}
-                      className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${userHasFarmerRole
-                        ? 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400'
-                        : 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400'
-                        }`}
+                      onClick={() =>
+                        handleToggleFarmerRole(
+                          Number(selectedUser.id),
+                          !!userHasFarmerRole,
+                        )
+                      }
+                      className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
+                        userHasFarmerRole
+                          ? "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                          : "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400"
+                      }`}
                     >
                       {userHasFarmerRole ? (
                         <>
                           <UserMinus className="h-4 w-4" />
-                          Remove FARMER Role
+                          {t('admin.users.detail.removeFarmerRole')}
                         </>
                       ) : (
                         <>
                           <UserPlus className="h-4 w-4" />
-                          Add FARMER Role
+                          {t('admin.users.detail.addFarmerRole')}
                         </>
                       )}
                     </button>
@@ -522,9 +801,25 @@ export function UsersRolesPage() {
       {/* User Form Modal */}
       <UserFormModal
         isOpen={showUserFormModal}
-        onOpenChange={setShowUserFormModal}
+        onOpenChange={handleUserFormOpenChange}
         user={editingUser}
         onSuccess={handleUserFormSuccess}
+      />
+
+      {/* User Warning Modal */}
+      <UserWarningModal
+        isOpen={showWarningModal}
+        onOpenChange={handleWarningOpenChange}
+        user={warningUser}
+        onSuccess={handleWarningSuccess}
+      />
+
+      {/* Role Form Modal */}
+      <RoleFormModal
+        isOpen={showRoleFormModal}
+        onOpenChange={setShowRoleFormModal}
+        role={editingRole}
+        onSuccess={handleRoleFormSuccess}
       />
     </div>
   );

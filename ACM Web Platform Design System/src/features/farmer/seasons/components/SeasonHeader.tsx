@@ -1,12 +1,29 @@
-import { HelpCircle, Download, Plus, ArrowLeft, Edit, Play, CheckCircle2, Ban, Archive, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Season, SeasonStatus } from '../types';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useI18n } from "@/hooks/useI18n";
+import { BackButton } from "@/shared/ui";
+import {
+    Archive,
+    Ban,
+    Calendar,
+    CheckCircle2,
+    Download,
+    Edit,
+    HelpCircle,
+    Play,
+    Plus,
+} from "lucide-react";
+import { Season, SeasonStatus } from "../types";
 
 interface SeasonHeaderProps {
-  viewMode: 'list' | 'detail';
+  viewMode: "list" | "detail";
   selectedSeason: Season | null;
   onNewSeason: () => void;
   onExport: () => void;
@@ -36,13 +53,22 @@ export function SeasonHeader({
   getStatusLabel,
   formatDateRange,
 }: SeasonHeaderProps) {
-  if (viewMode === 'detail' && selectedSeason) {
-    const canStart = selectedSeason.status === 'PLANNED';
-    const canComplete = selectedSeason.status === 'ACTIVE';
-    const canCancel = selectedSeason.status === 'PLANNED' || selectedSeason.status === 'ACTIVE';
-    const canEdit = selectedSeason.status === 'PLANNED' || selectedSeason.status === 'ACTIVE';
-    const canArchive = selectedSeason.status === 'COMPLETED' || selectedSeason.status === 'CANCELLED';
-    const effectiveEndDate = selectedSeason.endDate || selectedSeason.plannedHarvestDate || selectedSeason.startDate;
+  const { t } = useI18n();
+  
+  if (viewMode === "detail" && selectedSeason) {
+    const canStart = selectedSeason.status === "PLANNED";
+    const canComplete = selectedSeason.status === "ACTIVE";
+    const canCancel =
+      selectedSeason.status === "PLANNED" || selectedSeason.status === "ACTIVE";
+    const canEdit =
+      selectedSeason.status === "PLANNED" || selectedSeason.status === "ACTIVE";
+    const canArchive =
+      selectedSeason.status === "COMPLETED" ||
+      selectedSeason.status === "CANCELLED";
+    const effectiveEndDate =
+      selectedSeason.endDate ||
+      selectedSeason.plannedHarvestDate ||
+      selectedSeason.startDate;
 
     return (
       <div className="max-w-[1800px] mx-auto px-6 pt-6 mb-4">
@@ -50,23 +76,25 @@ export function SeasonHeader({
           <CardContent className="px-6 py-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-4">
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <BackButton
+                  iconOnly
                   onClick={onBack}
                   className="acm-rounded-sm"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
+                />
                 <div>
                   <div className="flex items-center gap-3">
                     <h1 className="text-2xl">{selectedSeason.name}</h1>
-                    <Badge className={`${getStatusColor(selectedSeason.status)} acm-rounded-sm`}>
+                    <Badge
+                      className={`${getStatusColor(selectedSeason.status)} acm-rounded-sm`}
+                    >
                       {getStatusLabel(selectedSeason.status)}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {formatDateRange(selectedSeason.startDate, effectiveEndDate)}
+                    {formatDateRange(
+                      selectedSeason.startDate,
+                      effectiveEndDate,
+                    )}
                   </p>
                 </div>
               </div>
@@ -79,7 +107,7 @@ export function SeasonHeader({
                   className="acm-rounded-sm border-border hover:bg-muted"
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  Edit
+                  {t('seasons.actions.edit')}
                 </Button>
                 {canStart && onStartSeason && (
                   <Button
@@ -88,7 +116,7 @@ export function SeasonHeader({
                     className="acm-rounded-sm border-border hover:bg-muted"
                   >
                     <Play className="w-4 h-4 mr-2" />
-                    Start Season
+                    {t('seasons.actions.start')}
                   </Button>
                 )}
                 {canComplete && onCompleteSeason && (
@@ -98,7 +126,7 @@ export function SeasonHeader({
                     className="acm-rounded-sm border-border hover:bg-muted"
                   >
                     <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Complete Season
+                    {t('seasons.actions.complete')}
                   </Button>
                 )}
                 {canCancel && onCancelSeason && (
@@ -108,7 +136,7 @@ export function SeasonHeader({
                     className="acm-rounded-sm border-border hover:bg-muted text-destructive"
                   >
                     <Ban className="w-4 h-4 mr-2" />
-                    Cancel Season
+                    {t('seasons.actions.cancel')}
                   </Button>
                 )}
                 {canArchive && onArchiveSeason && (
@@ -118,7 +146,7 @@ export function SeasonHeader({
                     className="acm-rounded-sm border-border hover:bg-muted"
                   >
                     <Archive className="w-4 h-4 mr-2" />
-                    Archive
+                    {t('seasons.actions.archive')}
                   </Button>
                 )}
               </div>
@@ -137,10 +165,10 @@ export function SeasonHeader({
             <div className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2 leading-tight">
                 <Calendar className="w-6 h-6 text-emerald-600" />
-                Seasons
+                {t('seasons.pageTitle')}
               </h1>
               <p className="text-sm text-slate-600 mt-1">
-                Manage your farming seasons and track progress
+                {t('seasons.subtitle')}
               </p>
             </div>
 
@@ -148,11 +176,15 @@ export function SeasonHeader({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="acm-rounded-sm">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="acm-rounded-sm"
+                    >
                       <HelpCircle className="w-5 h-5 text-muted-foreground" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Help & Documentation</TooltipContent>
+                  <TooltipContent>{t('seasons.help')}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
 
@@ -162,7 +194,7 @@ export function SeasonHeader({
                 className="acm-rounded-sm border-border hover:bg-muted"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Export
+                {t('seasons.actions.export')}
               </Button>
 
               <Button
@@ -170,7 +202,7 @@ export function SeasonHeader({
                 onClick={onNewSeason}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                New Season
+                {t('seasons.createButton')}
               </Button>
             </div>
           </div>
@@ -179,6 +211,3 @@ export function SeasonHeader({
     </div>
   );
 }
-
-
-

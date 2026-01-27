@@ -4,11 +4,11 @@
  * Mobile-optimized card layout for farm list
  */
 
-import { Badge, AddressDisplay, Checkbox } from '@/shared/ui';
+import type { Farm } from '@/entities/farm';
+import { AddressDisplay, Badge, Checkbox } from '@/shared/ui';
+import { MapPin, Maximize2 } from 'lucide-react';
 import { FarmActionsMenu } from './FarmActionsMenu';
 import { FarmBulkActionBar } from './FarmBulkActionBar';
-import type { Farm } from '@/entities/farm';
-import { MapPin, Maximize2 } from 'lucide-react';
 
 interface FarmsCardViewProps {
     farms: Farm[];
@@ -58,18 +58,18 @@ export function FarmsCardView({
     return (
         <>
             {/* Select All Header */}
-            <div className="bg-card rounded-lg border border-gray-200 shadow-sm p-4 mb-4 flex items-center justify-between">
+            <div className="bg-card rounded-lg border border-border shadow-sm p-4 mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Checkbox
                         checked={isAllSelected ? true : isSomeSelected ? "indeterminate" : false}
                         onCheckedChange={onToggleAllSelection}
-                        className="border-gray-400"
+                        className="border-muted-foreground"
                     />
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-foreground">
                         {isSomeSelected ? `${selectedFarms.length} selected` : 'Select all'}
                     </span>
                 </div>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                     {farms.length} farm{farms.length !== 1 ? 's' : ''}
                 </p>
             </div>
@@ -85,18 +85,18 @@ export function FarmsCardView({
                             className={`
                                 bg-card rounded-lg border shadow-sm transition-all duration-200
                                 ${isSelected
-                                    ? 'border-blue-500 ring-2 ring-blue-100'
-                                    : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                                    ? 'border-blue-500 ring-2 ring-blue-100 dark:ring-blue-900'
+                                    : 'border-border hover:border-muted-foreground hover:shadow-md'
                                 }
                             `}
                         >
                             {/* Card Header with Selection and Actions */}
-                            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                            <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <Checkbox
                                         checked={isSelected}
                                         onCheckedChange={() => onToggleSelection(farm.id)}
-                                        className="border-gray-400"
+                                        className="border-muted-foreground"
                                     />
                                     <Badge variant={farm.active ? 'default' : 'secondary'}>
                                         {farm.active ? 'Active' : 'Inactive'}
@@ -113,10 +113,10 @@ export function FarmsCardView({
                             {/* Card Body - Clickable */}
                             <div
                                 onClick={() => onView(farm.id)}
-                                className="px-4 py-4 cursor-pointer active:bg-gray-50 transition-colors"
+                                className="px-4 py-4 cursor-pointer active:bg-muted transition-colors"
                             >
                                 {/* Farm Name */}
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                                <h3 className="text-lg font-semibold text-foreground mb-3">
                                     {farm.name}
                                 </h3>
 
@@ -125,10 +125,10 @@ export function FarmsCardView({
                                     {/* Area */}
                                     {farm.area && (
                                         <div className="flex items-start gap-2">
-                                            <Maximize2 className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                            <Maximize2 className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase tracking-wide">Area</p>
-                                                <p className="text-sm font-mono text-gray-900">
+                                                <p className="text-xs text-muted-foreground uppercase tracking-wide">Area</p>
+                                                <p className="text-sm font-mono text-foreground">
                                                     {formatArea(farm.area)}
                                                 </p>
                                             </div>
@@ -138,10 +138,10 @@ export function FarmsCardView({
                                     {/* Address */}
                                     {farm.wardId && (
                                         <div className="flex items-start gap-2">
-                                            <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                                            <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                                             <div>
-                                                <p className="text-xs text-gray-500 uppercase tracking-wide">Location</p>
-                                                <p className="text-sm text-gray-900">
+                                                <p className="text-xs text-muted-foreground uppercase tracking-wide">Location</p>
+                                                <p className="text-sm text-foreground">
                                                     <AddressDisplay
                                                         wardCode={farm.wardId}
                                                         variant="compact"
@@ -152,8 +152,8 @@ export function FarmsCardView({
                                     )}
 
                                     {/* Farm ID */}
-                                    <div className="pt-2 border-t border-gray-100">
-                                        <p className="text-xs text-gray-400">
+                                    <div className="pt-2 border-t border-border">
+                                        <p className="text-xs text-muted-foreground">
                                             ID: #{farm.id}
                                         </p>
                                     </div>
@@ -165,9 +165,9 @@ export function FarmsCardView({
             </div>
 
             {/* Footer */}
-            <div className="mt-6 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-sm text-center text-gray-600">
-                    Showing <span className="font-semibold text-gray-900">{farms.length}</span> farm{farms.length !== 1 ? 's' : ''}
+            <div className="mt-6 px-4 py-3 bg-muted rounded-lg border border-border">
+                <p className="text-sm text-center text-muted-foreground">
+                    Showing <span className="font-semibold text-foreground">{farms.length}</span> farm{farms.length !== 1 ? 's' : ''}
                     {selectedFarms.length > 0 && (
                         <span className="ml-2">
                             • <span className="font-semibold text-blue-600">{selectedFarms.length}</span> selected

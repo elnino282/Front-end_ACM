@@ -1,23 +1,24 @@
-import { Menu, Bell, Bot } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useI18n } from '@/hooks/useI18n';
 import {
-    Button,
     Badge,
-    Separator,
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
+    Button,
+    Separator,
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from '@/shared/ui';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { SearchBar } from './SearchBar';
-import { ProfileMenu } from './ProfileMenu';
+import { Bell, Bot, Menu } from 'lucide-react';
 import type { HeaderProps } from '../model/types';
+import { ProfileMenu } from './ProfileMenu';
+import { GlobalSearchBar } from './SearchBar';
 
 /**
  * Header Component
@@ -31,7 +32,6 @@ export function Header({
     config,
     breadcrumbs,
     sidebarCollapsed: _sidebarCollapsed,
-    searchQuery,
     unreadCount,
     userName,
     userEmail,
@@ -41,13 +41,14 @@ export function Header({
     language,
     onToggleSidebar,
     onViewChange,
-    onSearchChange,
     onAiDrawerOpen,
     onNotificationsOpen,
     onThemeChange,
     onLanguageChange,
     onLogout,
 }: HeaderProps) {
+    const { t } = useI18n();
+    
     return (
         <header
             className="h-16 border-b border-white/10 flex items-center justify-between px-4 gap-4 shrink-0 z-50"
@@ -74,7 +75,7 @@ export function Header({
                         <span className="text-white text-lg">{config.emoji}</span>
                     </div>
                     <div className="hidden md:block">
-                        <div className="font-semibold text-sm text-white">ACM Platform</div>
+                        <div className="font-semibold text-sm text-white">{t('common.appName')}</div>
                         <div className="text-xs text-white/80">{config.name}</div>
                     </div>
                 </button>
@@ -110,7 +111,11 @@ export function Header({
             {/* Right Section */}
             <div className="flex items-center gap-2">
                 {/* Global Search */}
-                <SearchBar value={searchQuery} onChange={onSearchChange} />
+                {(portalType === "ADMIN" || portalType === "FARMER") && (
+                    <GlobalSearchBar
+                        portal={portalType === "ADMIN" ? "admin" : "farmer"}
+                    />
+                )}
 
                 <ThemeToggle className="text-white hover:bg-white/10" />
 
@@ -128,7 +133,7 @@ export function Header({
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p>AI Assistant</p>
+                            <p>{t('header.aiAssistant')}</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
@@ -155,7 +160,7 @@ export function Header({
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p>Notifications</p>
+                            <p>{t('header.notifications')}</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>

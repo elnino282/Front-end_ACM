@@ -24,6 +24,8 @@ import { GRADE_OPTIONS, STATUS_OPTIONS } from "../constants";
 import { useSeasons } from "@/entities/season";
 import { usePlots } from "@/entities/plot";
 import { useCrops } from "@/entities/crop";
+import { usePreferences } from "@/shared/contexts";
+import { getWeightUnitLabel } from "@/shared/lib";
 
 interface AddBatchDialogProps {
     open: boolean;
@@ -42,6 +44,9 @@ export function AddBatchDialog({
     onSubmit,
     onCancel,
 }: AddBatchDialogProps) {
+    const { preferences } = usePreferences();
+    const weightUnitLabel = getWeightUnitLabel(preferences.weightUnit);
+
     // Fetch seasons, plots, crops from API
     const { data: seasonsData } = useSeasons();
     const { data: plotsData } = usePlots();
@@ -116,7 +121,7 @@ export function AddBatchDialog({
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="quantity" className="text-foreground">
-                                Quantity (kg) <span className="text-destructive">*</span>
+                                Quantity ({weightUnitLabel}) <span className="text-destructive">*</span>
                             </Label>
                             <Input
                                 id="quantity"

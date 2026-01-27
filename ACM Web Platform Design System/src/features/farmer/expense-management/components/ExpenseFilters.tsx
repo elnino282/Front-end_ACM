@@ -46,14 +46,20 @@ export function ExpenseFilters({
 
             <Select value={selectedSeason} onValueChange={setSelectedSeason}>
                 <SelectTrigger className="rounded-xl border-border w-[150px]">
-                    <SelectValue placeholder="All Seasons" />
+                    <SelectValue placeholder="Select Season" />
                 </SelectTrigger>
                 <SelectContent>
-                    {seasonOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                            {option.label}
+                    {seasonOptions.length === 0 ? (
+                        <SelectItem value="none" disabled>
+                            No seasons available
                         </SelectItem>
-                    ))}
+                    ) : (
+                        seasonOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                            </SelectItem>
+                        ))
+                    )}
                 </SelectContent>
             </Select>
 

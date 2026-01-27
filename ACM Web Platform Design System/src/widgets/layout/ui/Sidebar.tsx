@@ -1,6 +1,33 @@
+import { useI18n } from '@/hooks/useI18n';
+import { Badge, Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button, Badge, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui';
 import type { SidebarProps } from '../model/types';
+
+// Map navigation item IDs to translation keys
+const navTranslationKeys: Record<string, string> = {
+    'dashboard': 'nav.dashboard',
+    'farms': 'nav.farms',
+    'farms-plots': 'nav.farms',
+    'seasons': 'nav.seasons',
+    'tasks': 'nav.tasks',
+    'field-logs': 'nav.fieldLogs',
+    'expenses': 'nav.expenses',
+    'harvest': 'nav.harvest',
+    'suppliers-supplies': 'nav.suppliersSupplies',
+    'inventory': 'nav.inventory',
+    'documents': 'nav.documents',
+    'incidents': 'nav.incidents',
+    'notifications': 'nav.notifications',
+    'ai-assistant': 'nav.aiAssistant',
+    'alerts': 'nav.alertsCenter',
+    'users-roles': 'nav.usersRoles',
+    'crops-varieties': 'nav.cropsVarieties',
+    'reports': 'nav.reports',
+    'marketplace': 'nav.marketplace',
+    'orders': 'nav.orders',
+    'traceability': 'nav.traceability',
+    'settings': 'nav.settings',
+};
 
 /**
  * Sidebar Component
@@ -18,6 +45,19 @@ export function Sidebar({
     onNavigate,
     onToggleCollapse,
 }: SidebarProps) {
+    const { t } = useI18n();
+    
+    // Get translated label for navigation item
+    const getNavLabel = (item: { id: string; label: string }) => {
+        const translationKey = navTranslationKeys[item.id];
+        if (translationKey) {
+            const translated = t(translationKey);
+            // If translation returns the key itself, fall back to label
+            return translated !== translationKey ? translated : item.label;
+        }
+        return item.label;
+    };
+    
     return (
         <aside
             className={`bg-card border-r border-border transition-all duration-300 shrink-0 ${collapsed ? 'w-[72px]' : 'w-64'
@@ -44,7 +84,7 @@ export function Sidebar({
                                     >
                                         <item.icon className="w-5 h-5 shrink-0" />
                                         {!collapsed && (
-                                            <span className="text-sm font-medium truncate">{item.label}</span>
+                                            <span className="text-sm font-medium truncate">{getNavLabel(item)}</span>
                                         )}
                                         {!collapsed && item.badge && (
                                             <Badge
@@ -58,7 +98,7 @@ export function Sidebar({
                                 </TooltipTrigger>
                                 {collapsed && (
                                     <TooltipContent side="right">
-                                        <p>{item.label}</p>
+                                        <p>{getNavLabel(item)}</p>
                                     </TooltipContent>
                                 )}
                             </Tooltip>
@@ -79,7 +119,7 @@ export function Sidebar({
                         ) : (
                             <>
                                 <ChevronLeft className="w-4 h-4 mr-2" />
-                                Collapse
+                                {t('nav.collapse')}
                             </>
                         )}
                     </Button>

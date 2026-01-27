@@ -37,7 +37,6 @@ export function AppShell({
     // Extract all state and logic from custom hook
     const {
         sidebarCollapsed,
-        searchQuery,
         aiDrawerOpen,
         notificationsOpen,
         theme,
@@ -45,7 +44,6 @@ export function AppShell({
         notifications,
         config,
         unreadCount,
-        setSearchQuery,
         handleToggleSidebar,
         handleAiDrawerChange,
         handleAiDrawerOpen,
@@ -75,7 +73,6 @@ export function AppShell({
                 config={config}
                 breadcrumbs={breadcrumbs}
                 sidebarCollapsed={sidebarCollapsed}
-                searchQuery={searchQuery}
                 unreadCount={unreadCount}
                 userName={userName}
                 userEmail={userEmail}
@@ -85,7 +82,6 @@ export function AppShell({
                 language={language}
                 onToggleSidebar={handleToggleSidebar}
                 onViewChange={onViewChange}
-                onSearchChange={setSearchQuery}
                 onAiDrawerOpen={handleAiDrawerOpen}
                 onNotificationsOpen={handleNotificationsOpen}
                 onThemeChange={setTheme}

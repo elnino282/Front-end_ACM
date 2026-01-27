@@ -1,5 +1,5 @@
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, Badge, Button, AddressDisplay } from '@/shared/ui';
 import type { FarmDetailResponse } from '@/entities/farm';
+import { AddressDisplay, Badge, Button, Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 
 interface FarmInfoCardProps {
@@ -56,11 +56,11 @@ export function FarmInfoCard({
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <p className="text-sm font-medium text-gray-500">Owner</p>
+                        <p className="text-sm font-medium text-muted-foreground">Owner</p>
                         <p className="mt-1 text-sm">@{farm.ownerUsername}</p>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500">Status</p>
+                        <p className="text-sm font-medium text-muted-foreground">Status</p>
                         <div className="mt-1">
                             <Badge variant={farm.active ? 'default' : 'secondary'}>
                                 {farm.active ? 'Active' : 'Inactive'}
@@ -68,13 +68,13 @@ export function FarmInfoCard({
                         </div>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500">Area</p>
+                        <p className="text-sm font-medium text-muted-foreground">Area</p>
                         <p className="mt-1 text-sm font-mono">
                             {farm.area ? `${farm.area} ha` : 'Not specified'}
                         </p>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500">Address</p>
+                        <p className="text-sm font-medium text-muted-foreground">Address</p>
                         <p className="mt-1 text-sm">
                             <AddressDisplay
                                 wardCode={farm.wardId}
@@ -86,13 +86,13 @@ export function FarmInfoCard({
                     </div>
                     {farm.totalPlots !== undefined && (
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Total Plots</p>
+                            <p className="text-sm font-medium text-muted-foreground">Total Plots</p>
                             <p className="mt-1 text-sm font-mono">{farm.totalPlots}</p>
                         </div>
                     )}
                     {farm.activePlots !== undefined && (
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Active Plots</p>
+                            <p className="text-sm font-medium text-muted-foreground">Active Plots</p>
                             <p className="mt-1 text-sm font-mono">{farm.activePlots}</p>
                         </div>
                     )}

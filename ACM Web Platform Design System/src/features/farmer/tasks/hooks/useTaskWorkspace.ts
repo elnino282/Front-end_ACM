@@ -67,6 +67,7 @@ const transformApiToFeature = (apiTask: ApiTask): Task => {
     type: inferTaskType(apiTask.title, apiTask.description),
     crop,
     plot,
+    seasonId: apiTask.seasonId ?? undefined,
     assignee,
     assigneeInitials: buildInitials(assignee),
     dueDate,

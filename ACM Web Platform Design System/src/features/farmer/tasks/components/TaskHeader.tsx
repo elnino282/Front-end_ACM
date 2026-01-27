@@ -1,7 +1,8 @@
-import { ClipboardList, Columns3, List, CalendarDays, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useI18n } from '@/hooks/useI18n';
+import { CalendarDays, ClipboardList, Columns3, List, Plus } from 'lucide-react';
 import type { ViewMode } from '../types';
 
 interface TaskHeaderProps {
@@ -11,6 +12,8 @@ interface TaskHeaderProps {
 }
 
 export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHeaderProps) {
+  const { t } = useI18n();
+  
   return (
     <Card className="border border-border rounded-xl shadow-sm">
       <CardContent className="px-6 py-4">
@@ -18,10 +21,10 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
           <div className="flex-shrink-0">
             <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2 leading-tight">
               <ClipboardList className="w-6 h-6 text-emerald-600" />
-              Tasks
+              {t('tasks.pageTitle')}
             </h1>
             <p className="text-sm text-slate-600 mt-1">
-              Manage and track all your farm tasks
+              {t('tasks.subtitle')}
             </p>
           </div>
 
@@ -44,7 +47,7 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
                       <Columns3 className="w-4 h-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Board View</TooltipContent>
+                  <TooltipContent>{t('tasks.views.board')}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
 
@@ -64,7 +67,7 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
                       <List className="w-4 h-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>List View</TooltipContent>
+                  <TooltipContent>{t('tasks.views.list')}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
 
@@ -84,7 +87,7 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
                       <CalendarDays className="w-4 h-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Calendar View</TooltipContent>
+                  <TooltipContent>{t('tasks.views.calendar')}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
@@ -95,7 +98,7 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
               onClick={onCreateTask}
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create Task
+              {t('tasks.createButton')}
             </Button>
           </div>
         </div>

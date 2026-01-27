@@ -1,12 +1,12 @@
-import { useState, useMemo } from "react";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge, AddressDisplay } from "@/shared/ui";
+import { useIsMobile } from "@/components/ui/use-mobile";
+import type { Farm } from "@/entities/farm";
+import { AddressDisplay, Badge } from "@/shared/ui";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { useMemo, useState } from "react";
 import { FarmActionsMenu } from "./FarmActionsMenu";
 import { FarmBulkActionBar } from "./FarmBulkActionBar";
 import { FarmsCardView } from "./FarmsCardView";
-import { useIsMobile } from "@/components/ui/use-mobile";
-import type { Farm } from "@/entities/farm";
 
 type SortColumn = "name" | "area" | "status" | null;
 type SortDirection = "asc" | "desc";
@@ -136,7 +136,7 @@ export function FarmsListView({
     return (
         <>
             {/* Desktop Table View */}
-            <div className="bg-card rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full table-fixed">
                         {/* Define column widths: Checkbox(12px), Name(25%), Area(15%), Address ID(20%), Status(20%), Actions(12px) */}
@@ -150,7 +150,7 @@ export function FarmsListView({
                         </colgroup>
 
                         {/* Table Header - Sticky */}
-                        <thead className="bg-gray-50 border-b-2 border-gray-200 sticky top-0 z-10">
+                        <thead className="bg-muted border-b-2 border-border sticky top-0 z-10">
                             <tr>
                                 {/* Checkbox Column */}
                                 <th className="px-4 py-3">
@@ -158,7 +158,7 @@ export function FarmsListView({
                                         <Checkbox
                                             checked={isAllSelected ? true : isSomeSelected ? "indeterminate" : false}
                                             onCheckedChange={onToggleAllSelection}
-                                            className="border-gray-400"
+                                            className="border-muted-foreground"
                                         />
                                     </div>
                                 </th>
@@ -167,7 +167,7 @@ export function FarmsListView({
                                 <th className="px-4 py-3 text-left">
                                     <button
                                         onClick={() => handleSort("name")}
-                                        className="group flex items-center text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors uppercase tracking-wider"
+                                        className="group flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
                                     >
                                         Name
                                         {renderSortIcon("name")}
@@ -178,7 +178,7 @@ export function FarmsListView({
                                 <th className="px-4 py-3 text-right">
                                     <button
                                         onClick={() => handleSort("area")}
-                                        className="group flex items-center justify-end text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors ml-auto uppercase tracking-wider"
+                                        className="group flex items-center justify-end text-xs font-medium text-muted-foreground hover:text-foreground transition-colors ml-auto uppercase tracking-wider"
                                     >
                                         Area (ha)
                                         {renderSortIcon("area")}
@@ -187,14 +187,14 @@ export function FarmsListView({
 
                                 {/* Address */}
                                 <th className="px-4 py-3 text-left">
-                                    <span className="text-xs font-medium text-slate-600 uppercase tracking-wider">Address</span>
+                                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Address</span>
                                 </th>
 
                                 {/* Status - Sortable */}
                                 <th className="px-4 py-3 text-left">
                                     <button
                                         onClick={() => handleSort("status")}
-                                        className="group flex items-center text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors uppercase tracking-wider"
+                                        className="group flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
                                     >
                                         Status
                                         {renderSortIcon("status")}
@@ -209,7 +209,7 @@ export function FarmsListView({
                         </thead>
 
                         {/* Table Body */}
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-border">
                             {sortedFarms.map((farm) => {
                                 const isSelected = selectedFarms.includes(farm.id);
 
@@ -220,8 +220,8 @@ export function FarmsListView({
                                         className={`
                                             group cursor-pointer transition-all duration-150
                                             ${isSelected
-                                                ? "bg-blue-50/50 hover:bg-blue-50/70"
-                                                : "bg-card hover:bg-gray-50"
+                                                ? "bg-blue-50/50 hover:bg-blue-50/70 dark:bg-blue-950/30 dark:hover:bg-blue-950/50"
+                                                : "bg-card hover:bg-muted"
                                             }
                                         `}
                                     >
@@ -232,21 +232,21 @@ export function FarmsListView({
                                                     checked={isSelected}
                                                     onClick={(e) => e.stopPropagation()}
                                                     onCheckedChange={() => onToggleSelection(farm.id)}
-                                                    className="border-gray-400"
+                                                    className="border-muted-foreground"
                                                 />
                                             </div>
                                         </td>
 
                                         {/* Name - Bold, Truncate */}
                                         <td className="px-4 py-3.5">
-                                            <div className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
+                                            <div className="text-sm font-semibold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
                                                 {farm.name}
                                             </div>
                                         </td>
 
                                         {/* Area - Right-aligned, Monospace */}
                                         <td className="px-4 py-3.5 text-right">
-                                            <span className="font-mono tabular-nums text-sm text-slate-900">
+                                            <span className="font-mono tabular-nums text-sm text-foreground">
                                                 {formatArea(farm.area)}
                                             </span>
                                         </td>
@@ -256,7 +256,7 @@ export function FarmsListView({
                                             <AddressDisplay
                                                 wardCode={farm.wardId}
                                                 variant="compact"
-                                                className="text-sm text-slate-600"
+                                                className="text-sm text-muted-foreground"
                                             />
                                         </td>
 
@@ -286,9 +286,9 @@ export function FarmsListView({
                 </div>
 
                 {/* Footer with row count */}
-                <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-                    <p className="text-sm text-slate-600">
-                        Showing <span className="font-semibold text-slate-900">{sortedFarms.length}</span> farm{sortedFarms.length !== 1 ? 's' : ''}
+                <div className="px-6 py-3 bg-muted border-t border-border">
+                    <p className="text-sm text-muted-foreground">
+                        Showing <span className="font-semibold text-foreground">{sortedFarms.length}</span> farm{sortedFarms.length !== 1 ? 's' : ''}
                         {selectedFarms.length > 0 && (
                             <span className="ml-2">
                                 • <span className="font-semibold text-blue-600">{selectedFarms.length}</span> selected

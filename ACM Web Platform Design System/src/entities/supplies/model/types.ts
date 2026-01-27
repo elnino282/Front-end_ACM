@@ -1,11 +1,13 @@
 // Re-export types from schemas
 export type {
-    Supplier,
-    SupplyItem,
-    SupplyLot,
-    StockInRequest,
-    StockInResponse,
-    SuppliersParams,
-    SupplyItemsParams,
-    SupplyLotsParams,
-} from './schemas';
+  CreateSupplierRequest,
+  StockInRequest,
+  StockInResponse,
+  Supplier,
+  SuppliersParams,
+  SupplyItem,
+  SupplyItemsParams,
+  SupplyLot,
+  SupplyLotsParams,
+  UpdateSupplierRequest,
+} from "./schemas";

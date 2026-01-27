@@ -1,24 +1,42 @@
-import { useState, useMemo } from 'react';
-import { FileText, Plus, Loader2, Search, Calendar, Trash2, Pencil, AlertCircle } from 'lucide-react';
-import { toast } from 'sonner';
+import { useI18n } from '@/hooks/useI18n';
 import type { AxiosError } from 'axios';
+import { AlertCircle, Calendar, FileText, Loader2, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
-import { 
-    useFieldLogsBySeason, 
-    useUserSeasons, 
-    useCreateFieldLog, 
-    useUpdateFieldLog, 
-    useDeleteFieldLog 
+import {
+    useCreateFieldLog,
+    useDeleteFieldLog,
+    useFieldLogsBySeason,
+    useUpdateFieldLog,
+    useUserSeasons
 } from '@/entities/field-log/api/hooks';
 import { LOG_TYPES } from '@/entities/field-log/model/schemas';
 import type { FieldLog, FieldLogCreateRequest } from '@/entities/field-log/model/types';
 
 import {
-    Button,
-    Input,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
     Badge,
+    Button,
     Card,
     CardContent,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    Input,
+    Label,
+    PageContainer,
+    PageHeader,
     Select,
     SelectContent,
     SelectItem,
@@ -30,24 +48,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    Label,
     Textarea,
-    PageContainer,
-    PageHeader,
 } from '@/shared/ui';
 
 const selectTriggerClass =
@@ -58,6 +59,7 @@ const selectTriggerClass =
 // ═══════════════════════════════════════════════════════════════
 
 export function FieldLogsPage() {
+    const { t } = useI18n();
     
     // State
     const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
@@ -94,33 +96,33 @@ export function FieldLogsPage() {
     // Mutations
     const createMutation = useCreateFieldLog(selectedSeasonId ?? 0, {
         onSuccess: () => {
-            toast.success('Field log created successfully');
+            toast.success(t('fieldLogs.toast.createSuccess'));
             closeModal();
         },
         onError: (error: AxiosError<{ message?: string }>) => {
-            const message = error?.response?.data?.message || 'Failed to create field log';
+            const message = error?.response?.data?.message || t('fieldLogs.toast.createError');
             toast.error(message);
         },
     });
     
     const updateMutation = useUpdateFieldLog(selectedSeasonId ?? 0, {
         onSuccess: () => {
-            toast.success('Field log updated successfully');
+            toast.success(t('fieldLogs.toast.updateSuccess'));
             closeModal();
         },
         onError: (error: AxiosError<{ message?: string }>) => {
-            const message = error?.response?.data?.message || 'Failed to update field log';
+            const message = error?.response?.data?.message || t('fieldLogs.toast.updateError');
             toast.error(message);
         },
     });
     
     const deleteMutation = useDeleteFieldLog(selectedSeasonId ?? 0, {
         onSuccess: () => {
-            toast.success('Field log deleted successfully');
+            toast.success(t('fieldLogs.toast.deleteSuccess'));
             setDeleteLogId(null);
         },
         onError: (error: AxiosError<{ message?: string }>) => {
-            const message = error?.response?.data?.message || 'Failed to delete field log';
+            const message = error?.response?.data?.message || t('fieldLogs.toast.deleteError');
             toast.error(message);
         },
     });
@@ -243,8 +245,8 @@ export function FieldLogsPage() {
                     <PageHeader
                         className="mb-0"
                         icon={<FileText className="w-8 h-8" />}
-                        title="Field Logs"
-                        subtitle="Track daily field activities and observations"
+                        title={t('fieldLogs.title')}
+                        subtitle={t('fieldLogs.subtitle')}
                         actions={
                             <Button 
                                 onClick={openCreateModal}
@@ -254,7 +256,7 @@ export function FieldLogsPage() {
                                 style={{ background: 'linear-gradient(135deg, #2F9E44 0%, #1a7a30 100%)' }}
                             >
                                 <Plus className="w-4 h-4 mr-2" />
-                                Create Log
+                                {t('fieldLogs.createButton')}
                             </Button>
                         }
                     />
@@ -267,19 +269,19 @@ export function FieldLogsPage() {
                     {seasonsLoading ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            Loading seasons...
+                            {t('fieldLogs.loadingSeasons')}
                         </div>
                     ) : seasons?.length === 0 ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
                             <AlertCircle className="w-4 h-4" />
-                            No seasons found. Create a season first.
+                            {t('fieldLogs.noSeasons')}
                         </div>
                     ) : (
                         <div className="flex flex-wrap items-center justify-start gap-4">
                             <div className="relative w-[320px]">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <Input
-                                    placeholder="Search in notes (min 2 characters)..."
+                                    placeholder={t('fieldLogs.searchPlaceholder')}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="pl-10 rounded-xl border-border focus:border-primary"
@@ -292,7 +294,7 @@ export function FieldLogsPage() {
                                 onValueChange={(value) => setSelectedSeasonId(Number(value))}
                             >
                             <SelectTrigger className="rounded-xl border-border w-[180px]">
-                                <SelectValue placeholder="Select a season..." />
+                                <SelectValue placeholder={t('fieldLogs.selectSeason')} />
                             </SelectTrigger>
                                 <SelectContent>
                                     {seasons?.map((season) => (
@@ -310,10 +312,10 @@ export function FieldLogsPage() {
 
                             <Select value={typeFilter} onValueChange={setTypeFilter}>
                             <SelectTrigger className="rounded-xl border-border w-[180px]" disabled={!selectedSeasonId}>
-                                <SelectValue placeholder="All Types" />
+                                <SelectValue placeholder={t('fieldLogs.allTypes')} />
                             </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All Types</SelectItem>
+                                    <SelectItem value="all">{t('fieldLogs.allTypes')}</SelectItem>
                                     {LOG_TYPES.map((type) => (
                                         <SelectItem key={type.value} value={type.value}>
                                             {type.label}
@@ -334,7 +336,7 @@ export function FieldLogsPage() {
                         <Card>
                             <CardContent className="px-6 py-4">
                                 <div className="text-2xl font-bold text-primary">{summaryStats.total}</div>
-                                <div className="text-sm text-muted-foreground">Total Logs</div>
+                                <div className="text-sm text-muted-foreground">{t('fieldLogs.summary.totalLogs')}</div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -342,7 +344,7 @@ export function FieldLogsPage() {
                                 <div className="text-2xl font-bold">
                                     {summaryStats.latestDate ? formatDate(summaryStats.latestDate) : '-'}
                                 </div>
-                                <div className="text-sm text-muted-foreground">Latest Log Date</div>
+                                <div className="text-sm text-muted-foreground">{t('fieldLogs.summary.latestDate')}</div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -352,7 +354,7 @@ export function FieldLogsPage() {
                                         ? getLogTypeConfig(summaryStats.commonType).label 
                                         : '-'}
                                 </div>
-                                <div className="text-sm text-muted-foreground">Most Common Type</div>
+                                <div className="text-sm text-muted-foreground">{t('fieldLogs.summary.commonType')}</div>
                             </CardContent>
                         </Card>
                     </div>
@@ -363,27 +365,27 @@ export function FieldLogsPage() {
                             {logsLoading ? (
                                 <div className="flex items-center justify-center h-48">
                                     <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                                    <span className="ml-2 text-muted-foreground">Loading logs...</span>
+                                    <span className="ml-2 text-muted-foreground">{t('fieldLogs.loading')}</span>
                                 </div>
                             ) : isError ? (
                                 <div className="flex items-center justify-center h-48 text-destructive">
                                     <AlertCircle className="w-5 h-5 mr-2" />
-                                    Failed to load logs. Please try again.
+                                    {t('fieldLogs.error')}
                                 </div>
                             ) : logs.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-48 text-muted-foreground">
                                     <FileText className="w-12 h-12 mb-2 opacity-50" />
-                                    <p>No field logs found for this season.</p>
+                                    <p>{t('fieldLogs.empty')}</p>
                                 </div>
                             ) : (
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Log Date</TableHead>
-                                            <TableHead>Type</TableHead>
-                                            <TableHead className="max-w-xs">Notes</TableHead>
-                                            <TableHead>Created At</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
+                                            <TableHead>{t('fieldLogs.table.logDate')}</TableHead>
+                                            <TableHead>{t('fieldLogs.table.type')}</TableHead>
+                                            <TableHead className="max-w-xs">{t('fieldLogs.table.notes')}</TableHead>
+                                            <TableHead>{t('fieldLogs.table.createdAt')}</TableHead>
+                                            <TableHead className="text-right">{t('fieldLogs.table.actions')}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -443,18 +445,18 @@ export function FieldLogsPage() {
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>
-                            {editingLog ? 'Edit Field Log' : 'Create Field Log'}
+                            {editingLog ? t('fieldLogs.dialog.editTitle') : t('fieldLogs.dialog.createTitle')}
                         </DialogTitle>
                         <DialogDescription>
                             {editingLog 
-                                ? 'Update the field log details below.'
-                                : 'Record a new field activity or observation.'}
+                                ? t('fieldLogs.dialog.editDescription')
+                                : t('fieldLogs.dialog.createDescription')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
                             <Label htmlFor="logDate">
-                                Log Date <span className="text-destructive">*</span>
+                                {t('fieldLogs.form.logDate')} <span className="text-destructive">*</span>
                             </Label>
                             <Input
                                 id="logDate"
@@ -470,14 +472,14 @@ export function FieldLogsPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="logType">
-                                Log Type <span className="text-destructive">*</span>
+                                {t('fieldLogs.form.logType')} <span className="text-destructive">*</span>
                             </Label>
                             <Select 
                                 value={formData.logType} 
                                 onValueChange={(value) => setFormData({ ...formData, logType: value })}
                             >
                                 <SelectTrigger className={selectTriggerClass}>
-                                    <SelectValue placeholder="Select log type..." />
+                                    <SelectValue placeholder={t('fieldLogs.form.selectType')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {LOG_TYPES.map((type) => (
@@ -489,10 +491,10 @@ export function FieldLogsPage() {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="notes">Notes</Label>
+                            <Label htmlFor="notes">{t('fieldLogs.form.notes')}</Label>
                             <Textarea
                                 id="notes"
-                                placeholder="Add any observations or details..."
+                                placeholder={t('fieldLogs.form.notesPlaceholder')}
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                                 rows={4}
@@ -503,15 +505,14 @@ export function FieldLogsPage() {
                         {(formData.logType === 'FERTILIZE' || formData.logType === 'SPRAY') && (
                             <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                                 <p className="text-sm text-blue-900">
-                                    💡 <strong>Tip:</strong> After saving, you can create a matching 
-                                    Stock OUT entry in Inventory to track material usage.
+                                    💡 <strong>{t('fieldLogs.form.tip')}</strong> {t('fieldLogs.form.inventoryHint')}
                                 </p>
                             </div>
                         )}
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={closeModal}>
-                            Cancel
+                            {t('common.cancel')}
                         </Button>
                         <Button 
                             onClick={handleSubmit}
@@ -521,7 +522,7 @@ export function FieldLogsPage() {
                             {(createMutation.isPending || updateMutation.isPending) && (
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                             )}
-                            {editingLog ? 'Update' : 'Create'}
+                            {editingLog ? t('common.update') : t('common.create')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -531,13 +532,13 @@ export function FieldLogsPage() {
             <AlertDialog open={deleteLogId !== null} onOpenChange={() => setDeleteLogId(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Field Log</AlertDialogTitle>
+                        <AlertDialogTitle>{t('fieldLogs.dialog.deleteTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Are you sure you want to delete this field log? This action cannot be undone.
+                            {t('fieldLogs.dialog.deleteDescription')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDelete}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -545,7 +546,7 @@ export function FieldLogsPage() {
                             {deleteMutation.isPending ? (
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                             ) : null}
-                            Delete
+                            {t('common.delete')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

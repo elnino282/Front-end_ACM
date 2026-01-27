@@ -10,8 +10,8 @@ import { portalConfig } from '../lib/config';
 describe('Farmer Portal Navigation Configuration', () => {
     const farmerNav = portalConfig.FARMER.navigation;
 
-    it('should contain exactly 12 navigation items', () => {
-        expect(farmerNav).toHaveLength(12);
+    it('should contain exactly 13 navigation items', () => {
+        expect(farmerNav).toHaveLength(13);
     });
 
     it('should have items in the exact required order', () => {
@@ -27,6 +27,7 @@ describe('Farmer Portal Navigation Configuration', () => {
             'inventory',
             'documents',
             'incidents',
+            'notifications',
             'ai-assistant',
         ];
 
@@ -41,7 +42,8 @@ describe('Farmer Portal Navigation Configuration', () => {
             expect(item).toHaveProperty('icon');
             expect(typeof item.id).toBe('string');
             expect(typeof item.label).toBe('string');
-            expect(typeof item.icon).toBe('function'); // Lucide icons are functions
+            const iconType = typeof item.icon;
+            expect(['function', 'object']).toContain(iconType); // Lucide icons are forwardRef objects
         });
     });
 
@@ -62,6 +64,7 @@ describe('Farmer Portal Navigation Configuration', () => {
         expect(itemLabels['inventory']).toBe('Inventory');
         expect(itemLabels['documents']).toBe('Documents');
         expect(itemLabels['incidents']).toBe('Incidents');
+        expect(itemLabels['notifications']).toBe('Notifications');
         expect(itemLabels['ai-assistant']).toBe('AI Assistant');
     });
 

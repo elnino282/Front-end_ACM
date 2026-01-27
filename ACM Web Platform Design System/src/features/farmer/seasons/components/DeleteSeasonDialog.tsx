@@ -1,14 +1,14 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogCancel,
-} from '@/components/ui/alert-dialog';
-import { Loader2 } from 'lucide-react';
+} from "@/shared/ui";
+import { Loader2 } from "lucide-react";
 
 interface DeleteSeasonDialogProps {
   open: boolean;
@@ -17,18 +17,26 @@ interface DeleteSeasonDialogProps {
   isDeleting?: boolean;
 }
 
-export function DeleteSeasonDialog({ open, onOpenChange, onConfirm, isDeleting }: DeleteSeasonDialogProps) {
+export function DeleteSeasonDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+  isDeleting,
+}: DeleteSeasonDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="acm-rounded-lg">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Season</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete this season? This action cannot be undone.
+            Are you sure you want to delete this season? This action cannot be
+            undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="acm-rounded-sm" disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="acm-rounded-sm" disabled={isDeleting}>
+            Cancel
+          </AlertDialogCancel>
           <Button
             onClick={onConfirm}
             className="bg-destructive hover:bg-destructive/90 text-white acm-rounded-sm"
@@ -40,7 +48,7 @@ export function DeleteSeasonDialog({ open, onOpenChange, onConfirm, isDeleting }
                 Deleting...
               </>
             ) : (
-              'Delete Season'
+              "Delete Season"
             )}
           </Button>
         </AlertDialogFooter>
@@ -48,6 +56,3 @@ export function DeleteSeasonDialog({ open, onOpenChange, onConfirm, isDeleting }
     </AlertDialog>
   );
 }
-
-
-

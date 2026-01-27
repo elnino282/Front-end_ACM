@@ -1,6 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Edit } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { SeasonUpdateRequest } from "@/entities/season";
+import { useVarietiesByCrop } from "@/entities/variety";
+import { usePreferences } from "@/shared/contexts";
+import {
+  convertWeight,
+  convertWeightToKg,
+  getWeightUnitLabel,
+} from "@/shared/lib";
 import {
   Dialog,
   DialogContent,
@@ -8,20 +24,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import type { SeasonUpdateRequest } from '@/entities/season';
-import { useVarietiesByCrop } from '@/entities/variety';
-import type { Season } from '../types';
+} from "@/shared/ui";
+import { Edit } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import type { Season } from "../types";
 
 interface EditSeasonDialogProps {
   open: boolean;
@@ -32,10 +38,10 @@ interface EditSeasonDialogProps {
 }
 
 const normalizeDate = (value?: string | null) => {
-  if (!value) return '';
+  if (!value) return "";
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return '';
+  if (Number.isNaN(parsed.getTime())) return "";
   return parsed.toISOString().slice(0, 10);
 };
 
@@ -46,60 +52,85 @@ export function EditSeasonDialog({
   onSubmit,
   isSubmitting = false,
 }: EditSeasonDialogProps) {
-  const [seasonName, setSeasonName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [plannedHarvestDate, setPlannedHarvestDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [currentPlantCount, setCurrentPlantCount] = useState('');
-  const [expectedYieldKg, setExpectedYieldKg] = useState('');
-  const [actualYieldKg, setActualYieldKg] = useState('');
-  const [notes, setNotes] = useState('');
-  const [varietyId, setVarietyId] = useState('');
+  const { preferences } = usePreferences();
+  const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+  const weightStep = preferences.weightUnit === "G" ? "1" : "0.01";
+  const [seasonName, setSeasonName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [plannedHarvestDate, setPlannedHarvestDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [currentPlantCount, setCurrentPlantCount] = useState("");
+  const [expectedYieldKg, setExpectedYieldKg] = useState("");
+  const [actualYieldKg, setActualYieldKg] = useState("");
+  const [budgetAmount, setBudgetAmount] = useState("");
+  const [notes, setNotes] = useState("");
+  const [varietyId, setVarietyId] = useState("");
 
   const cropId = season?.cropId ?? 0;
   const { data: varieties = [] } = useVarietiesByCrop(cropId);
 
   const farmLabel = useMemo(() => {
-    if (!season) return '-';
-    return season.farmName || 'Farm';
+    if (!season) return "-";
+    return season.farmName || "Farm";
   }, [season]);
   const plotLabel = useMemo(() => {
-    if (!season) return '-';
+    if (!season) return "-";
     if (season.plotName) return season.plotName;
     if (season.plotId) return `Plot #${season.plotId}`;
-    return 'Plot';
+    return "Plot";
   }, [season]);
   const cropLabel = useMemo(() => {
-    if (!season) return '-';
-    return season.crop || 'Crop';
+    if (!season) return "-";
+    return season.crop || "Crop";
   }, [season]);
+
+  const formatWeightInput = (valueKg?: number | null) => {
+    if (valueKg == null) return "";
+    const converted = convertWeight(valueKg, preferences.weightUnit);
+    const decimals = preferences.weightUnit === "G" ? 0 : 2;
+    return String(Number(converted.toFixed(decimals)));
+  };
+
+  const parseWeightInput = (value: string) => {
+    if (value === "") return undefined;
+    const parsed = parseFloat(value);
+    if (Number.isNaN(parsed)) return undefined;
+    return convertWeightToKg(parsed, preferences.weightUnit);
+  };
+
+  const parseBudgetInput = (value: string) => {
+    if (value === "") return undefined;
+    const parsed = parseFloat(value);
+    if (Number.isNaN(parsed)) return undefined;
+    return parsed;
+  };
 
   useEffect(() => {
     if (!open || !season) return;
-    setSeasonName(season.name || '');
+    setSeasonName(season.name || "");
     setStartDate(normalizeDate(season.startDate));
     setPlannedHarvestDate(normalizeDate(season.plannedHarvestDate));
     setEndDate(normalizeDate(season.endDate));
     const plantCount = season.currentPlantCount ?? season.initialPlantCount;
-    setCurrentPlantCount(plantCount != null ? String(plantCount) : '');
-    setExpectedYieldKg(season.expectedYieldKg != null ? String(season.expectedYieldKg) : '');
-    setActualYieldKg(season.actualYieldKg != null ? String(season.actualYieldKg) : '');
-    setNotes(season.notes || '');
-    setVarietyId(season.varietyId != null ? String(season.varietyId) : '');
-  }, [open, season?.id]);
+    setCurrentPlantCount(plantCount != null ? String(plantCount) : "");
+    setExpectedYieldKg(formatWeightInput(season.expectedYieldKg));
+    setActualYieldKg(formatWeightInput(season.actualYieldKg));
+    setBudgetAmount(season.budgetTotal ? String(season.budgetTotal) : "");
+    setNotes(season.notes || "");
+    setVarietyId(season.varietyId != null ? String(season.varietyId) : "");
+  }, [open, season?.id, preferences.weightUnit]);
 
   const currentPlantValue =
-    currentPlantCount === '' ? null : parseInt(currentPlantCount, 10);
+    currentPlantCount === "" ? null : parseInt(currentPlantCount, 10);
   const hasValidPlantCount =
     currentPlantValue !== null &&
     !Number.isNaN(currentPlantValue) &&
     currentPlantValue >= 1;
   const hasValidHarvestDate =
     !plannedHarvestDate || !startDate || plannedHarvestDate >= startDate;
-  const hasValidEndDate =
-    !endDate || !startDate || endDate >= startDate;
-  const expectedYieldValue = expectedYieldKg === '' ? undefined : parseFloat(expectedYieldKg);
-  const actualYieldValue = actualYieldKg === '' ? undefined : parseFloat(actualYieldKg);
+  const hasValidEndDate = !endDate || !startDate || endDate >= startDate;
+  const expectedYieldValue = parseWeightInput(expectedYieldKg);
+  const actualYieldValue = parseWeightInput(actualYieldKg);
 
   const isFormValid =
     seasonName.trim() &&
@@ -121,6 +152,7 @@ export function EditSeasonDialog({
       currentPlantCount: currentPlantValue,
       expectedYieldKg: expectedYieldValue,
       actualYieldKg: actualYieldValue,
+      budgetAmount: parseBudgetInput(budgetAmount),
       notes: notes.trim() || undefined,
       varietyId: varietyId ? parseInt(varietyId, 10) : undefined,
     };
@@ -166,13 +198,15 @@ export function EditSeasonDialog({
                 disabled={!cropId || varieties.length === 0}
               >
                 <SelectTrigger className="border-border focus:border-primary">
-                  <SelectValue placeholder={
-                    !cropId
-                      ? 'Select a crop first'
-                      : varieties.length === 0
-                        ? 'No varieties available'
-                        : 'Select variety'
-                  } />
+                  <SelectValue
+                    placeholder={
+                      !cropId
+                        ? "Select a crop first"
+                        : varieties.length === 0
+                          ? "No varieties available"
+                          : "Select variety"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {varieties.map((variety) => (
@@ -246,29 +280,46 @@ export function EditSeasonDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="expectedYieldKg">Expected Yield (kg)</Label>
+              <Label htmlFor="expectedYieldKg">
+                Expected Yield ({unitLabel})
+              </Label>
               <Input
                 id="expectedYieldKg"
                 type="number"
                 min="0"
-                step="0.1"
+                step={weightStep}
                 value={expectedYieldKg}
                 onChange={(e) => setExpectedYieldKg(e.target.value)}
                 className="border-border focus:border-primary"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="actualYieldKg">Actual Yield (kg)</Label>
+              <Label htmlFor="actualYieldKg">Actual Yield ({unitLabel})</Label>
               <Input
                 id="actualYieldKg"
                 type="number"
                 min="0"
-                step="0.1"
+                step={weightStep}
                 value={actualYieldKg}
                 onChange={(e) => setActualYieldKg(e.target.value)}
                 className="border-border focus:border-primary"
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="budgetAmount">
+              Season Budget ({preferences.currency})
+            </Label>
+            <Input
+              id="budgetAmount"
+              type="number"
+              min="0"
+              step="0.01"
+              value={budgetAmount}
+              onChange={(e) => setBudgetAmount(e.target.value)}
+              className="border-border focus:border-primary"
+            />
           </div>
 
           <div className="space-y-2">
@@ -296,13 +347,10 @@ export function EditSeasonDialog({
             className="bg-primary hover:bg-primary/90 text-white"
             disabled={!isFormValid || isSubmitting}
           >
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
+            {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-
-

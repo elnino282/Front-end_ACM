@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { GitMerge, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton, QueryError } from "@/shared/ui";
@@ -23,6 +25,7 @@ import { DeletePlotDialog } from "./components/DeletePlotDialog";
  * - Colocation: Related code grouped in feature folder
  */
 export function PlotManagement() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     viewMode,
     setViewMode,
@@ -77,6 +80,33 @@ export function PlotManagement() {
     isCreating,
     isDeleting,
   } = usePlotManagement();
+
+  const plotIdParam = searchParams.get("plotId");
+
+  const handleCloseDrawer = () => {
+    // If plot detail was opened via deep-link (?plotId=...), clear the param so the drawer can stay closed.
+    if (plotIdParam) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("plotId");
+      setSearchParams(next, { replace: true });
+    }
+    setIsDrawerOpen(false);
+  };
+
+  useEffect(() => {
+    if (!plotIdParam) return;
+    if (selectedPlot?.id === plotIdParam && isDrawerOpen) return;
+    const match = plots.find((plot) => plot.id === plotIdParam);
+    if (match) {
+      handleViewPlotDetails(match);
+    }
+  }, [
+    plotIdParam,
+    plots,
+    selectedPlot?.id,
+    isDrawerOpen,
+    handleViewPlotDetails,
+  ]);
 
   // Loading skeleton
   const LoadingSkeleton = () => (
@@ -173,7 +203,7 @@ export function PlotManagement() {
       <PlotDetailDrawer
         plot={selectedPlot}
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={handleCloseDrawer}
         onEdit={() => setIsAddPlotOpen(true)}
         onMerge={() => setIsMergeWizardOpen(true)}
         onMarkDormant={handleMarkDormant}

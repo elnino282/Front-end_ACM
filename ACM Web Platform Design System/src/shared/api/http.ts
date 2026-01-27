@@ -124,6 +124,25 @@ httpClient.interceptors.response.use(
         const originalRequest = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
 
         const status = error.response?.status;
+        const errorCode = (error.response?.data as { code?: string })?.code;
+
+        // Handle USER_LOCKED error - account has been locked by admin
+        if (status === 403 && errorCode === 'USER_LOCKED') {
+            console.warn('[Auth] Account locked by administrator');
+            
+            // Dispatch custom event for UI to show modal
+            // Modal will handle auth clearing and redirect after user clicks OK
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('account-locked', {
+                    detail: {
+                        message: (error.response?.data as { message?: string })?.message ||
+                            'Tài khoản của bạn đã bị khóa do vi phạm chính sách hệ thống.'
+                    }
+                }));
+            }
+            
+            return Promise.reject(error);
+        }
 
         if (
             originalRequest &&

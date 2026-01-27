@@ -1,12 +1,12 @@
-import { AI_FloatButton } from '@/features/shared/aiButton/AI_FloatButton';
-import { AppShell } from '@/features/shared/layout';
-import { FarmerPortalContent } from './components/FarmerPortalContent';
-import { useFarmerPortalShell } from './hooks/useFarmerPortalShell';
-import type { FarmerView } from './types';
+import { AI_FloatButton } from "@/features/shared/aiButton/AI_FloatButton";
+import { AppShell } from "@/features/shared/layout";
+import { FarmerPortalContent } from "./components/FarmerPortalContent";
+import { useFarmerPortalShell } from "./hooks/useFarmerPortalShell";
+import type { FarmerView } from "./types";
 
 /**
  * Main farmer portal container with application shell
- * 
+ *
  * Integrates:
  * - AppShell layout with navigation
  * - View-based content rendering
@@ -40,10 +40,10 @@ export function FarmerPortalWithShell() {
       <FarmerPortalContent />
 
       {/* Global AI Assistant Float Button */}
-      <AI_FloatButton onClick={() => setAiChatOpen(true)} />
+      <AI_FloatButton
+        onClick={() => setAiChatOpen(true)}
+        isHidden={aiChatOpen}
+      />
     </AppShell>
   );
 }
-
-
-

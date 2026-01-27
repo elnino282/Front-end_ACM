@@ -8,6 +8,7 @@ export interface Task {
   type: TaskType;
   crop: string;
   plot: string;
+  seasonId?: number;
   assignee: string;
   assigneeInitials: string;
   dueDate: string;

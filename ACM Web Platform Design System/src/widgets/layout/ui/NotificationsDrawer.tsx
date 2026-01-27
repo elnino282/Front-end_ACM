@@ -1,6 +1,7 @@
-import { Bell, CheckSquare, Sun, Package } from 'lucide-react';
-import { Button, Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, ScrollArea } from '@/shared/ui';
-import type { NotificationsDrawerProps, Notification } from '../model/types';
+import { useI18n } from '@/hooks/useI18n';
+import { Button, ScrollArea, Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/shared/ui';
+import { AlertTriangle, Bell, CheckSquare, Package, Sun } from 'lucide-react';
+import type { Notification, NotificationsDrawerProps } from '../model/types';
 
 /**
  * NotificationsDrawer Component
@@ -18,6 +19,8 @@ export function NotificationsDrawer({
     onMarkAsRead,
     onMarkAllAsRead,
 }: NotificationsDrawerProps) {
+    const { t } = useI18n();
+    
     const getNotificationIcon = (type: Notification['type']) => {
         switch (type) {
             case 'task':
@@ -28,6 +31,8 @@ export function NotificationsDrawer({
                 return <Package className="w-4 h-4 text-[#E74C3C]" />;
             case 'incident':
                 return <Bell className="w-4 h-4 text-[#F4C542]" />;
+            case 'warning':
+                return <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />;
             default:
                 return <Bell className="w-4 h-4" />;
         }
@@ -40,16 +45,16 @@ export function NotificationsDrawer({
                     <SheetTitle className="flex items-center justify-between">
                         <span className="flex items-center gap-2">
                             <Bell className="w-5 h-5" />
-                            Notifications
+                            {t('notifications.title')}
                         </span>
                         {unreadCount > 0 && (
                             <Button variant="ghost" size="sm" onClick={onMarkAllAsRead}>
-                                Mark all read
+                                {t('notifications.markAllRead')}
                             </Button>
                         )}
                     </SheetTitle>
                     <SheetDescription>
-                        Alerts for tasks, weather, inventory, and incidents
+                        {t('notifications.description')}
                     </SheetDescription>
                 </SheetHeader>
 

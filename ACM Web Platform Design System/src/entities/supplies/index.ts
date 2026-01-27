@@ -3,37 +3,44 @@
 
 // Types
 export type {
-    Supplier,
-    SupplyItem,
-    SupplyLot,
-    StockInRequest,
-    StockInResponse,
-    SuppliersParams,
-    SupplyItemsParams,
-    SupplyLotsParams,
-} from './model/types';
+  CreateSupplierRequest,
+  StockInRequest,
+  StockInResponse,
+  Supplier,
+  SuppliersParams,
+  SupplyItem,
+  SupplyItemsParams,
+  SupplyLot,
+  SupplyLotsParams,
+  UpdateSupplierRequest,
+} from "./model/types";
 
 // Schemas (for validation)
 export {
-    SupplierSchema,
-    SupplyItemSchema,
-    SupplyLotSchema,
-    StockInRequestSchema,
-    StockInResponseSchema,
-} from './model/schemas';
+  CreateSupplierRequestSchema,
+  StockInRequestSchema,
+  StockInResponseSchema,
+  SupplierSchema,
+  SupplyItemSchema,
+  SupplyLotSchema,
+  UpdateSupplierRequestSchema,
+} from "./model/schemas";
 
 // Query Keys
-export { suppliesKeys } from './model/keys';
+export { suppliesKeys } from "./model/keys";
 
 // API Client
-export { suppliesApi } from './api/client';
+export { suppliesApi } from "./api/client";
 
 // React Query Hooks
 export {
-    useSuppliers,
-    useAllSuppliers,
-    useSupplyItems,
-    useAllSupplyItems,
-    useSupplyLots,
-    useStockIn,
-} from './api/hooks';
+  useAllSuppliers,
+  useAllSupplyItems,
+  useCreateSupplier,
+  useDeleteSupplier,
+  useStockIn,
+  useSuppliers,
+  useSupplyItems,
+  useSupplyLots,
+  useUpdateSupplier,
+} from "./api/hooks";

@@ -4,18 +4,17 @@
  * Main orchestration component for farm management
  */
 
-import { useFarmManagement } from '../hooks/useFarmManagement';
-import { FarmToolbar } from '../ui/FarmToolbar';
-import { FarmFilters } from '../ui/FarmFilters';
-import { FarmsListView } from '../ui/FarmsListView';
-import { EmptyState } from '../ui/EmptyState';
-import { LoadingState } from '../ui/LoadingState';
-import { FarmFormDialog } from '../ui/FarmFormDialog';
-import { FarmDeleteDialog } from '../ui/FarmDeleteDialog';
+import type { FarmDetailResponse } from '@/entities/farm';
 import { Button } from '@/shared/ui';
 import { AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import type { FarmDetailResponse } from '@/entities/farm';
+import { useFarmManagement } from '../hooks/useFarmManagement';
+import { EmptyState } from '../ui/EmptyState';
+import { FarmDeleteDialog } from '../ui/FarmDeleteDialog';
+import { FarmFormDialog } from '../ui/FarmFormDialog';
+import { FarmsListView } from '../ui/FarmsListView';
+import { FarmToolbar } from '../ui/FarmToolbar';
+import { LoadingState } from '../ui/LoadingState';
 
 /**
  * FarmsListPage Component
@@ -88,10 +87,10 @@ export function FarmsListPage() {
                 <div className="container mx-auto py-6 px-4 max-w-7xl">
                     <div className="flex flex-col items-center justify-center py-12">
                         <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        <h2 className="text-2xl font-bold text-foreground mb-2">
                             Failed to Load Farms
                         </h2>
-                        <p className="text-gray-500 mb-6">
+                        <p className="text-muted-foreground mb-6">
                             {error?.message || 'An error occurred while loading your farms.'}
                         </p>
                         <Button onClick={refetch}>
@@ -170,13 +169,13 @@ export function FarmsListPage() {
             
             {/* Farms Table or Empty Filtered State */}
             {filteredFarms.length === 0 && hasActiveFilters ? (
-                <div className="bg-card rounded-xl border border-gray-200 shadow-sm p-12">
+                <div className="bg-card rounded-xl border border-border shadow-sm p-12">
                     <div className="flex flex-col items-center text-center">
                         <div className="text-4xl mb-4">🔍</div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        <h3 className="text-lg font-semibold text-foreground mb-2">
                             No farms found
                         </h3>
-                        <p className="text-gray-500 mb-4">
+                        <p className="text-muted-foreground mb-4">
                             Try adjusting your search or filters.
                         </p>
                         <Button

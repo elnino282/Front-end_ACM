@@ -1,13 +1,26 @@
-import { useState, useEffect } from 'react';
-import { Leaf, Sprout, Search, RefreshCw, AlertCircle, Plus, Edit, X, Trash2, Loader2, MoreVertical } from 'lucide-react';
-import { adminCropApi, adminVarietyApi } from '@/services/api.admin';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
+import { useI18n } from "@/hooks/useI18n";
+import { adminCropApi, adminVarietyApi } from "@/services/api.admin";
+import {
+  AlertCircle,
+  Edit,
+  Leaf,
+  Loader2,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  Search,
+  Sprout,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Crop {
   id: number;
@@ -24,7 +37,8 @@ interface Variety {
 }
 
 export function CropsVarietiesPage() {
-  const [activeTab, setActiveTab] = useState<'crops' | 'varieties'>('crops');
+  const { t } = useI18n();
+  const [activeTab, setActiveTab] = useState<"crops" | "varieties">("crops");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [crops, setCrops] = useState<Crop[]>([]);
@@ -34,8 +48,8 @@ export function CropsVarietiesPage() {
   const [selectedCropId, setSelectedCropId] = useState<number | null>(null);
 
   // Search state
-  const [cropSearchQuery, setCropSearchQuery] = useState('');
-  const [varietySearchQuery, setVarietySearchQuery] = useState('');
+  const [cropSearchQuery, setCropSearchQuery] = useState("");
+  const [varietySearchQuery, setVarietySearchQuery] = useState("");
 
   // Form states
   const [showCropForm, setShowCropForm] = useState(false);
@@ -45,15 +59,15 @@ export function CropsVarietiesPage() {
   const [formLoading, setFormLoading] = useState(false);
 
   // Form fields
-  const [cropName, setCropName] = useState('');
-  const [cropDescription, setCropDescription] = useState('');
-  const [varietyName, setVarietyName] = useState('');
-  const [varietyDescription, setVarietyDescription] = useState('');
+  const [cropName, setCropName] = useState("");
+  const [cropDescription, setCropDescription] = useState("");
+  const [varietyName, setVarietyName] = useState("");
+  const [varietyDescription, setVarietyDescription] = useState("");
   const [varietyCropId, setVarietyCropId] = useState<number | null>(null);
 
   // Delete confirmation state
   const [deleteConfirm, setDeleteConfirm] = useState<{
-    type: 'crop' | 'variety';
+    type: "crop" | "variety";
     id: number;
     name: string;
   } | null>(null);
@@ -61,7 +75,7 @@ export function CropsVarietiesPage() {
 
   // Toast notification state
   const [toast, setToast] = useState<{
-    type: 'success' | 'error';
+    type: "success" | "error";
     message: string;
   } | null>(null);
 
@@ -74,7 +88,7 @@ export function CropsVarietiesPage() {
         setCrops(Array.isArray(response.result) ? response.result : []);
       }
     } catch (err) {
-      setError('Failed to load crops');
+      setError("Failed to load crops");
       console.error(err);
     } finally {
       setLoading(false);
@@ -90,7 +104,7 @@ export function CropsVarietiesPage() {
         setVarieties(Array.isArray(response.result) ? response.result : []);
       }
     } catch (err) {
-      setError('Failed to load varieties');
+      setError("Failed to load varieties");
       console.error(err);
     } finally {
       setLoading(false);
@@ -102,7 +116,7 @@ export function CropsVarietiesPage() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'varieties') {
+    if (activeTab === "varieties") {
       fetchVarieties();
     }
   }, [activeTab, selectedCropId]);
@@ -111,11 +125,11 @@ export function CropsVarietiesPage() {
     if (crop) {
       setEditingCrop(crop);
       setCropName(crop.cropName);
-      setCropDescription(crop.description || '');
+      setCropDescription(crop.description || "");
     } else {
       setEditingCrop(null);
-      setCropName('');
-      setCropDescription('');
+      setCropName("");
+      setCropDescription("");
     }
     setShowCropForm(true);
   };
@@ -124,13 +138,13 @@ export function CropsVarietiesPage() {
     if (variety) {
       setEditingVariety(variety);
       setVarietyName(variety.name);
-      setVarietyDescription(variety.description || '');
+      setVarietyDescription(variety.description || "");
       setVarietyCropId(variety.cropId);
     } else {
       setEditingVariety(null);
-      setVarietyName('');
-      setVarietyDescription('');
-      setVarietyCropId(selectedCropId || (crops[0]?.id || null));
+      setVarietyName("");
+      setVarietyDescription("");
+      setVarietyCropId(selectedCropId || crops[0]?.id || null);
     }
     setShowVarietyForm(true);
   };
@@ -141,14 +155,17 @@ export function CropsVarietiesPage() {
     setFormLoading(true);
     try {
       if (editingCrop) {
-        await adminCropApi.update(editingCrop.id, { cropName, description: cropDescription });
+        await adminCropApi.update(editingCrop.id, {
+          cropName,
+          description: cropDescription,
+        });
       } else {
         await adminCropApi.create({ cropName, description: cropDescription });
       }
       setShowCropForm(false);
       fetchCrops();
     } catch (err) {
-      console.error('Failed to save crop:', err);
+      console.error("Failed to save crop:", err);
     } finally {
       setFormLoading(false);
     }
@@ -163,19 +180,19 @@ export function CropsVarietiesPage() {
         await adminVarietyApi.update(editingVariety.id, {
           name: varietyName,
           cropId: varietyCropId,
-          description: varietyDescription
+          description: varietyDescription,
         });
       } else {
         await adminVarietyApi.create({
           name: varietyName,
           cropId: varietyCropId,
-          description: varietyDescription
+          description: varietyDescription,
         });
       }
       setShowVarietyForm(false);
       fetchVarieties();
     } catch (err) {
-      console.error('Failed to save variety:', err);
+      console.error("Failed to save variety:", err);
     } finally {
       setFormLoading(false);
     }
@@ -186,23 +203,30 @@ export function CropsVarietiesPage() {
 
     setDeleteLoading(true);
     try {
-      if (deleteConfirm.type === 'crop') {
+      if (deleteConfirm.type === "crop") {
         await adminCropApi.delete(deleteConfirm.id);
-        setToast({ type: 'success', message: `Crop "${deleteConfirm.name}" deleted successfully` });
+        setToast({
+          type: "success",
+          message: `Crop "${deleteConfirm.name}" deleted successfully`,
+        });
         fetchCrops();
       } else {
         await adminVarietyApi.delete(deleteConfirm.id);
-        setToast({ type: 'success', message: `Variety "${deleteConfirm.name}" deleted successfully` });
+        setToast({
+          type: "success",
+          message: `Variety "${deleteConfirm.name}" deleted successfully`,
+        });
         fetchVarieties();
       }
       setDeleteConfirm(null);
     } catch (err: any) {
       // Handle 409 Conflict errors with specific backend messages
-      const errorMessage = err?.response?.data?.message ||
-        (deleteConfirm.type === 'crop'
-          ? 'Cannot delete this crop. It may have varieties or be referenced in seasons.'
-          : 'Cannot delete this variety. It may be referenced in seasons.');
-      setToast({ type: 'error', message: errorMessage });
+      const errorMessage =
+        err?.response?.data?.message ||
+        (deleteConfirm.type === "crop"
+          ? "Cannot delete this crop. It may have varieties or be referenced in seasons."
+          : "Cannot delete this variety. It may be referenced in seasons.");
+      setToast({ type: "error", message: errorMessage });
       setDeleteConfirm(null);
     } finally {
       setDeleteLoading(false);
@@ -218,15 +242,21 @@ export function CropsVarietiesPage() {
   }, [toast]);
 
   // Filtered data based on search
-  const filteredCrops = crops.filter(crop =>
-    crop.cropName.toLowerCase().includes(cropSearchQuery.toLowerCase()) ||
-    (crop.description || '').toLowerCase().includes(cropSearchQuery.toLowerCase())
+  const filteredCrops = crops.filter(
+    (crop) =>
+      crop.cropName.toLowerCase().includes(cropSearchQuery.toLowerCase()) ||
+      (crop.description || "")
+        .toLowerCase()
+        .includes(cropSearchQuery.toLowerCase()),
   );
 
-  const filteredVarieties = varieties.filter(variety =>
-    variety.name.toLowerCase().includes(varietySearchQuery.toLowerCase()) ||
-    (variety.description || '').toLowerCase().includes(varietySearchQuery.toLowerCase()) ||
-    variety.cropName.toLowerCase().includes(varietySearchQuery.toLowerCase())
+  const filteredVarieties = varieties.filter(
+    (variety) =>
+      variety.name.toLowerCase().includes(varietySearchQuery.toLowerCase()) ||
+      (variety.description || "")
+        .toLowerCase()
+        .includes(varietySearchQuery.toLowerCase()) ||
+      variety.cropName.toLowerCase().includes(varietySearchQuery.toLowerCase()),
   );
 
   const renderCrops = () => (
@@ -255,7 +285,8 @@ export function CropsVarietiesPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">
-            {filteredCrops.length} {filteredCrops.length === 1 ? 'crop' : 'crops'}
+            {filteredCrops.length}{" "}
+            {filteredCrops.length === 1 ? "crop" : "crops"}
             {cropSearchQuery && ` (filtered from ${crops.length})`}
           </span>
         </div>
@@ -271,7 +302,7 @@ export function CropsVarietiesPage() {
             onClick={fetchCrops}
             className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm hover:bg-muted/50"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
@@ -280,15 +311,24 @@ export function CropsVarietiesPage() {
         <table className="w-full">
           <thead className="bg-muted/50 border-b border-border">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Description</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Actions</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                Name
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                Description
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={3}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
                   Loading...
                 </td>
@@ -299,7 +339,10 @@ export function CropsVarietiesPage() {
                   <div className="flex flex-col items-center gap-2 text-destructive">
                     <AlertCircle className="h-6 w-6" />
                     {error}
-                    <button onClick={fetchCrops} className="text-sm text-primary hover:underline">
+                    <button
+                      onClick={fetchCrops}
+                      className="text-sm text-primary hover:underline"
+                    >
                       Try again
                     </button>
                   </div>
@@ -307,16 +350,28 @@ export function CropsVarietiesPage() {
               </tr>
             ) : filteredCrops.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={3}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <Leaf className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  {cropSearchQuery ? `No crops found matching "${cropSearchQuery}"` : 'No crops found'}
+                  {cropSearchQuery
+                    ? `No crops found matching "${cropSearchQuery}"`
+                    : "No crops found"}
                 </td>
               </tr>
             ) : (
               filteredCrops.map((crop) => (
-                <tr key={crop.id} className="border-b border-border hover:bg-muted/30">
-                  <td className="px-4 py-3 text-sm font-medium">{crop.cropName}</td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{crop.description || '-'}</td>
+                <tr
+                  key={crop.id}
+                  className="border-b border-border hover:bg-muted/30"
+                >
+                  <td className="px-4 py-3 text-sm font-medium">
+                    {crop.cropName}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                    {crop.description || "-"}
+                  </td>
                   <td className="px-4 py-3">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -337,7 +392,13 @@ export function CropsVarietiesPage() {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={() => setDeleteConfirm({ type: 'crop', id: crop.id, name: crop.cropName })}
+                          onClick={() =>
+                            setDeleteConfirm({
+                              type: "crop",
+                              id: crop.id,
+                              name: crop.cropName,
+                            })
+                          }
                           className="cursor-pointer text-destructive focus:text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
@@ -381,17 +442,22 @@ export function CropsVarietiesPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <select
-            value={selectedCropId || ''}
-            onChange={(e) => setSelectedCropId(e.target.value ? Number(e.target.value) : null)}
+            value={selectedCropId || ""}
+            onChange={(e) =>
+              setSelectedCropId(e.target.value ? Number(e.target.value) : null)
+            }
             className="px-3 py-2 border border-border rounded-lg bg-background text-sm"
           >
             <option value="">All Crops</option>
-            {crops.map(c => (
-              <option key={c.id} value={c.id}>{c.cropName}</option>
+            {crops.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.cropName}
+              </option>
             ))}
           </select>
           <span className="text-sm text-muted-foreground">
-            {filteredVarieties.length} {filteredVarieties.length === 1 ? 'variety' : 'varieties'}
+            {filteredVarieties.length}{" "}
+            {filteredVarieties.length === 1 ? "variety" : "varieties"}
             {varietySearchQuery && ` (filtered from ${varieties.length})`}
           </span>
         </div>
@@ -407,7 +473,7 @@ export function CropsVarietiesPage() {
             onClick={fetchVarieties}
             className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm hover:bg-muted/50"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
@@ -416,16 +482,27 @@ export function CropsVarietiesPage() {
         <table className="w-full">
           <thead className="bg-muted/50 border-b border-border">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Crop</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Description</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Actions</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                Name
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                Crop
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                Description
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={4}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
                   Loading...
                 </td>
@@ -436,7 +513,10 @@ export function CropsVarietiesPage() {
                   <div className="flex flex-col items-center gap-2 text-destructive">
                     <AlertCircle className="h-6 w-6" />
                     {error}
-                    <button onClick={fetchVarieties} className="text-sm text-primary hover:underline">
+                    <button
+                      onClick={fetchVarieties}
+                      className="text-sm text-primary hover:underline"
+                    >
                       Try again
                     </button>
                   </div>
@@ -444,21 +524,33 @@ export function CropsVarietiesPage() {
               </tr>
             ) : filteredVarieties.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                <td
+                  colSpan={4}
+                  className="px-4 py-8 text-center text-muted-foreground"
+                >
                   <Sprout className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  {varietySearchQuery ? `No varieties found matching "${varietySearchQuery}"` : 'No varieties found'}
+                  {varietySearchQuery
+                    ? `No varieties found matching "${varietySearchQuery}"`
+                    : "No varieties found"}
                 </td>
               </tr>
             ) : (
               filteredVarieties.map((variety) => (
-                <tr key={variety.id} className="border-b border-border hover:bg-muted/30">
-                  <td className="px-4 py-3 text-sm font-medium">{variety.name}</td>
+                <tr
+                  key={variety.id}
+                  className="border-b border-border hover:bg-muted/30"
+                >
+                  <td className="px-4 py-3 text-sm font-medium">
+                    {variety.name}
+                  </td>
                   <td className="px-4 py-3 text-sm">
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
                       {variety.cropName}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{variety.description || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                    {variety.description || "-"}
+                  </td>
                   <td className="px-4 py-3">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -479,7 +571,13 @@ export function CropsVarietiesPage() {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={() => setDeleteConfirm({ type: 'variety', id: variety.id, name: variety.name })}
+                          onClick={() =>
+                            setDeleteConfirm({
+                              type: "variety",
+                              id: variety.id,
+                              name: variety.name,
+                            })
+                          }
                           className="cursor-pointer text-destructive focus:text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
@@ -501,27 +599,31 @@ export function CropsVarietiesPage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-1">Crops & Varieties</h1>
-        <p className="text-muted-foreground">Manage the catalog of crops and varieties</p>
+        <p className="text-muted-foreground">
+          Manage the catalog of crops and varieties
+        </p>
       </div>
 
       {/* Tab Navigation */}
       <div className="flex border-b border-border mb-6">
         <button
-          onClick={() => setActiveTab('crops')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${activeTab === 'crops'
-            ? 'border-primary text-primary'
-            : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+          onClick={() => setActiveTab("crops")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+            activeTab === "crops"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
         >
           <Leaf className="inline-block h-4 w-4 mr-2" />
           Crops
         </button>
         <button
-          onClick={() => setActiveTab('varieties')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${activeTab === 'varieties'
-            ? 'border-primary text-primary'
-            : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
+          onClick={() => setActiveTab("varieties")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+            activeTab === "varieties"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
         >
           <Sprout className="inline-block h-4 w-4 mr-2" />
           Varieties
@@ -529,16 +631,21 @@ export function CropsVarietiesPage() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'crops' && renderCrops()}
-      {activeTab === 'varieties' && renderVarieties()}
+      {activeTab === "crops" && renderCrops()}
+      {activeTab === "varieties" && renderVarieties()}
 
       {/* Crop Form Modal */}
       {showCropForm && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-card border border-border rounded-lg shadow-lg w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <h3 className="text-lg font-semibold">{editingCrop ? 'Edit Crop' : 'Add Crop'}</h3>
-              <button onClick={() => setShowCropForm(false)} className="p-1 hover:bg-muted rounded">
+              <h3 className="text-lg font-semibold">
+                {editingCrop ? "Edit Crop" : "Add Crop"}
+              </h3>
+              <button
+                onClick={() => setShowCropForm(false)}
+                className="p-1 hover:bg-muted rounded"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -554,7 +661,9 @@ export function CropsVarietiesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
                 <textarea
                   value={cropDescription}
                   onChange={(e) => setCropDescription(e.target.value)}
@@ -568,14 +677,14 @@ export function CropsVarietiesPage() {
                 onClick={() => setShowCropForm(false)}
                 className="px-4 py-2 border border-border rounded-lg text-sm hover:bg-muted/50"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleSaveCrop}
                 disabled={formLoading || !cropName.trim()}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 disabled:opacity-50"
               >
-                {formLoading ? 'Saving...' : 'Save'}
+                {formLoading ? t("common.saving") : t("common.save")}
               </button>
             </div>
           </div>
@@ -587,8 +696,13 @@ export function CropsVarietiesPage() {
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-card border border-border rounded-lg shadow-lg w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <h3 className="text-lg font-semibold">{editingVariety ? 'Edit Variety' : 'Add Variety'}</h3>
-              <button onClick={() => setShowVarietyForm(false)} className="p-1 hover:bg-muted rounded">
+              <h3 className="text-lg font-semibold">
+                {editingVariety ? "Edit Variety" : "Add Variety"}
+              </h3>
+              <button
+                onClick={() => setShowVarietyForm(false)}
+                className="p-1 hover:bg-muted rounded"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -596,13 +710,15 @@ export function CropsVarietiesPage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Crop *</label>
                 <select
-                  value={varietyCropId || ''}
+                  value={varietyCropId || ""}
                   onChange={(e) => setVarietyCropId(Number(e.target.value))}
                   className="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm"
                 >
                   <option value="">Select a crop</option>
-                  {crops.map(c => (
-                    <option key={c.id} value={c.id}>{c.cropName}</option>
+                  {crops.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.cropName}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -617,7 +733,9 @@ export function CropsVarietiesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
                 <textarea
                   value={varietyDescription}
                   onChange={(e) => setVarietyDescription(e.target.value)}
@@ -631,14 +749,14 @@ export function CropsVarietiesPage() {
                 onClick={() => setShowVarietyForm(false)}
                 className="px-4 py-2 border border-border rounded-lg text-sm hover:bg-muted/50"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleSaveVariety}
                 disabled={formLoading || !varietyName.trim() || !varietyCropId}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 disabled:opacity-50"
               >
-                {formLoading ? 'Saving...' : 'Save'}
+                {formLoading ? t("common.saving") : t("common.save")}
               </button>
             </div>
           </div>
@@ -651,18 +769,21 @@ export function CropsVarietiesPage() {
           <div className="bg-card border border-border rounded-lg shadow-xl w-full max-w-md">
             <div className="p-4 border-b border-border">
               <h2 className="text-lg font-semibold text-destructive">
-                Delete {deleteConfirm.type === 'crop' ? 'Crop' : 'Variety'}
+                Delete {deleteConfirm.type === "crop" ? "Crop" : "Variety"}
               </h2>
             </div>
             <div className="p-4">
               <p className="text-sm text-muted-foreground mb-4">
-                Are you sure you want to delete the {deleteConfirm.type}{' '}
-                <strong className="text-foreground">"{deleteConfirm.name}"</strong>?
+                Are you sure you want to delete the {deleteConfirm.type}{" "}
+                <strong className="text-foreground">
+                  "{deleteConfirm.name}"
+                </strong>
+                ?
               </p>
               <p className="text-xs text-muted-foreground">
-                {deleteConfirm.type === 'crop'
-                  ? 'This action cannot be undone. The crop must not have any varieties or be referenced in seasons.'
-                  : 'This action cannot be undone. The variety must not be referenced in any seasons.'}
+                {deleteConfirm.type === "crop"
+                  ? "This action cannot be undone. The crop must not have any varieties or be referenced in seasons."
+                  : "This action cannot be undone. The variety must not be referenced in any seasons."}
               </p>
             </div>
             <div className="flex justify-end gap-2 p-4 border-t border-border">
@@ -698,12 +819,13 @@ export function CropsVarietiesPage() {
       {/* Toast Notification */}
       {toast && (
         <div
-          className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 ${toast.type === 'success'
-            ? 'bg-green-600 text-white'
-            : 'bg-destructive text-destructive-foreground'
-            }`}
+          className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 ${
+            toast.type === "success"
+              ? "bg-green-600 text-white"
+              : "bg-destructive text-destructive-foreground"
+          }`}
         >
-          {toast.type === 'success' ? (
+          {toast.type === "success" ? (
             <Leaf className="h-4 w-4" />
           ) : (
             <AlertCircle className="h-4 w-4" />

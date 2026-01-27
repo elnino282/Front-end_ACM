@@ -1,11 +1,11 @@
-import { Download, Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { SeasonHeader } from './SeasonHeader';
-import { SeasonKPICards } from './SeasonKPICards';
-import { SeasonTabs } from './SeasonTabs';
-import { ActivityFeed } from './ActivityFeed';
-import { Season, SeasonStatus, Activity } from '../types';
+import { Button } from "@/components/ui/button";
+import { Download, Save } from "lucide-react";
+import { toast } from "sonner";
+import type { Activity, Season, SeasonStatus } from "../types";
+import { ActivityFeed } from "./ActivityFeed";
+import { SeasonHeader } from "./SeasonHeader";
+import { SeasonKPICards } from "./SeasonKPICards";
+import { SeasonTabs } from "./SeasonTabs";
 
 interface SeasonDetailViewProps {
   season: Season;
@@ -61,9 +61,9 @@ export function SeasonDetailView({
       {/* Main Content */}
       <div className="max-w-[1800px] mx-auto p-6 space-y-6">
         <SeasonKPICards season={season} />
-        <SeasonTabs 
-          season={season} 
-          activeTab={activeTab} 
+        <SeasonTabs
+          season={season}
+          activeTab={activeTab}
           setActiveTab={setActiveTab}
           activities={activities}
         />
@@ -87,7 +87,7 @@ export function SeasonDetailView({
             </Button>
             <Button
               className="bg-primary hover:bg-primary/90 text-white acm-rounded-sm"
-              onClick={() => toast.success('Changes saved successfully')}
+              onClick={() => toast.success("Changes saved successfully")}
             >
               <Save className="w-4 h-4 mr-2" />
               Save Changes
@@ -98,6 +98,3 @@ export function SeasonDetailView({
     </>
   );
 }
-
-
-

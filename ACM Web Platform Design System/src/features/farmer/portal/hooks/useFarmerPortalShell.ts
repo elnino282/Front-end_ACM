@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useProfileMe } from '@/entities/user';
 import { useAuth } from '@/features/auth';
 import type { BreadcrumbPath } from '@/features/shared/layout/types';
-import type { FarmerView } from '../types';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { getFarmerBreadcrumbLabel } from '../constants';
+import type { FarmerView } from '../types';
 
 interface UseFarmerPortalShellReturn {
   currentView: FarmerView;
@@ -22,6 +23,7 @@ interface UseFarmerPortalShellReturn {
  */
 export function useFarmerPortalShell(): UseFarmerPortalShellReturn {
   const { user, logout } = useAuth();
+  const { data: profile } = useProfileMe();
   const navigate = useNavigate();
   const location = useLocation();
   const [currentView, setCurrentView] = useState<FarmerView>('dashboard');
@@ -38,9 +40,13 @@ export function useFarmerPortalShell(): UseFarmerPortalShellReturn {
     }
   }, [location.pathname]);
 
-  // Get user info from auth context, with fallback defaults
-  const userName = user?.email?.split('@')[0] || 'John Doe';
-  const userEmail = user?.email || 'john.doe@farm.com';
+  // Get user info - prioritize React Query profile data for instant updates after mutations
+  // Then fallback to session data, then extract from email, then default
+  const profileFullName = profile?.fullName?.trim();
+  const sessionFullName = user?.profile?.fullName?.trim();
+  const emailUsername = user?.email?.split('@')[0];
+  const userName = profileFullName || sessionFullName || emailUsername || 'Farmer';
+  const userEmail = profile?.email || user?.email || 'farmer@acm-platform.com';
 
   /**
    * Build breadcrumbs based on current view
@@ -65,8 +71,11 @@ export function useFarmerPortalShell(): UseFarmerPortalShellReturn {
 
   /**
    * Handle user logout with navigation and toast notification
+   * Also clears activeSeasonId to force season selection on next login
    */
   const handleLogout = async (): Promise<void> => {
+    // Clear active season to enforce selection on next login
+    localStorage.removeItem('activeSeasonId');
     await logout();
     toast.success('Signed out successfully');
     navigate('/sign-in', { replace: true });

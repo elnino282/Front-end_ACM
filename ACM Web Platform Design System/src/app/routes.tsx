@@ -1,62 +1,35 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
-import { useAuth } from '@/features/auth';
-import { ErrorBoundary, Skeleton } from '@/shared/ui';
-import { SeasonProvider } from '@/shared/contexts';
-
-// ═══════════════════════════════════════════════════════════════
-// LAZY LOADED COMPONENTS - Improves initial bundle size
-// ═══════════════════════════════════════════════════════════════
-
-// Auth pages (loaded immediately as they're entry points)
 import { SignInPage } from '@/pages/shared/SignInPage';
 import { SignUpPage } from '@/pages/shared/SignUpPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPassword';
 import { ResetPasswordPage } from '@/pages/ResetPassword';
-
-// Portal shells
 import { FarmerPortalWithShell } from '@/features/farmer/portal';
 import { AdminPortalWithShell } from '@/features/admin/portal';
+import { useAuth } from '@/features/auth';
+import { ErrorBoundary } from '@/shared/ui';
+import { SeasonProvider } from '@/shared/contexts';
 
-// Farmer feature components - Lazy loaded for code splitting
-const FarmerDashboard = lazy(() => import('@/features/farmer/dashboard').then(m => ({ default: m.FarmerDashboard })));
-const CropManagement = lazy(() => import('@/features/farmer/crops').then(m => ({ default: m.CropManagement })));
-const HarvestManagement = lazy(() => import('@/features/farmer/harvests').then(m => ({ default: m.HarvestManagement })));
-const PlotManagement = lazy(() => import('@/features/farmer/plots').then(m => ({ default: m.PlotManagement })));
-const SeasonManagement = lazy(() => import('@/features/farmer/seasons').then(m => ({ default: m.SeasonManagement })));
-const Documents = lazy(() => import('@/features/farmer/documents').then(m => ({ default: m.Documents })));
-const ExpenseManagement = lazy(() => import('@/features/farmer/expense-management').then(m => ({ default: m.ExpenseManagement })));
-const Reports = lazy(() => import('@/features/farmer/reports').then(m => ({ default: m.Reports })));
-const TaskWorkspace = lazy(() => import('@/features/farmer/tasks').then(m => ({ default: m.TaskWorkspace })));
-const FarmerProfile = lazy(() => import('@/features/farmer/profile').then(m => ({ default: m.FarmerProfile })));
-const FarmerPreferences = lazy(() => import('@/features/farmer/preferences').then(m => ({ default: m.FarmerPreferences })));
-const FarmsListPage = lazy(() => import('@/features/farmer/farm-management').then(m => ({ default: m.FarmsListPage })));
-const FarmDetailPage = lazy(() => import('@/features/farmer/farm-management').then(m => ({ default: m.FarmDetailPage })));
-
-// Farmer pages - Lazy loaded
-const FieldLogsPage = lazy(() => import('@/pages/farmer/FieldLogsPage').then(m => ({ default: m.FieldLogsPage })));
-const InventoryPage = lazy(() => import('@/pages/farmer/InventoryPage').then(m => ({ default: m.InventoryPage })));
-const IncidentsPage = lazy(() => import('@/pages/farmer/IncidentsPage').then(m => ({ default: m.IncidentsPage })));
-const AiAssistantPage = lazy(() => import('@/pages/farmer/AiAssistantPage').then(m => ({ default: m.AiAssistantPage })));
-const SuppliersSuppliesPage = lazy(() => import('@/pages/farmer/SuppliersSuppliesPage').then(m => ({ default: m.SuppliersSuppliesPage })));
-
-// ═══════════════════════════════════════════════════════════════
-// LOADING FALLBACK COMPONENT
-// ═══════════════════════════════════════════════════════════════
-
-function PageLoadingFallback() {
-  return (
-    <div className="flex items-center justify-center min-h-[60vh] w-full">
-      <div className="space-y-4 w-full max-w-md px-4">
-        <Skeleton className="h-8 w-3/4 mx-auto" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    </div>
-  );
-}
+// Farmer feature imports
+import { CropManagement } from '@/features/farmer/crops';
+import { FarmerDashboard } from '@/features/farmer/dashboard';
+import { HarvestManagement } from '@/features/farmer/harvests';
+import { PlotManagement } from '@/features/farmer/plots';
+import { SeasonManagement } from '@/features/farmer/seasons';
+import { Documents } from '@/features/farmer/documents';
+import { ExpenseManagement } from '@/features/farmer/expense-management';
+import { Reports } from '@/features/farmer/reports';
+import { TaskWorkspace } from '@/features/farmer/tasks';
+import { FarmerProfile } from '@/features/farmer/profile';
+import { FarmerPreferences } from '@/features/farmer/preferences';
+import { FarmsListPage, FarmDetailPage } from '@/features/farmer/farm-management';
+import { FieldLogsPage } from '@/pages/farmer/FieldLogsPage';
+import { InventoryPage } from '@/pages/farmer/InventoryPage';
+import { IncidentsPage } from '@/pages/farmer/IncidentsPage';
+import { AiAssistantPage } from '@/pages/farmer/AiAssistantPage';
+import { SuppliersSuppliesPage } from '@/pages/farmer/SuppliersSuppliesPage';
+import { NotificationsPage } from '@/pages/farmer/NotificationsPage';
+import { FarmerSearchPage } from '@/pages/farmer/FarmerSearchPage';
 
 /**
  * Root redirect - redirects to sign-in or user's portal based on auth state
@@ -86,7 +59,6 @@ function RootRedirect() {
  * - Role-based protection via ProtectedRoute
  * - Route-level ErrorBoundary for each portal
  * - SeasonProvider for farmer routes (tasks/harvests)
- * - Lazy loading with Suspense for code splitting
  */
 export function AppRoutes() {
   return (
@@ -116,31 +88,33 @@ export function AppRoutes() {
         <Route index element={<Navigate to="dashboard" replace />} />
 
         {/* Farmer Dashboard */}
-        <Route path="dashboard" element={<Suspense fallback={<PageLoadingFallback />}><FarmerDashboard /></Suspense>} />
+        <Route path="dashboard" element={<FarmerDashboard />} />
+        <Route path="search" element={<FarmerSearchPage />} />
 
         {/* Farm Management with nested routes */}
         <Route path="farms">
-          <Route index element={<Suspense fallback={<PageLoadingFallback />}><FarmsListPage /></Suspense>} />
-          <Route path=":id" element={<Suspense fallback={<PageLoadingFallback />}><FarmDetailPage /></Suspense>} />
+          <Route index element={<FarmsListPage />} />
+          <Route path=":id" element={<FarmDetailPage />} />
         </Route>
 
-        {/* Other Farmer Features - All lazy loaded */}
-        <Route path="plots" element={<Suspense fallback={<PageLoadingFallback />}><PlotManagement /></Suspense>} />
-        <Route path="seasons" element={<Suspense fallback={<PageLoadingFallback />}><SeasonManagement /></Suspense>} />
-        <Route path="tasks" element={<Suspense fallback={<PageLoadingFallback />}><TaskWorkspace /></Suspense>} />
-        <Route path="crops" element={<Suspense fallback={<PageLoadingFallback />}><CropManagement /></Suspense>} />
-        <Route path="expenses" element={<Suspense fallback={<PageLoadingFallback />}><ExpenseManagement /></Suspense>} />
-        <Route path="harvest" element={<Suspense fallback={<PageLoadingFallback />}><HarvestManagement /></Suspense>} />
-        <Route path="suppliers-supplies" element={<Suspense fallback={<PageLoadingFallback />}><SuppliersSuppliesPage /></Suspense>} />
-        <Route path="reports" element={<Suspense fallback={<PageLoadingFallback />}><Reports /></Suspense>} />
-        <Route path="documents" element={<Suspense fallback={<PageLoadingFallback />}><Documents /></Suspense>} />
-        <Route path="field-logs" element={<Suspense fallback={<PageLoadingFallback />}><FieldLogsPage /></Suspense>} />
-        <Route path="inventory" element={<Suspense fallback={<PageLoadingFallback />}><InventoryPage /></Suspense>} />
-        <Route path="incidents" element={<Suspense fallback={<PageLoadingFallback />}><IncidentsPage /></Suspense>} />
+        {/* Other Farmer Features */}
+        <Route path="plots" element={<PlotManagement />} />
+        <Route path="seasons" element={<SeasonManagement />} />
+        <Route path="tasks" element={<TaskWorkspace />} />
+        <Route path="crops" element={<CropManagement />} />
+        <Route path="expenses" element={<ExpenseManagement />} />
+        <Route path="harvest" element={<HarvestManagement />} />
+        <Route path="suppliers-supplies" element={<SuppliersSuppliesPage />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="documents" element={<Documents />} />
+        <Route path="field-logs" element={<FieldLogsPage />} />
+        <Route path="inventory" element={<InventoryPage />} />
+        <Route path="incidents" element={<IncidentsPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
         <Route path="farms-plots" element={<Navigate to="/farmer/farms" replace />} />
-        <Route path="ai-assistant" element={<Suspense fallback={<PageLoadingFallback />}><AiAssistantPage /></Suspense>} />
-        <Route path="profile" element={<Suspense fallback={<PageLoadingFallback />}><FarmerProfile /></Suspense>} />
-        <Route path="settings" element={<Suspense fallback={<PageLoadingFallback />}><FarmerPreferences /></Suspense>} />
+        <Route path="ai-assistant" element={<AiAssistantPage />} />
+        <Route path="profile" element={<FarmerProfile />} />
+        <Route path="settings" element={<FarmerPreferences />} />
       </Route>
 
       {/* Admin Routes - Protected with ErrorBoundary */}

@@ -1,6 +1,10 @@
-import { Farmer, AuditLog } from './types';
+import { AuditLog, Farmer } from './types';
 
-export const INITIAL_FARMERS: Farmer[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from farmer management endpoint
+ */
+export const PLACEHOLDER_FARMERS: Farmer[] = [
     {
         id: '1',
         name: 'John Anderson',
@@ -58,7 +62,11 @@ export const INITIAL_FARMERS: Farmer[] = [
     },
 ];
 
-export const AUDIT_LOGS: AuditLog[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from audit logs endpoint
+ */
+export const PLACEHOLDER_AUDIT_LOGS: AuditLog[] = [
     {
         id: '1',
         action: 'Account Created',
@@ -107,7 +115,11 @@ export const STATUS_BADGE_COLORS = {
 
 export const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100] as const;
 
-export const MOCK_CSV_PREVIEW = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real CSV parsing logic
+ */
+export const PLACEHOLDER_CSV_PREVIEW = [
     {
         name: 'Alice Johnson',
         email: 'alice@farm.com',
@@ -131,7 +143,11 @@ export const MOCK_CSV_PREVIEW = [
     },
 ];
 
-export const MOCK_VALIDATION_ERRORS = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real CSV validation logic
+ */
+export const PLACEHOLDER_VALIDATION_ERRORS = [
     { row: 3, field: 'email', message: 'Invalid email format' },
     { row: 3, field: 'phone', message: 'Phone number is required' },
 ];

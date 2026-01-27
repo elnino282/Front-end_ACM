@@ -1,14 +1,25 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import axios from 'axios';
-import { useQueryClient } from '@tanstack/react-query';
-import { sessionApi, type AuthSignInResponse, type ProfileInfo } from '@/entities/session';
-import { getProfileQueryOptions } from '@/entities/user/api/hooks';
+import {
+  sessionApi,
+  type AuthSignInResponse,
+  type ProfileInfo,
+} from "@/entities/session";
+import { getProfileQueryOptions } from "@/entities/user/api/hooks";
+import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════════
 
-export type UserRole = 'admin' | 'farmer' | 'buyer';
+export type UserRole = "admin" | "farmer" | "buyer";
 
 export interface User {
   id?: number;
@@ -25,13 +36,13 @@ interface AuthStorageShape {
   user: User;
 }
 
-export type AuthErrorType = 
-  | 'invalid_credentials'  // 401 INVALID_CREDENTIALS
-  | 'user_locked'          // 403 USER_LOCKED
-  | 'role_missing'         // 403 ROLE_MISSING
-  | 'network_error'        // Network connectivity issue
-  | 'server_error'         // 5xx errors
-  | 'api_not_found';       // 404 (API endpoint not found)
+export type AuthErrorType =
+  | "invalid_credentials" // 401 INVALID_CREDENTIALS
+  | "user_locked" // 403 USER_LOCKED
+  | "role_missing" // 403 ROLE_MISSING
+  | "network_error" // Network connectivity issue
+  | "server_error" // 5xx errors
+  | "api_not_found"; // 404 (API endpoint not found)
 
 export interface AuthError {
   type: AuthErrorType;
@@ -43,7 +54,11 @@ export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (identifier: string, password: string, rememberMe?: boolean) => Promise<{ success: boolean; error?: AuthError; redirectTo?: string }>;
+  login: (
+    identifier: string,
+    password: string,
+    rememberMe?: boolean,
+  ) => Promise<{ success: boolean; error?: AuthError; redirectTo?: string }>;
   logout: () => Promise<void>;
   getUserRole: () => UserRole | null;
   refreshUserFromToken: () => Promise<void>;
@@ -56,7 +71,7 @@ export interface AuthContextType {
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════
 
-const AUTH_STORAGE_KEY = 'acm_auth';
+const AUTH_STORAGE_KEY = "acm_auth";
 
 // ═══════════════════════════════════════════════════════════════
 // CONTEXT
@@ -73,33 +88,38 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  */
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
   try {
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length !== 3) return null;
-    
+
     const payload = parts[1];
-    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
     return JSON.parse(decoded);
   } catch (error) {
-    console.error('Failed to decode JWT:', error);
+    console.error("Failed to decode JWT:", error);
     return null;
   }
 }
 
 function normalizeRole(value?: string | null): UserRole | null {
   const normalized = value?.toLowerCase();
-  if (normalized === 'admin' || normalized === 'farmer' || normalized === 'buyer') {
+  if (
+    normalized === "admin" ||
+    normalized === "farmer" ||
+    normalized === "buyer"
+  ) {
     return normalized;
   }
   return null;
 }
 
 function loadStoredAuth(): AuthStorageShape | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
 
   try {
     // Check both localStorage and sessionStorage
-    const raw = window.localStorage.getItem(AUTH_STORAGE_KEY) 
-             || window.sessionStorage.getItem(AUTH_STORAGE_KEY);
+    const raw =
+      window.localStorage.getItem(AUTH_STORAGE_KEY) ||
+      window.sessionStorage.getItem(AUTH_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as AuthStorageShape;
     if (!parsed.token || !parsed.user) return null;
@@ -110,7 +130,7 @@ function loadStoredAuth(): AuthStorageShape | null {
 }
 
 function saveStoredAuth(data: AuthStorageShape, rememberMe: boolean = true) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   const storage = rememberMe ? window.localStorage : window.sessionStorage;
   // Clear both storages first to avoid conflicts
   window.localStorage.removeItem(AUTH_STORAGE_KEY);
@@ -119,7 +139,7 @@ function saveStoredAuth(data: AuthStorageShape, rememberMe: boolean = true) {
 }
 
 function clearStoredAuth() {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   window.localStorage.removeItem(AUTH_STORAGE_KEY);
   window.sessionStorage.removeItem(AUTH_STORAGE_KEY);
 }
@@ -127,28 +147,32 @@ function clearStoredAuth() {
 /**
  * Map backend error response to AuthError
  */
-function mapBackendError(status: number, code?: string, message?: string): AuthError {
+function mapBackendError(
+  status: number,
+  code?: string,
+  message?: string,
+): AuthError {
   // Map specific error codes
-  if (code === 'INVALID_CREDENTIALS') {
+  if (code === "INVALID_CREDENTIALS") {
     return {
-      type: 'invalid_credentials',
-      message: 'Invalid username/email or password.',
+      type: "invalid_credentials",
+      message: "Invalid username/email or password.",
       code,
     };
   }
-  
-  if (code === 'USER_LOCKED') {
+
+  if (code === "USER_LOCKED") {
     return {
-      type: 'user_locked',
-      message: 'Your account is locked. Please contact support.',
+      type: "user_locked",
+      message: "Your account is locked. Please contact support.",
       code,
     };
   }
-  
-  if (code === 'ROLE_MISSING') {
+
+  if (code === "ROLE_MISSING") {
     return {
-      type: 'role_missing',
-      message: 'No role assigned to your account. Please contact support.',
+      type: "role_missing",
+      message: "No role assigned to your account. Please contact support.",
       code,
     };
   }
@@ -156,31 +180,32 @@ function mapBackendError(status: number, code?: string, message?: string): AuthE
   // Map by HTTP status
   if (status === 401) {
     return {
-      type: 'invalid_credentials',
-      message: message || 'Invalid credentials.',
+      type: "invalid_credentials",
+      message: message || "Invalid credentials.",
       code,
     };
   }
-  
+
   if (status === 403) {
     return {
-      type: 'user_locked',
-      message: message || 'Access denied.',
+      type: "user_locked",
+      message: message || "Access denied.",
       code,
     };
   }
-  
+
   if (status === 404) {
     return {
-      type: 'api_not_found',
-      message: 'Cannot reach login service. Please check if the server is running.',
-      code: 'ERR_API_NOT_FOUND',
+      type: "api_not_found",
+      message:
+        "Cannot reach login service. Please check if the server is running.",
+      code: "ERR_API_NOT_FOUND",
     };
   }
 
   return {
-    type: 'server_error',
-    message: message || 'An unexpected error occurred. Please try again.',
+    type: "server_error",
+    message: message || "An unexpected error occurred. Please try again.",
     code,
   };
 }
@@ -191,10 +216,10 @@ function mapBackendError(status: number, code?: string, message?: string): AuthE
 
 /**
  * AuthProvider Component
- * 
+ *
  * Provides authentication context to the entire application.
  * Manages user state, login/logout, and session persistence.
- * 
+ *
  * Features:
  * - Supports login via username OR email
  * - Returns role-based redirect path
@@ -239,7 +264,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const refreshedUser: User = {
         id: result.userId,
-        username: result.username || '',
+        username: result.username || "",
         role: primaryRole,
         email: result.email,
         profile: result.profile,
@@ -253,7 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: refreshedUser,
       });
     } catch (error) {
-      console.error('Failed to refresh user from token:', error);
+      console.error("Failed to refresh user from token:", error);
       // Token is invalid, clear auth
       clearStoredAuth();
       setUser(null);
@@ -272,13 +297,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await refreshUserFromToken();
           } catch {
             // If /me fails, keep using stored user
-            console.warn('Failed to refresh user info from /me endpoint');
+            console.warn("Failed to refresh user info from /me endpoint");
           }
         } else if (stored && stored.expiresAt <= Date.now()) {
           clearStoredAuth();
         }
       } catch (error) {
-        console.error('Failed to load auth from storage:', error);
+        console.error("Failed to load auth from storage:", error);
         clearStoredAuth();
       } finally {
         setIsLoading(false);
@@ -290,16 +315,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /**
    * Login with username/email and password.
-   * 
+   *
    * @param identifier - Username or email
    * @param password - User password
    * @param rememberMe - Whether to persist session in localStorage
    * @returns Result with success status, error (if failed), and redirectTo path
    */
   const login = async (
-    identifier: string, 
-    password: string, 
-    rememberMe: boolean = false
+    identifier: string,
+    password: string,
+    rememberMe: boolean = false,
   ): Promise<{ success: boolean; error?: AuthError; redirectTo?: string }> => {
     try {
       // Call backend with identifier-based login
@@ -311,11 +336,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Extract user info from the response
       const { result } = authResponse;
-      const { token, username, roles, userId, expiresIn, role, profile, redirectTo } = result;
+      const {
+        token,
+        username,
+        roles,
+        userId,
+        expiresIn,
+        role,
+        profile,
+        redirectTo,
+      } = result;
 
       // Decode JWT to get user ID if not in response
       const jwtPayload = decodeJwtPayload(token);
-      const userIdFromToken = jwtPayload?.user_id || jwtPayload?.userId || jwtPayload?.sub;
+      const userIdFromToken =
+        jwtPayload?.user_id || jwtPayload?.userId || jwtPayload?.sub;
 
       // Use primary role from response or fall back to first role
       const primaryRole = normalizeRole(role || roles[0]);
@@ -323,8 +358,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return {
           success: false,
           error: {
-            type: 'role_missing',
-            message: 'No supported role assigned to your account.',
+            type: "role_missing",
+            message: "No supported role assigned to your account.",
           },
         };
       }
@@ -333,7 +368,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: userId ?? (userIdFromToken ? Number(userIdFromToken) : undefined),
         username,
         role: primaryRole,
-        email: identifier.includes('@') ? identifier : undefined,
+        email: identifier.includes("@") ? identifier : undefined,
         profile,
       };
 
@@ -354,42 +389,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       prefetchProfile();
 
       const normalizedRedirect =
-        redirectTo === '/admin' || redirectTo === '/farmer' || redirectTo === '/buyer' ? redirectTo : `/${primaryRole}`;
+        redirectTo === "/admin" ||
+        redirectTo === "/farmer" ||
+        redirectTo === "/buyer"
+          ? redirectTo
+          : `/${primaryRole}`;
 
-      return { 
+      return {
         success: true,
         redirectTo: normalizedRedirect,
       };
     } catch (error) {
-      console.error('Failed to login:', error);
-      
+      console.error("Failed to login:", error);
+
       // Parse error to provide specific feedback
       if (axios.isAxiosError(error)) {
         const status = error.response?.status || 0;
-        const responseData = error.response?.data as { code?: string; message?: string } | undefined;
+        const responseData = error.response?.data as
+          | { code?: string; message?: string }
+          | undefined;
 
         if (!error.response) {
           return {
             success: false,
             error: {
-              type: 'network_error',
-              message: 'Cannot connect to server. Please check your network connection.',
-              code: 'ERR_NETWORK',
+              type: "network_error",
+              message:
+                "Cannot connect to server. Please check your network connection.",
+              code: "ERR_NETWORK",
             },
           };
         }
 
         return {
           success: false,
-          error: mapBackendError(status, responseData?.code, responseData?.message),
+          error: mapBackendError(
+            status,
+            responseData?.code,
+            responseData?.message,
+          ),
         };
       }
 
       return {
         success: false,
         error: {
-          type: 'server_error',
-          message: 'An unexpected error occurred. Please try again.',
+          type: "server_error",
+          message: "An unexpected error occurred. Please try again.",
         },
       };
     }
@@ -405,13 +451,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       // Log error but continue with logout even if API call fails
-      console.warn('Failed to invalidate token on server:', error);
+      console.warn("Failed to invalidate token on server:", error);
     } finally {
       // Always clear local state and storage
       setUser(null);
       clearStoredAuth();
+      // Clear React Query cache to prevent stale data when switching users
+      queryClient.clear();
+      // Clear season selection to prevent 403 errors when new user logs in
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem("activeSeasonId");
+      }
     }
-  }, []);
+  }, [queryClient]);
 
   const getUserRole = useCallback((): UserRole | null => {
     return user?.role || null;
@@ -426,27 +478,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * Update user profile in session storage (for optimistic UI updates)
    * Call this after successful profile mutations to sync session with API response
    */
-  const updateUserProfile = useCallback((profileUpdate: Partial<ProfileInfo>) => {
-    setUser(prev => {
-      if (!prev) return null;
-      const updatedUser = {
-        ...prev,
-        profile: {
-          ...prev.profile,
-          ...profileUpdate,
-        },
-      };
-      // Also update storage
-      const stored = loadStoredAuth();
-      if (stored) {
-        saveStoredAuth({
-          ...stored,
-          user: updatedUser,
-        });
-      }
-      return updatedUser;
-    });
-  }, []);
+  const updateUserProfile = useCallback(
+    (profileUpdate: Partial<ProfileInfo>) => {
+      setUser((prev) => {
+        if (!prev) return null;
+        const updatedUser = {
+          ...prev,
+          profile: {
+            ...prev.profile,
+            ...profileUpdate,
+          },
+        };
+        // Also update storage
+        const stored = loadStoredAuth();
+        if (stored) {
+          saveStoredAuth({
+            ...stored,
+            user: updatedUser,
+          });
+        }
+        return updatedUser;
+      });
+    },
+    [],
+  );
 
   // Show loading UI while checking authentication state
   if (isLoading) {
@@ -481,14 +536,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 /**
  * useAuth Hook
- * 
+ *
  * Custom hook to access authentication context
  * Throws error if used outside AuthProvider
  */
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

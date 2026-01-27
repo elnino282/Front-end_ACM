@@ -8,6 +8,10 @@ export const FARMER_VIEW_CONFIG: Record<FarmerView, FarmerViewConfig> = {
     title: 'Dashboard',
     breadcrumbLabel: 'Dashboard',
   },
+  search: {
+    title: 'Search',
+    breadcrumbLabel: 'Search',
+  },
   farms: {
     title: 'Farms & Plots',
     breadcrumbLabel: 'Farms & Plots',

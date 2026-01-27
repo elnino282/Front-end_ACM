@@ -1,6 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Calendar, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useCrops } from "@/entities/crop";
+import { useFarms } from "@/entities/farm";
+import { usePlotsByFarm } from "@/entities/plot";
+import type { SeasonCreateRequest } from "@/entities/season";
+import { useVarietiesByCrop } from "@/entities/variety";
+import { usePreferences } from "@/shared/contexts";
+import { convertWeightToKg, getWeightUnitLabel } from "@/shared/lib";
 import {
   Dialog,
   DialogContent,
@@ -8,22 +23,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import type { SeasonCreateRequest } from '@/entities/season';
-import { useFarms } from '@/entities/farm';
-import { usePlotsByFarm } from '@/entities/plot';
-import { useCrops } from '@/entities/crop';
-import { useVarietiesByCrop } from '@/entities/variety';
+} from "@/shared/ui";
+import { Calendar, Check } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface NewSeasonDialogProps {
   open: boolean;
@@ -36,7 +38,7 @@ interface NewSeasonDialogProps {
  * NewSeasonDialog Component
  *
  * Dialog for creating a new growing season matching backend API structure.
- * 
+ *
  * Backend expects (POST /api/v1/seasons):
  * - plotId: number (required) - ID of the plot where the season will be planted
  * - cropId: number (required) - ID of the crop type
@@ -46,7 +48,7 @@ interface NewSeasonDialogProps {
  * - plannedHarvestDate: string (optional) - Planned harvest date
  * - endDate: string (optional) - End date
  * - initialPlantCount: number (required) - Number of plants at start
- * - expectedYieldKg: number (optional) - Expected yield in kg
+ * - expectedYieldKg: number (optional) - Expected yield in canonical kg
  * - notes: string (optional) - Additional notes
  */
 export function NewSeasonDialog({
@@ -55,18 +57,37 @@ export function NewSeasonDialog({
   onSubmit,
   isSubmitting = false,
 }: NewSeasonDialogProps) {
+  const { preferences } = usePreferences();
+  const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+  const weightStep = preferences.weightUnit === "G" ? "1" : "0.01";
+
   // Form state
-  const [farmId, setFarmId] = useState<string>('');
-  const [plotId, setPlotId] = useState<string>('');
-  const [cropId, setCropId] = useState<string>('');
-  const [varietyId, setVarietyId] = useState<string>('');
-  const [seasonName, setSeasonName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [plannedHarvestDate, setPlannedHarvestDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [initialPlantCount, setInitialPlantCount] = useState('');
-  const [expectedYieldKg, setExpectedYieldKg] = useState('');
-  const [notes, setNotes] = useState('');
+  const [farmId, setFarmId] = useState<string>("");
+  const [plotId, setPlotId] = useState<string>("");
+  const [cropId, setCropId] = useState<string>("");
+  const [varietyId, setVarietyId] = useState<string>("");
+  const [seasonName, setSeasonName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [plannedHarvestDate, setPlannedHarvestDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [initialPlantCount, setInitialPlantCount] = useState("");
+  const [expectedYieldKg, setExpectedYieldKg] = useState("");
+  const [budgetAmount, setBudgetAmount] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const parseWeightInput = (value: string) => {
+    if (value === "") return undefined;
+    const parsed = parseFloat(value);
+    if (Number.isNaN(parsed)) return undefined;
+    return convertWeightToKg(parsed, preferences.weightUnit);
+  };
+
+  const parseBudgetInput = (value: string) => {
+    if (value === "") return undefined;
+    const parsed = parseFloat(value);
+    if (Number.isNaN(parsed)) return undefined;
+    return parsed;
+  };
 
   // Fetch farms for selection
   const { data: farmsData } = useFarms({ page: 0, size: 100 });
@@ -74,7 +95,10 @@ export function NewSeasonDialog({
 
   // Fetch plots based on selected farm
   const selectedFarmId = farmId ? parseInt(farmId, 10) : 0;
-  const { data: plotsData } = usePlotsByFarm(selectedFarmId, { page: 0, size: 100 });
+  const { data: plotsData } = usePlotsByFarm(selectedFarmId, {
+    page: 0,
+    size: 100,
+  });
   const plots = plotsData?.items ?? [];
 
   // Fetch crops for dropdown
@@ -86,15 +110,16 @@ export function NewSeasonDialog({
 
   // Reset plot when farm changes
   useEffect(() => {
-    setPlotId('');
+    setPlotId("");
   }, [farmId]);
 
   // Reset variety when crop changes
   useEffect(() => {
-    setVarietyId('');
+    setVarietyId("");
   }, [cropId]);
 
-  const initialPlantValue = initialPlantCount === '' ? null : parseInt(initialPlantCount, 10);
+  const initialPlantValue =
+    initialPlantCount === "" ? null : parseInt(initialPlantCount, 10);
   const hasValidPlantCount =
     initialPlantValue !== null &&
     !Number.isNaN(initialPlantValue) &&
@@ -112,17 +137,18 @@ export function NewSeasonDialog({
     hasValidHarvestDate;
 
   const resetForm = () => {
-    setFarmId('');
-    setPlotId('');
-    setCropId('');
-    setVarietyId('');
-    setSeasonName('');
-    setStartDate('');
-    setPlannedHarvestDate('');
-    setEndDate('');
-    setInitialPlantCount('');
-    setExpectedYieldKg('');
-    setNotes('');
+    setFarmId("");
+    setPlotId("");
+    setCropId("");
+    setVarietyId("");
+    setSeasonName("");
+    setStartDate("");
+    setPlannedHarvestDate("");
+    setEndDate("");
+    setInitialPlantCount("");
+    setExpectedYieldKg("");
+    setBudgetAmount("");
+    setNotes("");
   };
 
   const handleClose = () => {
@@ -142,7 +168,8 @@ export function NewSeasonDialog({
       plannedHarvestDate: plannedHarvestDate || undefined,
       endDate: endDate || undefined,
       initialPlantCount: parseInt(initialPlantCount, 10),
-      expectedYieldKg: expectedYieldKg === '' ? undefined : parseFloat(expectedYieldKg),
+      expectedYieldKg: parseWeightInput(expectedYieldKg),
+      budgetAmount: parseBudgetInput(budgetAmount),
       notes: notes.trim() || undefined,
     };
 
@@ -150,10 +177,13 @@ export function NewSeasonDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => {
-      if (!isOpen) handleClose();
-      else onOpenChange(isOpen);
-    }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) handleClose();
+        else onOpenChange(isOpen);
+      }}
+    >
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground">
@@ -205,13 +235,15 @@ export function NewSeasonDialog({
                 disabled={!farmId || plots.length === 0}
               >
                 <SelectTrigger className="border-border focus:border-primary">
-                  <SelectValue placeholder={
-                    !farmId
-                      ? "Select farm first"
-                      : plots.length === 0
-                        ? "No plots available"
-                        : "Select plot"
-                  } />
+                  <SelectValue
+                    placeholder={
+                      !farmId
+                        ? "Select farm first"
+                        : plots.length === 0
+                          ? "No plots available"
+                          : "Select plot"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {plots.map((plot) => (
@@ -250,13 +282,15 @@ export function NewSeasonDialog({
                 disabled={!cropId || varieties.length === 0}
               >
                 <SelectTrigger className="border-border focus:border-primary">
-                  <SelectValue placeholder={
-                    !cropId
-                      ? "Select a crop first"
-                      : varieties.length === 0
-                        ? "No varieties available"
-                        : "Select variety"
-                  } />
+                  <SelectValue
+                    placeholder={
+                      !cropId
+                        ? "Select a crop first"
+                        : varieties.length === 0
+                          ? "No varieties available"
+                          : "Select variety"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {varieties.map((variety) => (
@@ -328,12 +362,14 @@ export function NewSeasonDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="expectedYieldKg">Expected Yield (kg)</Label>
+              <Label htmlFor="expectedYieldKg">
+                Expected Yield ({unitLabel})
+              </Label>
               <Input
                 id="expectedYieldKg"
                 type="number"
                 min="0"
-                step="0.1"
+                step={weightStep}
                 value={expectedYieldKg}
                 onChange={(e) => setExpectedYieldKg(e.target.value)}
                 placeholder="e.g., 5000"
@@ -343,6 +379,25 @@ export function NewSeasonDialog({
                 Optional estimated harvest amount
               </p>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="budgetAmount">
+              Season Budget ({preferences.currency})
+            </Label>
+            <Input
+              id="budgetAmount"
+              type="number"
+              min="0"
+              step="0.01"
+              value={budgetAmount}
+              onChange={(e) => setBudgetAmount(e.target.value)}
+              placeholder="e.g., 20000"
+              className="border-border focus:border-primary"
+            />
+            <p className="text-xs text-muted-foreground">
+              Optional budget for tracking expenses
+            </p>
           </div>
 
           {/* Notes */}
@@ -389,6 +444,3 @@ export function NewSeasonDialog({
     </Dialog>
   );
 }
-
-
-

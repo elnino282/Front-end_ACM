@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Ban } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -8,11 +9,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import type { Season } from '../types';
+} from "@/shared/ui";
+import { Ban } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { Season } from "../types";
 
 interface CancelSeasonDialogProps {
   open: boolean;
@@ -29,12 +29,12 @@ export function CancelSeasonDialog({
   onConfirm,
   isSubmitting = false,
 }: CancelSeasonDialogProps) {
-  const [reason, setReason] = useState('');
+  const [reason, setReason] = useState("");
   const [forceCancel, setForceCancel] = useState(false);
 
   useEffect(() => {
     if (!open) return;
-    setReason('');
+    setReason("");
     setForceCancel(false);
   }, [open, season?.id]);
 
@@ -98,13 +98,10 @@ export function CancelSeasonDialog({
             disabled={isSubmitting}
             className="bg-destructive hover:bg-destructive/90 text-white acm-rounded-sm"
           >
-            {isSubmitting ? 'Cancelling...' : 'Cancel Season'}
+            {isSubmitting ? "Cancelling..." : "Cancel Season"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-
-

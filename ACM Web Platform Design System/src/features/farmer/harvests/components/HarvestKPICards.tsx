@@ -7,6 +7,8 @@ import {
     TrendingDown,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePreferences } from "@/shared/contexts";
+import { formatWeight } from "@/shared/lib";
 
 interface HarvestKPICardsProps {
     totalHarvested: number;
@@ -24,6 +26,12 @@ export function HarvestKPICards({
     yieldVsPlan,
 }: HarvestKPICardsProps) {
     const isOnTarget = parseFloat(yieldVsPlan) >= 100;
+    const { preferences } = usePreferences();
+    const totalHarvestedLabel = formatWeight(
+        totalHarvested,
+        preferences.weightUnit,
+        preferences.locale
+    );
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
@@ -34,9 +42,8 @@ export function HarvestKPICards({
                         <div>
                             <p className="text-sm text-muted-foreground mb-1">Total Harvested</p>
                             <p className="text-2xl numeric text-foreground">
-                                {totalHarvested.toLocaleString()}
+                                {totalHarvestedLabel}
                             </p>
-                            <p className="text-xs text-muted-foreground mt-1">kg</p>
                         </div>
                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                             <Wheat className="w-5 h-5 text-primary" />

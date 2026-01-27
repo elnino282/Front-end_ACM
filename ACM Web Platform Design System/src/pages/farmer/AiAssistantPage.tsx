@@ -1,5 +1,7 @@
-﻿import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { Bot, Leaf, RotateCcw, Send, Sparkles, User } from 'lucide-react';
+﻿import { MarkdownMessage } from '@/components/MarkdownMessage';
+import { useAiChatSession } from '@/features/ai';
+import { useI18n } from '@/hooks/useI18n';
+import { cn } from '@/shared/lib';
 import {
     Badge,
     Button,
@@ -13,43 +15,43 @@ import {
     ScrollArea,
     Textarea,
 } from '@/shared/ui';
-import { cn } from '@/shared/lib';
-import { useAiChatSession } from '@/features/ai';
-import { MarkdownMessage } from '@/components/MarkdownMessage';
-
-const QUICK_PROMPTS = [
-    'Cách xử lý lá vàng trên lúa?',
-    'Lịch tưới cà chua khi ra hoa?',
-    'Dấu hiệu và phòng trừ sâu cuốn lá?',
-    'Bón phân NPK cho bắp bao lâu một lần?',
-    'Cải tạo đất chua phèn như thế nào?',
-    'Thời điểm thu hoạch dưa hấu?',
-];
-
-const CONTEXT_TEMPLATES = [
-    {
-        label: 'Lúa - đẻ nhánh',
-        value: 'Cây lúa, giai đoạn đẻ nhánh, gieo sạ 20 ngày, đất thịt nhẹ.',
-    },
-    {
-        label: 'Rau màu - sinh trưởng',
-        value: 'Rau ăn lá, trồng ngoài trời, đất pha cát, tưới mỗi ngày.',
-    },
-    {
-        label: 'Cà phê - ra hoa',
-        value: 'Cà phê, giai đoạn ra hoa, đất đỏ bazan, có tưới nhỏ giọt.',
-    },
-    {
-        label: 'Cây ăn trái',
-        value: 'Cây ăn trái năm thứ 3, đang ra trái non, đất phù sa.',
-    },
-];
+import { Bot, Leaf, RotateCcw, Send, Sparkles, User } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 
 export function AiAssistantPage() {
+    const { t } = useI18n();
     const { messages, isSending, sendMessage, reset } = useAiChatSession();
     const [draft, setDraft] = useState('');
     const [cropContext, setCropContext] = useState('');
     const bottomRef = useRef<HTMLDivElement | null>(null);
+
+    const QUICK_PROMPTS = useMemo(() => [
+        t('ai.quickPrompts.yellowLeaves'),
+        t('ai.quickPrompts.tomatoWatering'),
+        t('ai.quickPrompts.leafRoller'),
+        t('ai.quickPrompts.npkFertilizer'),
+        t('ai.quickPrompts.acidSoil'),
+        t('ai.quickPrompts.watermelonHarvest'),
+    ], [t]);
+
+    const CONTEXT_TEMPLATES = useMemo(() => [
+        {
+            label: t('ai.contextTemplates.riceTillering.label'),
+            value: t('ai.contextTemplates.riceTillering.value'),
+        },
+        {
+            label: t('ai.contextTemplates.vegetables.label'),
+            value: t('ai.contextTemplates.vegetables.value'),
+        },
+        {
+            label: t('ai.contextTemplates.coffee.label'),
+            value: t('ai.contextTemplates.coffee.value'),
+        },
+        {
+            label: t('ai.contextTemplates.fruitTree.label'),
+            value: t('ai.contextTemplates.fruitTree.value'),
+        },
+    ], [t]);
 
     const contextPreview = useMemo(() => {
         const trimmed = cropContext.trim();
@@ -99,8 +101,8 @@ export function AiAssistantPage() {
                     <PageHeader
                         className="mb-0"
                         icon={<Bot className="w-7 h-7" />}
-                        title="AI Assistant"
-                        subtitle="Trợ lý nông nghiệp cho mùa vụ của bạn"
+                        title={t('ai.assistant.title')}
+                        subtitle={t('ai.assistant.subtitle')}
                         actions={(
                             <Button
                                 variant="outline"
@@ -109,7 +111,7 @@ export function AiAssistantPage() {
                                 disabled={!canReset}
                             >
                                 <RotateCcw className="w-4 h-4 mr-2" />
-                                Làm mới hội thoại
+                                {t('common.reset', 'Làm mới hội thoại')}
                             </Button>
                         )}
                     />
@@ -122,10 +124,10 @@ export function AiAssistantPage() {
                     <CardHeader className="pb-3">
                         <CardTitle className="flex items-center gap-2 text-lg">
                             <Leaf className="w-4 h-4 text-primary" />
-                            Hỏi đáp nông nghiệp
+                            {t('ai.chat.title')}
                         </CardTitle>
                         <CardDescription>
-                            Đặt câu hỏi ngắn gọn, có bối cảnh để nhận tư vấn chính xác hơn.
+                            {t('ai.chat.description')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-1 flex-col gap-4">
@@ -175,7 +177,7 @@ export function AiAssistantPage() {
                                             <Bot className="h-4 w-4" />
                                         </div>
                                         <div className="rounded-lg border bg-card px-3 py-2 text-sm text-muted-foreground animate-pulse">
-                                            Đang phân tích câu hỏi...
+                                            {t('ai.chat.analyzing')}
                                         </div>
                                     </div>
                                 )}
@@ -185,14 +187,14 @@ export function AiAssistantPage() {
 
                         {contextPreview && (
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Badge variant="info">Ngữ cảnh</Badge>
+                                <Badge variant="info">{t('ai.context.label')}</Badge>
                                 <span className="truncate flex-1 min-w-0">{contextPreview}</span>
                             </div>
                         )}
 
                         <div className="space-y-3">
                             <Textarea
-                                placeholder="Nhập câu hỏi về cây trồng, sâu bệnh, đất, tưới tiêu..."
+                                placeholder={t('ai.chat.placeholder')}
                                 value={draft}
                                 onChange={(event) => setDraft(event.target.value)}
                                 onKeyDown={handleKeyDown}
@@ -201,11 +203,11 @@ export function AiAssistantPage() {
                             />
                             <div className="flex items-center justify-between gap-3">
                                 <p className="text-xs text-muted-foreground">
-                                    Enter để gửi, Shift + Enter để xuống dòng
+                                    {t('ai.chat.sendHint')}
                                 </p>
                                 <Button onClick={handleSend} disabled={!draft.trim() || isSending}>
                                     <Send className="w-4 h-4" />
-                                    Gửi
+                                    {t('common.send')}
                                 </Button>
                             </div>
                         </div>
@@ -217,15 +219,15 @@ export function AiAssistantPage() {
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Leaf className="w-4 h-4 text-primary" />
-                                Thông tin mùa vụ
+                                {t('ai.context.title')}
                             </CardTitle>
                             <CardDescription>
-                                Bổ sung bối cảnh để AI tư vấn sát thực tế hơn.
+                                {t('ai.context.description')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-3">
                             <Textarea
-                                placeholder="Ví dụ: Lúa, giai đoạn đẻ nhánh, đất thịt nhẹ, có tưới nhỏ giọt..."
+                                placeholder={t('ai.context.placeholder')}
                                 value={cropContext}
                                 onChange={(event) => setCropContext(event.target.value)}
                                 rows={4}
@@ -250,9 +252,9 @@ export function AiAssistantPage() {
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Sparkles className="w-4 h-4 text-primary" />
-                                Gợi ý câu hỏi
+                                {t('ai.suggestions.title')}
                             </CardTitle>
-                            <CardDescription>Chọn nhanh để bắt đầu cuộc trò chuyện.</CardDescription>
+                            <CardDescription>{t('ai.suggestions.description')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-2">
@@ -274,15 +276,15 @@ export function AiAssistantPage() {
                     <Card className="border-primary/20 bg-primary/5">
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
-                                Lưu ý: Phạm vi hỗ trợ
+                                {t('ai.scope.title')}
                             </CardTitle>
                             <CardDescription>
-                                Trợ lý tập trung vào các câu hỏi liên quan đến nông nghiệp.
+                                {t('ai.scope.description')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="text-sm text-muted-foreground space-y-2">
-                            <p>Gợi ý cách chăm sóc cây trồng, dinh dưỡng, sâu bệnh và lịch mùa vụ.</p>
-                            <p>Không hỗ trợ nội dung về chính trị, tài chính hay công nghệ phần mềm.</p>
+                            <p>{t('ai.scope.supported')}</p>
+                            <p>{t('ai.scope.notSupported')}</p>
                         </CardContent>
                     </Card>
                 </div>

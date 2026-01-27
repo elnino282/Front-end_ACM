@@ -2,11 +2,15 @@
  * GoogleSignInButton - Google OAuth sign-in button with separator
  */
 
+import { useI18n } from '@/hooks/useI18n';
+
 interface GoogleSignInButtonProps {
     onClick: () => void;
 }
 
 export function GoogleSignInButton({ onClick }: GoogleSignInButtonProps) {
+    const { t } = useI18n();
+    
     return (
         <>
             {/* Google Sign In Button */}
@@ -30,7 +34,7 @@ export function GoogleSignInButton({ onClick }: GoogleSignInButtonProps) {
                 </svg>
 
                 <span className="text-[#2b3674] text-[14px] font-medium tracking-[-0.28px]">
-                    Sign in with Google
+                    {t('auth.signIn.continueWithGoogle')}
                 </span>
             </button>
 
@@ -41,7 +45,7 @@ export function GoogleSignInButton({ onClick }: GoogleSignInButtonProps) {
                     className="font-['DM_Sans:Medium',sans-serif] font-medium leading-[24px] text-[#a3aed0] text-[14px] text-center tracking-[-0.28px] px-[11px]"
                     style={{ fontVariationSettings: "'opsz' 14" }}
                 >
-                    or
+                    {t('auth.signIn.orSignInWith')}
                 </p>
                 <div className="flex-1 h-[1px] bg-[#e0e5f2]" />
             </div>

@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react';
-import type { AppShellProps, Language, Notification, PortalConfig } from '../model/types';
-import { portalConfig, initialNotifications, SEARCH_DEBOUNCE_DELAY, SEARCH_MIN_LENGTH } from '../lib/config';
+import {
+    useFarmerNotifications,
+    useMarkNotificationRead,
+    type Notification as FarmerNotification,
+} from '@/entities/notification';
 import { useTheme } from '@/hooks/useTheme';
+import { changeLanguage, getCurrentLocale, getLanguageCode } from '@/i18n';
+import { adminAlertApi, type AdminAlert } from '@/services/api.admin';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { portalConfig } from '../lib/config';
+import type { AppShellProps, Language, Notification, PortalConfig } from '../model/types';
 
 const LANGUAGE_STORAGE_KEY = 'acm_language';
 
@@ -10,8 +18,8 @@ const getStoredLanguage = (): Language => {
         return 'en';
     }
 
-    const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    return stored === 'vi' ? 'vi' : 'en';
+    const locale = getCurrentLocale();
+    return getLanguageCode(locale) as Language;
 };
 
 /**
@@ -37,17 +45,94 @@ export function useAppShell(props: AppShellProps) {
         const stored = localStorage.getItem(storageKey);
         return stored ? JSON.parse(stored) : false;
     });
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchDebounced, setSearchDebounced] = useState('');
     const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
 
     // User Preferences
     const { theme, setTheme } = useTheme();
     const [language, setLanguage] = useState<Language>(() => getStoredLanguage());
+    const queryClient = useQueryClient();
 
-    // Data State
-    const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
+    const farmerNotificationsQuery = useFarmerNotifications({
+        enabled: portalType === 'FARMER',
+    });
+    const markNotificationReadMutation = useMarkNotificationRead();
+
+    const adminAlertsQuery = useQuery({
+        queryKey: ['adminAlerts', 'notifications'],
+        queryFn: () => adminAlertApi.list({ windowDays: 30, page: 0, limit: 20 }),
+        enabled: portalType === 'ADMIN',
+        staleTime: 60 * 1000,
+    });
+
+    const adminAlertReadMutation = useMutation({
+        mutationFn: (id: number) => adminAlertApi.updateStatus(id, 'DISMISSED'),
+        onSuccess: (updatedAlert) => {
+            queryClient.setQueryData(['adminAlerts', 'notifications'], (oldData: any) => {
+                if (!oldData) return oldData;
+                return {
+                    ...oldData,
+                    items: oldData.items?.map((item: AdminAlert) =>
+                        item.id === updatedAlert.id ? updatedAlert : item
+                    ),
+                };
+            });
+        },
+    });
+
+    const formatNotificationTime = (value: string | null | undefined) => {
+        if (!value) return 'Just now';
+        try {
+            return new Date(value).toLocaleString();
+        } catch {
+            return value;
+        }
+    };
+
+    const resolveAdminNotificationType = (type?: string | null): Notification['type'] => {
+        switch (type) {
+            case 'INVENTORY_EXPIRED':
+            case 'INVENTORY_EXPIRING':
+                return 'inventory';
+            case 'INCIDENT_OPEN':
+                return 'incident';
+            case 'TASK_OVERDUE':
+                return 'task';
+            case 'BUDGET_OVERSPEND':
+                return 'warning';
+            default:
+                return 'warning';
+        }
+    };
+
+    const farmerNotifications = useMemo<Notification[]>(() => {
+        return (farmerNotificationsQuery.data ?? []).map((item: FarmerNotification) => ({
+            id: item.id,
+            type: 'warning',
+            title: item.title || 'Notification',
+            message: item.message || 'No message provided.',
+            time: formatNotificationTime(item.createdAt),
+            read: Boolean(item.readAt),
+        }));
+    }, [farmerNotificationsQuery.data]);
+
+    const adminNotifications = useMemo<Notification[]>(() => {
+        return (adminAlertsQuery.data?.items ?? []).map((alert: AdminAlert) => ({
+            id: alert.id,
+            type: resolveAdminNotificationType(alert.type),
+            title: alert.title || 'System alert',
+            message: alert.message || 'No details available.',
+            time: formatNotificationTime(alert.createdAt),
+            read: alert.status ? alert.status !== 'NEW' : true,
+        }));
+    }, [adminAlertsQuery.data]);
+
+    const notifications =
+        portalType === 'FARMER'
+            ? farmerNotifications
+            : portalType === 'ADMIN'
+                ? adminNotifications
+                : [];
 
     // Computed Values
     const config: PortalConfig = portalConfig[portalType];
@@ -62,28 +147,21 @@ export function useAppShell(props: AppShellProps) {
         localStorage.setItem(storageKey, JSON.stringify(sidebarCollapsed));
     }, [sidebarCollapsed, portalType]);
 
+    // Language sync is now handled by i18n module, this effect just updates document.lang
     useEffect(() => {
         if (typeof document === 'undefined') {
             return;
         }
-
         document.documentElement.lang = language;
-        window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
     }, [language]);
 
-    /**
-     * Effect: Search Debouncing
-     * Debounces search query to avoid excessive API calls
-     */
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (searchQuery.length >= SEARCH_MIN_LENGTH || searchQuery.length === 0) {
-                setSearchDebounced(searchQuery);
-            }
-        }, SEARCH_DEBOUNCE_DELAY);
+    // Handler to change language with i18n integration
+    const handleLanguageChange = useCallback(async (newLanguage: Language) => {
+        const locale = newLanguage === 'vi' ? 'vi-VN' : 'en-US';
+        await changeLanguage(locale);
+        setLanguage(newLanguage);
+    }, []);
 
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
 
     /**
      * Effect: Sync External AI Drawer State
@@ -96,29 +174,10 @@ export function useAppShell(props: AppShellProps) {
     }, [aiDrawerExternalOpen]);
 
     /**
-     * Effect: Execute Search
-     * Triggers search when debounced query changes
-     */
-    useEffect(() => {
-        if (searchDebounced) {
-            handleSearch(searchDebounced);
-        }
-    }, [searchDebounced]);
-
-    /**
-     * Handler: Search
-     * Implements cross-entity search logic
-     */
-    const handleSearch = (query: string) => {
-        // console.log('Searching for:', query);
-        // TODO: Implement actual cross-entity search logic
-    };
-
-    /**
      * Handler: Toggle Sidebar
      */
     const handleToggleSidebar = () => {
-        setSidebarCollapsed((prev: boolean) => !prev);
+        setSidebarCollapsed((prev) => !prev);
     };
 
     /**
@@ -134,16 +193,36 @@ export function useAppShell(props: AppShellProps) {
      * Handler: Mark Notification as Read
      */
     const markNotificationAsRead = (id: number) => {
-        setNotifications((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-        );
+        if (portalType === 'FARMER') {
+            markNotificationReadMutation.mutate(id);
+            return;
+        }
+        if (portalType === 'ADMIN') {
+            const alert = adminAlertsQuery.data?.items?.find((item) => item.id === id);
+            if (alert?.status !== 'NEW') {
+                return;
+            }
+            adminAlertReadMutation.mutate(id);
+        }
     };
 
     /**
      * Handler: Mark All Notifications as Read
      */
     const markAllAsRead = () => {
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+        if (portalType === 'FARMER') {
+            const unreadIds =
+                farmerNotificationsQuery.data
+                    ?.filter((item) => !item.readAt)
+                    .map((item) => item.id) ?? [];
+            unreadIds.forEach((id) => markNotificationReadMutation.mutate(id));
+            return;
+        }
+        if (portalType === 'ADMIN') {
+            const unreadAlerts =
+                adminAlertsQuery.data?.items?.filter((item) => item.status === 'NEW') ?? [];
+            unreadAlerts.forEach((alert) => adminAlertReadMutation.mutate(alert.id));
+        }
     };
 
     /**
@@ -151,6 +230,12 @@ export function useAppShell(props: AppShellProps) {
      */
     const handleNotificationsOpen = () => {
         setNotificationsOpen(true);
+        if (portalType === 'FARMER') {
+            farmerNotificationsQuery.refetch();
+        }
+        if (portalType === 'ADMIN') {
+            adminAlertsQuery.refetch();
+        }
     };
 
     /**
@@ -164,7 +249,6 @@ export function useAppShell(props: AppShellProps) {
     return {
         // UI State
         sidebarCollapsed,
-        searchQuery,
         aiDrawerOpen,
         notificationsOpen,
 
@@ -180,7 +264,6 @@ export function useAppShell(props: AppShellProps) {
         unreadCount,
 
         // Handlers
-        setSearchQuery,
         handleToggleSidebar,
         handleAiDrawerChange,
         handleAiDrawerOpen,
@@ -189,6 +272,6 @@ export function useAppShell(props: AppShellProps) {
         markNotificationAsRead,
         markAllAsRead,
         setTheme,
-        setLanguage,
+        setLanguage: handleLanguageChange,
     };
 }

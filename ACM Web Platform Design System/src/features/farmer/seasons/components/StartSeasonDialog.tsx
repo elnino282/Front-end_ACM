@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Play } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -8,17 +9,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import type { Season } from '../types';
+} from "@/shared/ui";
+import { Play } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { Season } from "../types";
 
 interface StartSeasonDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   season: Season | null;
-  onConfirm: (data: { actualStartDate?: string; currentPlantCount?: number }) => void;
+  onConfirm: (data: {
+    actualStartDate?: string;
+    currentPlantCount?: number;
+  }) => void;
   isSubmitting?: boolean;
 }
 
@@ -29,19 +32,19 @@ export function StartSeasonDialog({
   onConfirm,
   isSubmitting = false,
 }: StartSeasonDialogProps) {
-  const [actualStartDate, setActualStartDate] = useState('');
-  const [currentPlantCount, setCurrentPlantCount] = useState('');
+  const [actualStartDate, setActualStartDate] = useState("");
+  const [currentPlantCount, setCurrentPlantCount] = useState("");
   const [syncPlantCount, setSyncPlantCount] = useState(false);
 
   useEffect(() => {
     if (!open) return;
-    setActualStartDate('');
-    setCurrentPlantCount('');
+    setActualStartDate("");
+    setCurrentPlantCount("");
     setSyncPlantCount(false);
   }, [open, season?.id]);
 
   const currentPlantValue =
-    currentPlantCount === '' ? null : parseInt(currentPlantCount, 10);
+    currentPlantCount === "" ? null : parseInt(currentPlantCount, 10);
   const hasValidPlantCount =
     !syncPlantCount ||
     (currentPlantValue !== null &&
@@ -54,7 +57,9 @@ export function StartSeasonDialog({
     if (!season || !canSubmit) return;
     onConfirm({
       actualStartDate: actualStartDate || undefined,
-      currentPlantCount: syncPlantCount ? currentPlantValue ?? undefined : undefined,
+      currentPlantCount: syncPlantCount
+        ? (currentPlantValue ?? undefined)
+        : undefined,
     });
   };
 
@@ -67,13 +72,16 @@ export function StartSeasonDialog({
             Start Season
           </DialogTitle>
           <DialogDescription>
-            Activate this planned season. Leave fields empty to keep existing values.
+            Activate this planned season. Leave fields empty to keep existing
+            values.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="actualStartDate">Actual Start Date (Optional)</Label>
+            <Label htmlFor="actualStartDate">
+              Actual Start Date (Optional)
+            </Label>
             <Input
               id="actualStartDate"
               type="date"
@@ -93,7 +101,9 @@ export function StartSeasonDialog({
               className="mt-1"
             />
             <div className="space-y-2 flex-1">
-              <Label htmlFor="currentPlantCount">Current Plant Count (Optional)</Label>
+              <Label htmlFor="currentPlantCount">
+                Current Plant Count (Optional)
+              </Label>
               <Input
                 id="currentPlantCount"
                 type="number"
@@ -125,13 +135,10 @@ export function StartSeasonDialog({
             disabled={!canSubmit}
             className="bg-primary hover:bg-primary/90 text-white acm-rounded-sm"
           >
-            {isSubmitting ? 'Starting...' : 'Start Season'}
+            {isSubmitting ? "Starting..." : "Start Season"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-
-

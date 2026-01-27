@@ -24,7 +24,7 @@ export interface NavigationItem {
  */
 export interface Notification {
     id: number;
-    type: 'task' | 'weather' | 'inventory' | 'incident';
+    type: 'task' | 'weather' | 'inventory' | 'incident' | 'warning';
     title: string;
     message: string;
     time: string;
@@ -75,7 +75,6 @@ export interface HeaderProps {
     config: PortalConfig;
     breadcrumbs: BreadcrumbPath[];
     sidebarCollapsed: boolean;
-    searchQuery: string;
     unreadCount: number;
     userName: string;
     userEmail: string;
@@ -85,7 +84,6 @@ export interface HeaderProps {
     language: Language;
     onToggleSidebar: () => void;
     onViewChange: (view: string) => void;
-    onSearchChange: (query: string) => void;
     onAiDrawerOpen: () => void;
     onNotificationsOpen: () => void;
     onThemeChange: (theme: Theme) => void;
@@ -103,8 +101,7 @@ export interface SidebarProps {
 }
 
 export interface SearchBarProps {
-    value: string;
-    onChange: (value: string) => void;
+    portal: "admin" | "farmer";
     placeholder?: string;
 }
 

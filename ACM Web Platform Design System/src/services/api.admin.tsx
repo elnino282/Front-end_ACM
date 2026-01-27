@@ -1,6 +1,10 @@
-import { z } from 'zod';
-import httpClient from '@/shared/api/http';
-import { parseApiResponse, parsePageResponse, type PageResponse } from '@/shared/api/types';
+import httpClient from "@/shared/api/http";
+import {
+  parseApiResponse,
+  parsePageResponse,
+  type PageResponse,
+} from "@/shared/api/types";
+import { z } from "zod";
 
 // ═══════════════════════════════════════════════════════════════
 // ADMIN SCHEMAS
@@ -39,29 +43,36 @@ export const AdminUserListParamsSchema = z.object({
 export type AdminUserListParams = z.infer<typeof AdminUserListParamsSchema>;
 
 export const AdminUserCreateRequestSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  email: z.string().email('Invalid email format').optional().or(z.literal('')),
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z.string().email("Invalid email format").optional().or(z.literal("")),
   fullName: z.string().optional(),
   phone: z.string().optional(),
   roles: z.array(z.string()).optional(),
 });
 
-export type AdminUserCreateRequest = z.infer<typeof AdminUserCreateRequestSchema>;
+export type AdminUserCreateRequest = z.infer<
+  typeof AdminUserCreateRequestSchema
+>;
 
 export const AdminUserUpdateRequestSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters').optional(),
-  email: z.string().email('Invalid email format').optional().or(z.literal('')),
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .optional(),
+  email: z.string().email("Invalid email format").optional().or(z.literal("")),
   fullName: z.string().optional(),
   phone: z.string().optional(),
   roles: z.array(z.string()).optional(),
   status: z.string().optional(),
 });
 
-export type AdminUserUpdateRequest = z.infer<typeof AdminUserUpdateRequestSchema>;
+export type AdminUserUpdateRequest = z.infer<
+  typeof AdminUserUpdateRequestSchema
+>;
 
 export const AdminUserStatusUpdateSchema = z.object({
-  status: z.string().min(1, 'Status is required'),
+  status: z.string().min(1, "Status is required"),
 });
 
 export type AdminUserStatusUpdate = z.infer<typeof AdminUserStatusUpdateSchema>;
@@ -72,13 +83,53 @@ export const AdminUserRolesUpdateSchema = z.object({
 
 export type AdminUserRolesUpdate = z.infer<typeof AdminUserRolesUpdateSchema>;
 
+export const AdminUserWarningDecisionSchema = z.enum([
+  "WARNING",
+  "LOCK_1_DAY",
+  "LOCK_PERMANENT",
+]);
+
+export type AdminUserWarningDecision = z.infer<
+  typeof AdminUserWarningDecisionSchema
+>;
+
+export const AdminUserWarningRequestSchema = z.object({
+  description: z.string().min(1, "Description is required"),
+  decision: AdminUserWarningDecisionSchema,
+});
+
+export type AdminUserWarningRequest = z.infer<
+  typeof AdminUserWarningRequestSchema
+>;
+
+export const AdminUserWarningResponseSchema = z.object({
+  id: z.number().int(),
+  userId: z.number().int(),
+  decision: z.string(),
+  description: z.string().optional().nullable(),
+  createdAt: z.string().optional().nullable(),
+  lockUntil: z.string().optional().nullable(),
+  userStatus: z.string().optional().nullable(),
+});
+
+export type AdminUserWarningResponse = z.infer<
+  typeof AdminUserWarningResponseSchema
+>;
+
 export const RoleCreateRequestSchema = z.object({
-  code: z.string().min(1, 'Role code is required'),
-  name: z.string().min(1, 'Role name is required'),
+  code: z.string().min(1, "Role code is required"),
+  name: z.string().min(1, "Role name is required"),
   description: z.string().optional(),
 });
 
 export type RoleCreateRequest = z.infer<typeof RoleCreateRequestSchema>;
+
+export const RoleUpdateRequestSchema = z.object({
+  name: z.string().min(1, "Role name is required").optional(),
+  description: z.string().optional().nullable(),
+});
+
+export type RoleUpdateRequest = z.infer<typeof RoleUpdateRequestSchema>;
 
 // Document Schemas (Admin CRUD - Updated)
 export const AdminDocumentSchema = z.object({
@@ -104,21 +155,28 @@ export const AdminDocumentListParamsSchema = z.object({
   sort: z.string().optional(),
 });
 
-export type AdminDocumentListParams = z.infer<typeof AdminDocumentListParamsSchema>;
+export type AdminDocumentListParams = z.infer<
+  typeof AdminDocumentListParamsSchema
+>;
 
 export const AdminDocumentCreateRequestSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
+  title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().optional(),
-  documentUrl: z.string().url('Must be a valid URL'),
-  documentType: z.enum(['POLICY', 'GUIDE', 'MANUAL', 'LEGAL', 'OTHER']),
-  status: z.enum(['ACTIVE', 'INACTIVE']),
+  documentUrl: z.string().url("Must be a valid URL"),
+  documentType: z.enum(["POLICY", "GUIDE", "MANUAL", "LEGAL", "OTHER"]),
+  status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
-export type AdminDocumentCreateRequest = z.infer<typeof AdminDocumentCreateRequestSchema>;
+export type AdminDocumentCreateRequest = z.infer<
+  typeof AdminDocumentCreateRequestSchema
+>;
 
-export const AdminDocumentUpdateRequestSchema = AdminDocumentCreateRequestSchema;
+export const AdminDocumentUpdateRequestSchema =
+  AdminDocumentCreateRequestSchema;
 
-export type AdminDocumentUpdateRequest = z.infer<typeof AdminDocumentUpdateRequestSchema>;
+export type AdminDocumentUpdateRequest = z.infer<
+  typeof AdminDocumentUpdateRequestSchema
+>;
 
 // Legacy Document Schema (compatibility)
 export const DocumentSchema = AdminDocumentSchema;
@@ -141,26 +199,31 @@ export type UserSummary = z.infer<typeof UserSummarySchema>;
 
 export const adminKeys = {
   // All Users (unified)
-  users: ['admin', 'users'] as const,
-  userList: (params?: AdminUserListParams) => [...adminKeys.users, 'list', params] as const,
-  userDetail: (id: number) => [...adminKeys.users, 'detail', id] as const,
-  userCanDelete: (id: number) => [...adminKeys.users, 'canDelete', id] as const,
+  users: ["admin", "users"] as const,
+  userList: (params?: AdminUserListParams) =>
+    [...adminKeys.users, "list", params] as const,
+  userDetail: (id: number) => [...adminKeys.users, "detail", id] as const,
+  userCanDelete: (id: number) => [...adminKeys.users, "canDelete", id] as const,
   // Farmers
-  farmers: ['admin', 'farmers'] as const,
-  farmerList: (params?: AdminUserListParams) => [...adminKeys.farmers, 'list', params] as const,
-  farmerDetail: (id: number) => [...adminKeys.farmers, 'detail', id] as const,
+  farmers: ["admin", "farmers"] as const,
+  farmerList: (params?: AdminUserListParams) =>
+    [...adminKeys.farmers, "list", params] as const,
+  farmerDetail: (id: number) => [...adminKeys.farmers, "detail", id] as const,
   // Buyers
-  buyers: ['admin', 'buyers'] as const,
-  buyerList: (params?: AdminUserListParams) => [...adminKeys.buyers, 'list', params] as const,
+  buyers: ["admin", "buyers"] as const,
+  buyerList: (params?: AdminUserListParams) =>
+    [...adminKeys.buyers, "list", params] as const,
   // Roles
-  roles: ['admin', 'roles'] as const,
-  roleList: () => [...adminKeys.roles, 'list'] as const,
+  roles: ["admin", "roles"] as const,
+  roleList: () => [...adminKeys.roles, "list"] as const,
   // Documents
-  documents: ['admin', 'documents'] as const,
-  documentList: (params?: AdminDocumentListParams) => [...adminKeys.documents, 'list', params] as const,
-  documentDetail: (id: number) => [...adminKeys.documents, 'detail', id] as const,
+  documents: ["admin", "documents"] as const,
+  documentList: (params?: AdminDocumentListParams) =>
+    [...adminKeys.documents, "list", params] as const,
+  documentDetail: (id: number) =>
+    [...adminKeys.documents, "detail", id] as const,
   // Summary
-  summary: ['admin', 'summary'] as const,
+  summary: ["admin", "summary"] as const,
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -169,9 +232,15 @@ export const adminKeys = {
 
 export const adminUsersApi = {
   /** GET /api/v1/admin/users - Search all users */
-  list: async (params?: AdminUserListParams): Promise<PageResponse<AdminUser>> => {
-    const validatedParams = params ? AdminUserListParamsSchema.parse(params) : undefined;
-    const response = await httpClient.get('/api/v1/admin/users', { params: validatedParams });
+  list: async (
+    params?: AdminUserListParams,
+  ): Promise<PageResponse<AdminUser>> => {
+    const validatedParams = params
+      ? AdminUserListParamsSchema.parse(params)
+      : undefined;
+    const response = await httpClient.get("/api/v1/admin/users", {
+      params: validatedParams,
+    });
     return parsePageResponse(response.data, AdminUserSchema);
   },
 
@@ -184,33 +253,66 @@ export const adminUsersApi = {
   /** POST /api/v1/admin/users - Create user account */
   create: async (data: AdminUserCreateRequest): Promise<AdminUser> => {
     const validatedPayload = AdminUserCreateRequestSchema.parse(data);
-    const response = await httpClient.post('/api/v1/admin/users', validatedPayload);
+    const response = await httpClient.post(
+      "/api/v1/admin/users",
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminUserSchema);
   },
 
   /** PUT /api/v1/admin/users/{id} - Update user */
-  update: async (id: number, data: AdminUserUpdateRequest): Promise<AdminUser> => {
+  update: async (
+    id: number,
+    data: AdminUserUpdateRequest,
+  ): Promise<AdminUser> => {
     const validatedPayload = AdminUserUpdateRequestSchema.parse(data);
-    const response = await httpClient.put(`/api/v1/admin/users/${id}`, validatedPayload);
+    const response = await httpClient.put(
+      `/api/v1/admin/users/${id}`,
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminUserSchema);
   },
 
   /** PATCH /api/v1/admin/users/{id}/status - Update user status */
-  updateStatus: async (id: number, data: AdminUserStatusUpdate): Promise<AdminUser> => {
+  updateStatus: async (
+    id: number,
+    data: AdminUserStatusUpdate,
+  ): Promise<AdminUser> => {
     const validatedPayload = AdminUserStatusUpdateSchema.parse(data);
-    const response = await httpClient.patch(`/api/v1/admin/users/${id}/status`, validatedPayload);
+    const response = await httpClient.patch(
+      `/api/v1/admin/users/${id}/status`,
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminUserSchema);
+  },
+
+  /** POST /api/v1/admin/users/{id}/warnings - Issue warning */
+  warn: async (
+    id: number,
+    data: AdminUserWarningRequest,
+  ): Promise<AdminUserWarningResponse> => {
+    const validatedPayload = AdminUserWarningRequestSchema.parse(data);
+    const response = await httpClient.post(
+      `/api/v1/admin/users/${id}/warnings`,
+      validatedPayload,
+    );
+    return parseApiResponse(response.data, AdminUserWarningResponseSchema);
   },
 
   /** PATCH /api/v1/admin/users/{id}/password - Reset user password */
   resetPassword: async (id: number, password: string): Promise<AdminUser> => {
-    const response = await httpClient.patch(`/api/v1/admin/users/${id}/password`, { password });
+    const response = await httpClient.patch(
+      `/api/v1/admin/users/${id}/password`,
+      { password },
+    );
     return parseApiResponse(response.data, AdminUserSchema);
   },
 
   /** GET /api/v1/admin/users/{id}/can-delete - Check if user can be deleted */
   canDelete: async (id: number): Promise<boolean> => {
-    const response = await httpClient.get(`/api/v1/admin/users/${id}/can-delete`);
+    const response = await httpClient.get(
+      `/api/v1/admin/users/${id}/can-delete`,
+    );
     return parseApiResponse(response.data, z.boolean());
   },
 
@@ -226,9 +328,15 @@ export const adminUsersApi = {
 
 export const adminFarmerApi = {
   /** GET /api/v1/admin/users/farmers - Search farmers */
-  list: async (params?: AdminUserListParams): Promise<PageResponse<AdminUser>> => {
-    const validatedParams = params ? AdminUserListParamsSchema.parse(params) : undefined;
-    const response = await httpClient.get('/api/v1/admin/users/farmers', { params: validatedParams });
+  list: async (
+    params?: AdminUserListParams,
+  ): Promise<PageResponse<AdminUser>> => {
+    const validatedParams = params
+      ? AdminUserListParamsSchema.parse(params)
+      : undefined;
+    const response = await httpClient.get("/api/v1/admin/users/farmers", {
+      params: validatedParams,
+    });
     return parsePageResponse(response.data, AdminUserSchema);
   },
 
@@ -241,21 +349,36 @@ export const adminFarmerApi = {
   /** POST /api/v1/admin/users/farmers - Create farmer account */
   create: async (data: AdminUserCreateRequest): Promise<AdminUser> => {
     const validatedPayload = AdminUserCreateRequestSchema.parse(data);
-    const response = await httpClient.post('/api/v1/admin/users/farmers', validatedPayload);
+    const response = await httpClient.post(
+      "/api/v1/admin/users/farmers",
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminUserSchema);
   },
 
   /** PATCH /api/v1/admin/users/farmers/{id}/status - Update farmer status */
-  updateStatus: async (id: number, data: AdminUserStatusUpdate): Promise<AdminUser> => {
+  updateStatus: async (
+    id: number,
+    data: AdminUserStatusUpdate,
+  ): Promise<AdminUser> => {
     const validatedPayload = AdminUserStatusUpdateSchema.parse(data);
-    const response = await httpClient.patch(`/api/v1/admin/users/farmers/${id}/status`, validatedPayload);
+    const response = await httpClient.patch(
+      `/api/v1/admin/users/farmers/${id}/status`,
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminUserSchema);
   },
 
   /** PUT /api/v1/admin/users/farmers/{id}/roles - Update farmer roles */
-  updateRoles: async (id: number, data: AdminUserRolesUpdate): Promise<AdminUser> => {
+  updateRoles: async (
+    id: number,
+    data: AdminUserRolesUpdate,
+  ): Promise<AdminUser> => {
     const validatedPayload = AdminUserRolesUpdateSchema.parse(data);
-    const response = await httpClient.put(`/api/v1/admin/users/farmers/${id}/roles`, validatedPayload);
+    const response = await httpClient.put(
+      `/api/v1/admin/users/farmers/${id}/roles`,
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminUserSchema);
   },
 
@@ -271,9 +394,15 @@ export const adminFarmerApi = {
 
 export const adminBuyerApi = {
   /** GET /api/v1/admin/users/buyers - Search buyers */
-  list: async (params?: AdminUserListParams): Promise<PageResponse<AdminUser>> => {
-    const validatedParams = params ? AdminUserListParamsSchema.parse(params) : undefined;
-    const response = await httpClient.get('/api/v1/admin/users/buyers', { params: validatedParams });
+  list: async (
+    params?: AdminUserListParams,
+  ): Promise<PageResponse<AdminUser>> => {
+    const validatedParams = params
+      ? AdminUserListParamsSchema.parse(params)
+      : undefined;
+    const response = await httpClient.get("/api/v1/admin/users/buyers", {
+      params: validatedParams,
+    });
     return parsePageResponse(response.data, AdminUserSchema);
   },
 };
@@ -285,14 +414,33 @@ export const adminBuyerApi = {
 export const adminRoleApi = {
   /** GET /api/v1/admin/roles - List all roles */
   list: async (): Promise<Role[]> => {
-    const response = await httpClient.get('/api/v1/admin/roles');
+    const response = await httpClient.get("/api/v1/admin/roles");
     return parseApiResponse(response.data, z.array(RoleSchema));
+  },
+
+  /** GET /api/v1/admin/roles/{id} - Get role by ID */
+  getById: async (id: number): Promise<Role> => {
+    const response = await httpClient.get(`/api/v1/admin/roles/${id}`);
+    return parseApiResponse(response.data, RoleSchema);
   },
 
   /** POST /api/v1/admin/roles - Create role */
   create: async (data: RoleCreateRequest): Promise<Role> => {
     const validatedPayload = RoleCreateRequestSchema.parse(data);
-    const response = await httpClient.post('/api/v1/admin/roles', validatedPayload);
+    const response = await httpClient.post(
+      "/api/v1/admin/roles",
+      validatedPayload,
+    );
+    return parseApiResponse(response.data, RoleSchema);
+  },
+
+  /** PUT /api/v1/admin/roles/{id} - Update role */
+  update: async (id: number, data: RoleUpdateRequest): Promise<Role> => {
+    const validatedPayload = RoleUpdateRequestSchema.parse(data);
+    const response = await httpClient.put(
+      `/api/v1/admin/roles/${id}`,
+      validatedPayload,
+    );
     return parseApiResponse(response.data, RoleSchema);
   },
 
@@ -308,9 +456,15 @@ export const adminRoleApi = {
 
 export const adminDocumentApi = {
   /** GET /api/v1/admin/documents - List documents with pagination and filters (Admin only) */
-  list: async (params?: AdminDocumentListParams): Promise<PageResponse<AdminDocument>> => {
-    const validatedParams = params ? AdminDocumentListParamsSchema.parse(params) : undefined;
-    const response = await httpClient.get('/api/v1/admin/documents', { params: validatedParams });
+  list: async (
+    params?: AdminDocumentListParams,
+  ): Promise<PageResponse<AdminDocument>> => {
+    const validatedParams = params
+      ? AdminDocumentListParamsSchema.parse(params)
+      : undefined;
+    const response = await httpClient.get("/api/v1/admin/documents", {
+      params: validatedParams,
+    });
     return parsePageResponse(response.data, AdminDocumentSchema);
   },
 
@@ -323,14 +477,23 @@ export const adminDocumentApi = {
   /** POST /api/v1/admin/documents - Create document (Admin only) */
   create: async (data: AdminDocumentCreateRequest): Promise<AdminDocument> => {
     const validatedPayload = AdminDocumentCreateRequestSchema.parse(data);
-    const response = await httpClient.post('/api/v1/admin/documents', validatedPayload);
+    const response = await httpClient.post(
+      "/api/v1/admin/documents",
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminDocumentSchema);
   },
 
   /** PUT /api/v1/admin/documents/{id} - Update document (Admin only) */
-  update: async (id: number, data: AdminDocumentUpdateRequest): Promise<AdminDocument> => {
+  update: async (
+    id: number,
+    data: AdminDocumentUpdateRequest,
+  ): Promise<AdminDocument> => {
     const validatedPayload = AdminDocumentUpdateRequestSchema.parse(data);
-    const response = await httpClient.put(`/api/v1/admin/documents/${id}`, validatedPayload);
+    const response = await httpClient.put(
+      `/api/v1/admin/documents/${id}`,
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminDocumentSchema);
   },
 
@@ -352,7 +515,9 @@ export const adminDocumentApi = {
 export const adminSummaryApi = {
   /** GET /api/v1/admin/reports/users/summary - Get user summary report */
   getSummary: async (): Promise<UserSummary> => {
-    const response = await httpClient.get('/api/v1/admin/reports/users/summary');
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/users/summary",
+    );
     return parseApiResponse(response.data, UserSummarySchema);
   },
 };
@@ -404,7 +569,12 @@ export const InventoryHealthSchema = z.object({
 });
 
 export const DashboardStatsSchema = z.object({
-  summary: DashboardStatsSummarySchema.optional().default({ totalUsers: 0, totalFarms: 0, totalPlots: 0, totalSeasons: 0 }),
+  summary: DashboardStatsSummarySchema.optional().default({
+    totalUsers: 0,
+    totalFarms: 0,
+    totalPlots: 0,
+    totalSeasons: 0,
+  }),
   userRoleCounts: z.array(UserRoleCountSchema).optional().default([]),
   userStatusCounts: z.array(UserStatusCountSchema).optional().default([]),
   seasonStatusCounts: z.array(SeasonStatusCountSchema).optional().default([]),
@@ -422,14 +592,14 @@ export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
 
 // Query keys for TanStack Query
 export const dashboardStatsKeys = {
-  all: ['admin', 'dashboard-stats'] as const,
+  all: ["admin", "dashboard-stats"] as const,
   stats: () => [...dashboardStatsKeys.all] as const,
 };
 
 export const adminDashboardStatsApi = {
   /** GET /api/v1/admin/dashboard-stats - Get real-time dashboard statistics */
   getStats: async (): Promise<DashboardStats> => {
-    const response = await httpClient.get('/api/v1/admin/dashboard-stats');
+    const response = await httpClient.get("/api/v1/admin/dashboard-stats");
     return parseApiResponse(response.data, DashboardStatsSchema);
   },
 };
@@ -453,11 +623,161 @@ export const AdminDashboardSummarySchema = z.object({
 
 export type AdminDashboardSummary = z.infer<typeof AdminDashboardSummarySchema>;
 
+export const InventoryHealthWidgetRiskLotSchema = z.object({
+  lotId: z.number().int(),
+  itemName: z.string(),
+  expiryDate: z.string().optional().nullable(),
+  onHand: z.number(),
+  status: z.enum(["EXPIRED", "EXPIRING_SOON"]),
+});
+
+export const InventoryHealthWidgetFarmSchema = z.object({
+  farmId: z.number().int(),
+  farmName: z.string(),
+  expiredLots: z.number().int().nonnegative(),
+  expiringLots: z.number().int().nonnegative(),
+  qtyAtRisk: z.number().nonnegative(),
+  topRiskLots: z.array(InventoryHealthWidgetRiskLotSchema).optional().default([]),
+});
+
+export const InventoryHealthWidgetSummarySchema = z.object({
+  expiredLots: z.number().int().nonnegative(),
+  expiringLots: z.number().int().nonnegative(),
+  qtyAtRisk: z.number().nonnegative(),
+  unknownExpiryLots: z.number().int().nonnegative(),
+});
+
+export const InventoryHealthWidgetResponseSchema = z.object({
+  asOfDate: z.string(),
+  windowDays: z.number().int(),
+  includeExpiring: z.boolean(),
+  summary: InventoryHealthWidgetSummarySchema,
+  farms: z.array(InventoryHealthWidgetFarmSchema).optional().default([]),
+});
+
+export type InventoryHealthWidgetRiskLot = z.infer<
+  typeof InventoryHealthWidgetRiskLotSchema
+>;
+export type InventoryHealthWidgetFarm = z.infer<
+  typeof InventoryHealthWidgetFarmSchema
+>;
+export type InventoryHealthWidgetSummary = z.infer<
+  typeof InventoryHealthWidgetSummarySchema
+>;
+export type InventoryHealthWidgetResponse = z.infer<
+  typeof InventoryHealthWidgetResponseSchema
+>;
+
 export const adminDashboardApi = {
   /** GET /api/v1/admin/dashboard/summary - Get admin dashboard summary (legacy) */
   getSummary: async (): Promise<AdminDashboardSummary> => {
-    const response = await httpClient.get('/api/v1/admin/dashboard/summary');
+    const response = await httpClient.get("/api/v1/admin/dashboard/summary");
     return parseApiResponse(response.data, AdminDashboardSummarySchema);
+  },
+  /** GET /api/v1/admin/dashboard/inventory-health - Inventory health widget data */
+  getInventoryHealth: async (params?: {
+    windowDays?: number;
+    includeExpiring?: boolean;
+    limit?: number;
+  }): Promise<InventoryHealthWidgetResponse> => {
+    const response = await httpClient.get(
+      "/api/v1/admin/dashboard/inventory-health",
+      { params },
+    );
+    return parseApiResponse(response.data, InventoryHealthWidgetResponseSchema);
+  },
+};
+
+export const AdminInventoryRiskLotSchema = z.object({
+  lotId: z.number().int(),
+  itemId: z.number().int().optional().nullable(),
+  itemName: z.string(),
+  lotCode: z.string().optional().nullable(),
+  farmId: z.number().int().optional().nullable(),
+  farmName: z.string().optional().nullable(),
+  expiryDate: z.string().optional().nullable(),
+  onHand: z.number(),
+  daysToExpiry: z.number().optional().nullable(),
+  status: z.string(),
+  unit: z.string().optional().nullable(),
+  unitCost: z.number().optional().nullable(),
+});
+
+export type AdminInventoryRiskLot = z.infer<typeof AdminInventoryRiskLotSchema>;
+
+export const AdminInventoryBalanceSchema = z.object({
+  warehouseId: z.number().int().optional().nullable(),
+  warehouseName: z.string().optional().nullable(),
+  farmId: z.number().int().optional().nullable(),
+  farmName: z.string().optional().nullable(),
+  locationId: z.number().int().optional().nullable(),
+  locationLabel: z.string().optional().nullable(),
+  quantity: z.number(),
+});
+
+export const AdminInventoryLotDetailSchema = z.object({
+  lotId: z.number().int(),
+  itemId: z.number().int().optional().nullable(),
+  itemName: z.string().optional().nullable(),
+  lotCode: z.string().optional().nullable(),
+  unit: z.string().optional().nullable(),
+  supplierName: z.string().optional().nullable(),
+  expiryDate: z.string().optional().nullable(),
+  status: z.string().optional().nullable(),
+  onHandTotal: z.number().optional().nullable(),
+  balances: z.array(AdminInventoryBalanceSchema),
+});
+
+export const AdminInventoryMovementSchema = z.object({
+  movementId: z.number().int(),
+  movementType: z.string().optional().nullable(),
+  quantity: z.number(),
+  movementDate: z.string().optional().nullable(),
+  reference: z.string().optional().nullable(),
+  note: z.string().optional().nullable(),
+});
+
+export const AdminInventoryFarmOptionSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+});
+
+export const AdminInventoryOptionsSchema = z.object({
+  farms: z.array(AdminInventoryFarmOptionSchema),
+  categories: z.array(z.string()),
+});
+
+export const adminInventoryApi = {
+  /** GET /api/v1/admin/inventory/lots - Risk lots drill-down */
+  listRiskLots: async (params: {
+    farmId?: number;
+    status?: string;
+    windowDays?: number;
+    q?: string;
+    sort?: string;
+    lowStockThreshold?: number;
+    page?: number;
+    limit?: number;
+  }): Promise<PageResponse<AdminInventoryRiskLot>> => {
+    const response = await httpClient.get("/api/v1/admin/inventory/lots", {
+      params,
+    });
+    return parsePageResponse(response.data, AdminInventoryRiskLotSchema);
+  },
+  /** GET /api/v1/admin/inventory/lots/{lotId} - Lot detail */
+  getLotDetail: async (lotId: number) => {
+    const response = await httpClient.get(`/api/v1/admin/inventory/lots/${lotId}`);
+    return parseApiResponse(response.data, AdminInventoryLotDetailSchema);
+  },
+  /** GET /api/v1/admin/inventory/lots/{lotId}/movements - Lot movements */
+  getLotMovements: async (lotId: number) => {
+    const response = await httpClient.get(`/api/v1/admin/inventory/lots/${lotId}/movements`);
+    return parseApiResponse(response.data, z.array(AdminInventoryMovementSchema));
+  },
+  /** GET /api/v1/admin/inventory/options - Inventory filters */
+  getOptions: async () => {
+    const response = await httpClient.get("/api/v1/admin/inventory/options");
+    return parseApiResponse(response.data, AdminInventoryOptionsSchema);
   },
 };
 
@@ -495,30 +815,39 @@ export type AdminFarmDetail = z.infer<typeof AdminFarmDetailSchema>;
 
 // Request schemas for admin farm operations
 export const AdminFarmUpdateRequestSchema = z.object({
-  name: z.string().min(1, 'Farm name is required'),
-  provinceId: z.number({ required_error: 'Province is required' }),
-  wardId: z.number({ required_error: 'Ward is required' }),
-  area: z.number().positive('Area must be positive'),
-  ownerId: z.number({ required_error: 'Owner is required' }),
+  name: z.string().min(1, "Farm name is required"),
+  provinceId: z.number({ required_error: "Province is required" }),
+  wardId: z.number({ required_error: "Ward is required" }),
+  area: z.number().positive("Area must be positive"),
+  ownerId: z.number({ required_error: "Owner is required" }),
   active: z.boolean(),
 });
 
-export type AdminFarmUpdateRequest = z.infer<typeof AdminFarmUpdateRequestSchema>;
+export type AdminFarmUpdateRequest = z.infer<
+  typeof AdminFarmUpdateRequestSchema
+>;
 
 export const AdminPlotCreateRequestSchema = z.object({
-  plotName: z.string().min(1, 'Plot name is required'),
+  plotName: z.string().min(1, "Plot name is required"),
   area: z.number().positive().optional(),
   soilType: z.string().optional(),
   provinceId: z.number().optional(),
   wardId: z.number().optional(),
 });
 
-export type AdminPlotCreateRequest = z.infer<typeof AdminPlotCreateRequestSchema>;
+export type AdminPlotCreateRequest = z.infer<
+  typeof AdminPlotCreateRequestSchema
+>;
 
 export const adminFarmApi = {
   /** GET /api/v1/admin/farms - List all farms */
-  list: async (params?: { keyword?: string; active?: boolean; page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/farms', { params });
+  list: async (params?: {
+    keyword?: string;
+    active?: boolean;
+    page?: number;
+    size?: number;
+  }) => {
+    const response = await httpClient.get("/api/v1/admin/farms", { params });
     return response.data;
   },
 
@@ -529,16 +858,25 @@ export const adminFarmApi = {
   },
 
   /** PUT /api/v1/admin/farms/{id} - Update farm (cascades owner to plots) */
-  update: async (id: number, data: AdminFarmUpdateRequest): Promise<AdminFarmDetail> => {
+  update: async (
+    id: number,
+    data: AdminFarmUpdateRequest,
+  ): Promise<AdminFarmDetail> => {
     const validatedPayload = AdminFarmUpdateRequestSchema.parse(data);
-    const response = await httpClient.put(`/api/v1/admin/farms/${id}`, validatedPayload);
+    const response = await httpClient.put(
+      `/api/v1/admin/farms/${id}`,
+      validatedPayload,
+    );
     return parseApiResponse(response.data, AdminFarmDetailSchema);
   },
 
   /** POST /api/v1/admin/farms/{id}/plots - Add plot to farm */
   addPlot: async (farmId: number, data: AdminPlotCreateRequest) => {
     const validatedPayload = AdminPlotCreateRequestSchema.parse(data);
-    const response = await httpClient.post(`/api/v1/admin/farms/${farmId}/plots`, validatedPayload);
+    const response = await httpClient.post(
+      `/api/v1/admin/farms/${farmId}/plots`,
+      validatedPayload,
+    );
     return response.data;
   },
 };
@@ -555,7 +893,9 @@ export const AdminSeasonUpdateRequestSchema = z.object({
   notes: z.string().optional(),
 });
 
-export type AdminSeasonUpdateRequest = z.infer<typeof AdminSeasonUpdateRequestSchema>;
+export type AdminSeasonUpdateRequest = z.infer<
+  typeof AdminSeasonUpdateRequestSchema
+>;
 
 export const adminSeasonApi = {
   /** GET /api/v1/admin/seasons - List all seasons with filtering */
@@ -565,9 +905,9 @@ export const adminSeasonApi = {
     cropId?: number;
     plotId?: number;
     page?: number;
-    size?: number
+    size?: number;
   }) => {
-    const response = await httpClient.get('/api/v1/admin/seasons', { params });
+    const response = await httpClient.get("/api/v1/admin/seasons", { params });
     return response.data;
   },
 
@@ -579,14 +919,19 @@ export const adminSeasonApi = {
 
   /** GET /api/v1/admin/seasons/{id}/pending-task-count - Get count of non-DONE tasks */
   getPendingTaskCount: async (id: number): Promise<number> => {
-    const response = await httpClient.get(`/api/v1/admin/seasons/${id}/pending-task-count`);
+    const response = await httpClient.get(
+      `/api/v1/admin/seasons/${id}/pending-task-count`,
+    );
     return response.data?.data ?? 0;
   },
 
   /** PUT /api/v1/admin/seasons/{id} - Update season (admin intervention) */
   update: async (id: number, data: AdminSeasonUpdateRequest) => {
     const validatedPayload = AdminSeasonUpdateRequestSchema.parse(data);
-    const response = await httpClient.put(`/api/v1/admin/seasons/${id}`, validatedPayload);
+    const response = await httpClient.put(
+      `/api/v1/admin/seasons/${id}`,
+      validatedPayload,
+    );
     return response.data;
   },
 };
@@ -595,41 +940,151 @@ export const adminSeasonApi = {
 // ADMIN INCIDENTS API
 // ═══════════════════════════════════════════════════════════════
 
+export const AdminIncidentSchema = z.object({
+  incidentId: z.number().int(),
+  seasonId: z.number().int().optional().nullable(),
+  seasonName: z.string().optional().nullable(),
+  plotId: z.number().int().optional().nullable(),
+  plotName: z.string().optional().nullable(),
+  farmId: z.number().int().optional().nullable(),
+  farmName: z.string().optional().nullable(),
+  reportedById: z.number().optional().nullable(),
+  reportedByUsername: z.string().optional().nullable(),
+  incidentType: z.string().optional().nullable(),
+  severity: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  status: z.string().optional().nullable(),
+  deadline: z.string().optional().nullable(),
+  resolvedAt: z.string().optional().nullable(),
+  createdAt: z.string().optional().nullable(),
+});
+
+export type AdminIncident = z.infer<typeof AdminIncidentSchema>;
+
 export const adminIncidentApi = {
   /** GET /api/v1/admin/incidents - List all incidents */
-  list: async (params?: { status?: string; severity?: string; type?: string; page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/incidents', { params });
-    return response.data;
+  list: async (params?: {
+    status?: string;
+    severity?: string;
+    type?: string;
+    farmId?: number;
+    q?: string;
+    sort?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<PageResponse<AdminIncident>> => {
+    const response = await httpClient.get("/api/v1/admin/incidents", {
+      params,
+    });
+    return parsePageResponse(response.data, AdminIncidentSchema);
   },
 
   /** GET /api/v1/admin/incidents/{id} - Get incident detail */
-  getById: async (id: number) => {
+  getById: async (id: number): Promise<AdminIncident> => {
     const response = await httpClient.get(`/api/v1/admin/incidents/${id}`);
-    return response.data;
+    return parseApiResponse(response.data, AdminIncidentSchema);
   },
 
   /** PATCH /api/v1/admin/incidents/{id}/triage - Triage incident (OPEN -> IN_PROGRESS) */
-  triage: async (id: number, data: { severity: string; deadline?: string; assigneeId?: number }) => {
-    const response = await httpClient.patch(`/api/v1/admin/incidents/${id}/triage`, data);
-    return response.data;
+  triage: async (
+    id: number,
+    data: { severity: string; deadline?: string; assigneeId?: number },
+  ) => {
+    const response = await httpClient.patch(
+      `/api/v1/admin/incidents/${id}/triage`,
+      data,
+    );
+    return parseApiResponse(response.data, AdminIncidentSchema);
   },
 
   /** PATCH /api/v1/admin/incidents/{id}/resolve - Resolve incident (IN_PROGRESS -> RESOLVED) */
   resolve: async (id: number, data: { resolutionNote: string }) => {
-    const response = await httpClient.patch(`/api/v1/admin/incidents/${id}/resolve`, data);
-    return response.data;
+    const response = await httpClient.patch(
+      `/api/v1/admin/incidents/${id}/resolve`,
+      data,
+    );
+    return parseApiResponse(response.data, AdminIncidentSchema);
   },
 
   /** PATCH /api/v1/admin/incidents/{id}/cancel - Cancel incident (OPEN/IN_PROGRESS -> CANCELLED) */
   cancel: async (id: number, data: { cancellationReason: string }) => {
-    const response = await httpClient.patch(`/api/v1/admin/incidents/${id}/cancel`, data);
-    return response.data;
+    const response = await httpClient.patch(
+      `/api/v1/admin/incidents/${id}/cancel`,
+      data,
+    );
+    return parseApiResponse(response.data, AdminIncidentSchema);
   },
 
   /** PATCH /api/v1/admin/incidents/{id}/status - Update incident status (Legacy) */
   updateStatus: async (id: number, status: string) => {
-    const response = await httpClient.patch(`/api/v1/admin/incidents/${id}/status`, { status });
-    return response.data;
+    const response = await httpClient.patch(
+      `/api/v1/admin/incidents/${id}/status`,
+      { status },
+    );
+    return parseApiResponse(response.data, AdminIncidentSchema);
+  },
+};
+
+// ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?
+// ADMIN ALERTS API
+// ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?ƒ?
+
+export const AdminAlertSchema = z.object({
+  id: z.number().int(),
+  type: z.string().optional().nullable(),
+  severity: z.string().optional().nullable(),
+  status: z.string().optional().nullable(),
+  farmId: z.number().int().optional().nullable(),
+  farmName: z.string().optional().nullable(),
+  seasonId: z.number().int().optional().nullable(),
+  plotId: z.number().int().optional().nullable(),
+  cropId: z.number().int().optional().nullable(),
+  title: z.string().optional().nullable(),
+  message: z.string().optional().nullable(),
+  suggestedActionType: z.string().optional().nullable(),
+  suggestedActionUrl: z.string().optional().nullable(),
+  recipientFarmerIds: z.array(z.number()).optional().nullable(),
+  createdAt: z.string().optional().nullable(),
+  sentAt: z.string().optional().nullable(),
+});
+
+export type AdminAlert = z.infer<typeof AdminAlertSchema>;
+
+export const adminAlertApi = {
+  /** GET /api/v1/admin/alerts - List alerts */
+  list: async (params?: {
+    type?: string;
+    severity?: string;
+    status?: string;
+    farmId?: number;
+    windowDays?: number;
+    page?: number;
+    limit?: number;
+  }): Promise<PageResponse<AdminAlert>> => {
+    const response = await httpClient.get("/api/v1/admin/alerts", { params });
+    return parsePageResponse(response.data, AdminAlertSchema);
+  },
+  /** POST /api/v1/admin/alerts/refresh - Refresh alerts */
+  refresh: async (payload?: { windowDays?: number }): Promise<AdminAlert[]> => {
+    const response = await httpClient.post("/api/v1/admin/alerts/refresh", payload ?? {});
+    return parseApiResponse(response.data, z.array(AdminAlertSchema));
+  },
+  /** POST /api/v1/admin/alerts/{id}/send - Send alert */
+  send: async (
+    id: number,
+    payload: {
+      channel: "IN_APP";
+      recipientMode: "ALL_FARMERS_IN_FARM" | "SELECTED";
+      recipientFarmerIds?: number[];
+    },
+  ): Promise<AdminAlert> => {
+    const response = await httpClient.post(`/api/v1/admin/alerts/${id}/send`, payload);
+    return parseApiResponse(response.data, AdminAlertSchema);
+  },
+  /** PATCH /api/v1/admin/alerts/{id}/status - Update alert status */
+  updateStatus: async (id: number, status: string): Promise<AdminAlert> => {
+    const response = await httpClient.patch(`/api/v1/admin/alerts/${id}/status`, { status });
+    return parseApiResponse(response.data, AdminAlertSchema);
   },
 };
 
@@ -638,33 +1093,36 @@ export const adminIncidentApi = {
 // ═══════════════════════════════════════════════════════════════
 
 // Runtime-safe numeric: coerce BigDecimal/string to number, NaN → 0
-const NumericSchema = z.preprocess(
-  (val) => {
-    if (val === null || val === undefined) return 0;
-    const num = typeof val === 'string' ? parseFloat(val) : val;
-    return Number.isFinite(num) ? num : 0;
-  },
-  z.number()
-);
+const NumericSchema = z.preprocess((val) => {
+  if (val === null || val === undefined) return 0;
+  const num = typeof val === "string" ? parseFloat(val) : val;
+  return Number.isFinite(num) ? num : 0;
+}, z.number());
 
 // Nullable ratio: for percentages like profitMargin, costPerKg, variancePercent. NaN → null
-const NullableRatioSchema = z.preprocess(
-  (val) => {
-    if (val === null || val === undefined) return null;
-    const num = typeof val === 'string' ? parseFloat(val) : val;
-    return Number.isFinite(num) ? num : null;
-  },
-  z.number().nullable()
-);
+const NullableRatioSchema = z.preprocess((val) => {
+  if (val === null || val === undefined) return null;
+  const num = typeof val === "string" ? parseFloat(val) : val;
+  return Number.isFinite(num) ? num : null;
+}, z.number().nullable());
+
+const CountSchema = z.preprocess((val) => {
+  if (val === null || val === undefined) return 0;
+  const num = typeof val === "string" ? parseFloat(val) : val;
+  return Number.isFinite(num) ? num : 0;
+}, z.number());
 
 // Report filter params for API calls
 export interface ReportFilterParams {
   year?: number;
-  fromDate?: string;  // YYYY-MM-DD format
-  toDate?: string;    // YYYY-MM-DD format
+  dateFrom?: string; // YYYY-MM-DD format
+  dateTo?: string; // YYYY-MM-DD format
   cropId?: number;
   farmId?: number;
   plotId?: number;
+  varietyId?: number;
+  granularity?: "DAY" | "WEEK" | "MONTH";
+  analytics?: boolean;
 }
 
 // Legacy schemas (backward compatibility)
@@ -767,6 +1225,130 @@ export const IncidentStatisticsReportSchema = z.object({
   averageResolutionDays: NumericSchema,
 });
 
+// Admin Reports Analytics (Summary + Tabs)
+export const AppliedFiltersSchema = z.object({
+  year: z.number().int().optional().nullable(),
+  dateFrom: z.string().optional().nullable(),
+  dateTo: z.string().optional().nullable(),
+  farmId: z.number().int().optional().nullable(),
+  plotId: z.number().int().optional().nullable(),
+  cropId: z.number().int().optional().nullable(),
+  varietyId: z.number().int().optional().nullable(),
+});
+
+export const ReportSummarySchema = z.object({
+  actualYield: NumericSchema,
+  totalCost: NumericSchema,
+  costPerTon: NullableRatioSchema,
+  revenue: NumericSchema,
+  grossProfit: NumericSchema,
+  marginPercent: NullableRatioSchema,
+  warnings: z.array(z.string()).optional().nullable(),
+  appliedFilters: AppliedFiltersSchema.optional().nullable(),
+});
+
+export const YieldAnalyticsRowSchema = z.object({
+  farmId: z.number().int().optional().nullable(),
+  farmName: z.string().optional().nullable(),
+  plotId: z.number().int().optional().nullable(),
+  plotName: z.string().optional().nullable(),
+  cropId: z.number().int().optional().nullable(),
+  cropName: z.string().optional().nullable(),
+  varietyId: z.number().int().optional().nullable(),
+  varietyName: z.string().optional().nullable(),
+  actualYield: NumericSchema,
+  harvestCount: CountSchema,
+});
+
+export const YieldAnalyticsTotalsSchema = z.object({
+  actualYield: NumericSchema,
+  harvestCount: CountSchema,
+});
+
+export const YieldAnalyticsResponseSchema = z.object({
+  tableRows: z.array(YieldAnalyticsRowSchema),
+  chartSeries: z.array(YieldAnalyticsRowSchema),
+  totals: YieldAnalyticsTotalsSchema,
+});
+
+export const CostCategoryRowSchema = z.object({
+  category: z.string().optional().nullable(),
+  totalCost: NumericSchema,
+  expenseCount: CountSchema,
+});
+
+export const CostVendorRowSchema = z.object({
+  vendorId: z.number().int().optional().nullable(),
+  vendorName: z.string().optional().nullable(),
+  totalCost: NumericSchema,
+  expenseCount: CountSchema,
+});
+
+export const CostTimeRowSchema = z.object({
+  periodStart: z.string().optional().nullable(),
+  label: z.string().optional().nullable(),
+  totalCost: NumericSchema,
+});
+
+export const CostTotalsSchema = z.object({
+  totalCost: NumericSchema,
+  expenseCount: CountSchema,
+});
+
+export const CostAnalyticsResponseSchema = z.object({
+  tableRows: z.array(CostCategoryRowSchema),
+  chartSeries: z.array(CostCategoryRowSchema),
+  totals: CostTotalsSchema,
+  vendorRows: z.array(CostVendorRowSchema),
+  timeSeries: z.array(CostTimeRowSchema),
+});
+
+export const RevenueRowSchema = z.object({
+  cropId: z.number().int().optional().nullable(),
+  cropName: z.string().optional().nullable(),
+  plotId: z.number().int().optional().nullable(),
+  plotName: z.string().optional().nullable(),
+  totalQuantity: NumericSchema,
+  totalRevenue: NumericSchema,
+  avgPrice: NullableRatioSchema,
+});
+
+export const RevenueTotalsSchema = z.object({
+  totalQuantity: NumericSchema,
+  totalRevenue: NumericSchema,
+  avgPrice: NullableRatioSchema,
+});
+
+export const RevenueAnalyticsResponseSchema = z.object({
+  tableRows: z.array(RevenueRowSchema),
+  chartSeries: z.array(RevenueRowSchema),
+  totals: RevenueTotalsSchema,
+});
+
+export const ProfitRowSchema = z.object({
+  cropId: z.number().int().optional().nullable(),
+  cropName: z.string().optional().nullable(),
+  plotId: z.number().int().optional().nullable(),
+  plotName: z.string().optional().nullable(),
+  totalRevenue: NumericSchema,
+  totalCost: NumericSchema,
+  grossProfit: NumericSchema,
+  marginPercent: NullableRatioSchema,
+});
+
+export const ProfitTotalsSchema = z.object({
+  totalRevenue: NumericSchema,
+  totalCost: NumericSchema,
+  grossProfit: NumericSchema,
+  marginPercent: NullableRatioSchema,
+});
+
+export const ProfitAnalyticsResponseSchema = z.object({
+  tableRows: z.array(ProfitRowSchema),
+  chartSeries: z.array(ProfitRowSchema),
+  totals: ProfitTotalsSchema,
+});
+
 // Export types
 export type MonthlyTotal = z.infer<typeof MonthlyTotalSchema>;
 export type SeasonHarvest = z.infer<typeof SeasonHarvestSchema>;
@@ -778,28 +1360,58 @@ export type RevenueReport = z.infer<typeof RevenueReportSchema>;
 export type ProfitReport = z.infer<typeof ProfitReportSchema>;
 export type TaskPerformanceReport = z.infer<typeof TaskPerformanceReportSchema>;
 export type InventoryOnHandReport = z.infer<typeof InventoryOnHandReportSchema>;
-export type IncidentStatisticsReport = z.infer<typeof IncidentStatisticsReportSchema>;
+export type IncidentStatisticsReport = z.infer<
+  typeof IncidentStatisticsReportSchema
+>;
+export type ReportSummary = z.infer<typeof ReportSummarySchema>;
+export type YieldAnalyticsRow = z.infer<typeof YieldAnalyticsRowSchema>;
+export type YieldAnalyticsResponse = z.infer<
+  typeof YieldAnalyticsResponseSchema
+>;
+export type CostCategoryRow = z.infer<typeof CostCategoryRowSchema>;
+export type CostVendorRow = z.infer<typeof CostVendorRowSchema>;
+export type CostTimeRow = z.infer<typeof CostTimeRowSchema>;
+export type CostAnalyticsResponse = z.infer<typeof CostAnalyticsResponseSchema>;
+export type RevenueRow = z.infer<typeof RevenueRowSchema>;
+export type RevenueAnalyticsResponse = z.infer<
+  typeof RevenueAnalyticsResponseSchema
+>;
+export type ProfitRow = z.infer<typeof ProfitRowSchema>;
+export type ProfitAnalyticsResponse = z.infer<
+  typeof ProfitAnalyticsResponseSchema
+>;
 
 // Helper: normalize params for stable query keys (remove undefined, fixed order)
 const normalizeReportParams = (p?: ReportFilterParams) => ({
   ...(p?.year !== undefined && { year: p.year }),
-  ...(p?.fromDate !== undefined && { fromDate: p.fromDate }),
-  ...(p?.toDate !== undefined && { toDate: p.toDate }),
+  ...(p?.dateFrom !== undefined && { dateFrom: p.dateFrom }),
+  ...(p?.dateTo !== undefined && { dateTo: p.dateTo }),
   ...(p?.cropId !== undefined && { cropId: p.cropId }),
   ...(p?.farmId !== undefined && { farmId: p.farmId }),
   ...(p?.plotId !== undefined && { plotId: p.plotId }),
+  ...(p?.varietyId !== undefined && { varietyId: p.varietyId }),
+  ...(p?.granularity !== undefined && { granularity: p.granularity }),
+  ...(p?.analytics !== undefined && { analytics: p.analytics }),
 });
 
 // Query keys for reports
 export const reportsKeys = {
-  all: ['adminReports'] as const,
-  yield: (p?: ReportFilterParams) => [...reportsKeys.all, 'yield', normalizeReportParams(p)] as const,
-  cost: (p?: ReportFilterParams) => [...reportsKeys.all, 'cost', normalizeReportParams(p)] as const,
-  revenue: (p?: ReportFilterParams) => [...reportsKeys.all, 'revenue', normalizeReportParams(p)] as const,
-  profit: (p?: ReportFilterParams) => [...reportsKeys.all, 'profit', normalizeReportParams(p)] as const,
-  taskPerformance: (year?: number) => [...reportsKeys.all, 'taskPerformance', year] as const,
-  inventoryOnHand: () => [...reportsKeys.all, 'inventoryOnHand'] as const,
-  incidentStatistics: (year?: number) => [...reportsKeys.all, 'incidentStatistics', year] as const,
+  all: ["adminReports"] as const,
+  summary: (p?: ReportFilterParams) =>
+    [...reportsKeys.all, "summary", normalizeReportParams(p)] as const,
+  yield: (p?: ReportFilterParams) =>
+    [...reportsKeys.all, "yield", normalizeReportParams(p)] as const,
+  cost: (p?: ReportFilterParams) =>
+    [...reportsKeys.all, "cost", normalizeReportParams(p)] as const,
+  revenue: (p?: ReportFilterParams) =>
+    [...reportsKeys.all, "revenue", normalizeReportParams(p)] as const,
+  profit: (p?: ReportFilterParams) =>
+    [...reportsKeys.all, "profit", normalizeReportParams(p)] as const,
+  taskPerformance: (year?: number) =>
+    [...reportsKeys.all, "taskPerformance", year] as const,
+  inventoryOnHand: () => [...reportsKeys.all, "inventoryOnHand"] as const,
+  incidentStatistics: (year?: number) =>
+    [...reportsKeys.all, "incidentStatistics", year] as const,
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -810,68 +1422,161 @@ export const adminReportsApi = {
   // Legacy endpoints
   /** GET /api/v1/admin/reports/expenses-by-month */
   getExpensesByMonth: async (year?: number): Promise<MonthlyTotal[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/expenses-by-month', { params: { year } });
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/expenses-by-month",
+      { params: { year } },
+    );
     return parseApiResponse(response.data, z.array(MonthlyTotalSchema));
   },
 
   /** GET /api/v1/admin/reports/harvest-by-season */
   getHarvestBySeason: async (): Promise<SeasonHarvest[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/harvest-by-season');
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/harvest-by-season",
+    );
     return parseApiResponse(response.data, z.array(SeasonHarvestSchema));
   },
 
   /** GET /api/v1/admin/reports/incidents-summary */
   getIncidentsSummary: async (): Promise<IncidentsSummary> => {
-    const response = await httpClient.get('/api/v1/admin/reports/incidents-summary');
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/incidents-summary",
+    );
     return parseApiResponse(response.data, IncidentsSummarySchema);
   },
 
   /** GET /api/v1/admin/reports/inventory-movements */
   getInventoryMovements: async (year?: number): Promise<MovementSummary[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/inventory-movements', { params: { year } });
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/inventory-movements",
+      { params: { year } },
+    );
     return parseApiResponse(response.data, z.array(MovementSummarySchema));
   },
 
   // NEW Analytics endpoints (all accept ReportFilterParams)
   /** GET /api/v1/admin/reports/yield - Yield report: expected vs actual */
-  getYieldReport: async (params?: ReportFilterParams): Promise<YieldReport[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/yield', { params });
+  getYieldReport: async (
+    params?: ReportFilterParams,
+  ): Promise<YieldReport[]> => {
+    const response = await httpClient.get("/api/v1/admin/reports/yield", {
+      params,
+    });
     return parseApiResponse(response.data, z.array(YieldReportSchema));
   },
 
   /** GET /api/v1/admin/reports/cost - Cost report: expense per season with cost/kg */
   getCostReport: async (params?: ReportFilterParams): Promise<CostReport[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/cost', { params });
+    const response = await httpClient.get("/api/v1/admin/reports/cost", {
+      params,
+    });
     return parseApiResponse(response.data, z.array(CostReportSchema));
   },
 
   /** GET /api/v1/admin/reports/revenue - Revenue report: harvest quantity * price */
-  getRevenueReport: async (params?: ReportFilterParams): Promise<RevenueReport[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/revenue', { params });
+  getRevenueReport: async (
+    params?: ReportFilterParams,
+  ): Promise<RevenueReport[]> => {
+    const response = await httpClient.get("/api/v1/admin/reports/revenue", {
+      params,
+    });
     return parseApiResponse(response.data, z.array(RevenueReportSchema));
   },
 
   /** GET /api/v1/admin/reports/profit - Profit report: revenue vs expense with margins */
-  getProfitReport: async (params?: ReportFilterParams): Promise<ProfitReport[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/profit', { params });
+  getProfitReport: async (
+    params?: ReportFilterParams,
+  ): Promise<ProfitReport[]> => {
+    const response = await httpClient.get("/api/v1/admin/reports/profit", {
+      params,
+    });
     return parseApiResponse(response.data, z.array(ProfitReportSchema));
+  },
+
+  /** GET /api/v1/admin/reports/summary - KPI summary */
+  getSummary: async (params?: ReportFilterParams): Promise<ReportSummary> => {
+    const response = await httpClient.get("/api/v1/admin/reports/summary", {
+      params,
+    });
+    return parseApiResponse(response.data, ReportSummarySchema);
+  },
+
+  /** GET /api/v1/admin/reports/yield - Analytics */
+  getYieldAnalytics: async (
+    params?: ReportFilterParams,
+  ): Promise<YieldAnalyticsResponse> => {
+    const response = await httpClient.get("/api/v1/admin/reports/yield", {
+      params: { ...params, analytics: true },
+    });
+    return parseApiResponse(response.data, YieldAnalyticsResponseSchema);
+  },
+
+  /** GET /api/v1/admin/reports/cost - Analytics */
+  getCostAnalytics: async (
+    params?: ReportFilterParams,
+  ): Promise<CostAnalyticsResponse> => {
+    const response = await httpClient.get("/api/v1/admin/reports/cost", {
+      params: { ...params, analytics: true },
+    });
+    return parseApiResponse(response.data, CostAnalyticsResponseSchema);
+  },
+
+  /** GET /api/v1/admin/reports/revenue - Analytics */
+  getRevenueAnalytics: async (
+    params?: ReportFilterParams,
+  ): Promise<RevenueAnalyticsResponse> => {
+    const response = await httpClient.get("/api/v1/admin/reports/revenue", {
+      params: { ...params, analytics: true },
+    });
+    return parseApiResponse(response.data, RevenueAnalyticsResponseSchema);
+  },
+
+  /** GET /api/v1/admin/reports/profit - Analytics */
+  getProfitAnalytics: async (
+    params?: ReportFilterParams,
+  ): Promise<ProfitAnalyticsResponse> => {
+    const response = await httpClient.get("/api/v1/admin/reports/profit", {
+      params: { ...params, analytics: true },
+    });
+    return parseApiResponse(response.data, ProfitAnalyticsResponseSchema);
+  },
+
+  /** GET /api/v1/admin/reports/export - Export report CSV */
+  exportReport: async (tab: string, params?: ReportFilterParams) => {
+    return httpClient.get("/api/v1/admin/reports/export", {
+      params: { tab, ...params },
+      responseType: "blob",
+    });
   },
 
   /** GET /api/v1/admin/reports/task-performance - Task completion and overdue rates */
   getTaskPerformance: async (year?: number): Promise<TaskPerformanceReport> => {
-    const response = await httpClient.get('/api/v1/admin/reports/task-performance', { params: { year } });
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/task-performance",
+      { params: { year } },
+    );
     return parseApiResponse(response.data, TaskPerformanceReportSchema);
   },
 
   /** GET /api/v1/admin/reports/inventory-onhand - Current stock by warehouse */
   getInventoryOnHand: async (): Promise<InventoryOnHandReport[]> => {
-    const response = await httpClient.get('/api/v1/admin/reports/inventory-onhand');
-    return parseApiResponse(response.data, z.array(InventoryOnHandReportSchema));
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/inventory-onhand",
+    );
+    return parseApiResponse(
+      response.data,
+      z.array(InventoryOnHandReportSchema),
+    );
   },
 
   /** GET /api/v1/admin/reports/incident-statistics - Incident breakdown with resolution metrics */
-  getIncidentStatistics: async (year?: number): Promise<IncidentStatisticsReport> => {
-    const response = await httpClient.get('/api/v1/admin/reports/incident-statistics', { params: { year } });
+  getIncidentStatistics: async (
+    year?: number,
+  ): Promise<IncidentStatisticsReport> => {
+    const response = await httpClient.get(
+      "/api/v1/admin/reports/incident-statistics",
+      { params: { year } },
+    );
     return parseApiResponse(response.data, IncidentStatisticsReportSchema);
   },
 };
@@ -883,18 +1588,21 @@ export const adminReportsApi = {
 export const adminCropApi = {
   /** GET /api/v1/admin/crops - List all crops */
   list: async () => {
-    const response = await httpClient.get('/api/v1/admin/crops');
+    const response = await httpClient.get("/api/v1/admin/crops");
     return response.data;
   },
 
   /** POST /api/v1/admin/crops - Create crop */
   create: async (data: { cropName: string; description?: string }) => {
-    const response = await httpClient.post('/api/v1/admin/crops', data);
+    const response = await httpClient.post("/api/v1/admin/crops", data);
     return response.data;
   },
 
   /** PUT /api/v1/admin/crops/{id} - Update crop */
-  update: async (id: number, data: { cropName: string; description?: string }) => {
+  update: async (
+    id: number,
+    data: { cropName: string; description?: string },
+  ) => {
     const response = await httpClient.put(`/api/v1/admin/crops/${id}`, data);
     return response.data;
   },
@@ -912,19 +1620,31 @@ export const adminCropApi = {
 export const adminVarietyApi = {
   /** GET /api/v1/admin/varieties - List all varieties */
   list: async (cropId?: number) => {
-    const response = await httpClient.get('/api/v1/admin/varieties', { params: { cropId } });
+    const response = await httpClient.get("/api/v1/admin/varieties", {
+      params: { cropId },
+    });
     return response.data;
   },
 
   /** POST /api/v1/admin/varieties - Create variety */
-  create: async (data: { name: string; cropId: number; description?: string }) => {
-    const response = await httpClient.post('/api/v1/admin/varieties', data);
+  create: async (data: {
+    name: string;
+    cropId: number;
+    description?: string;
+  }) => {
+    const response = await httpClient.post("/api/v1/admin/varieties", data);
     return response.data;
   },
 
   /** PUT /api/v1/admin/varieties/{id} - Update variety */
-  update: async (id: number, data: { name: string; cropId: number; description?: string }) => {
-    const response = await httpClient.put(`/api/v1/admin/varieties/${id}`, data);
+  update: async (
+    id: number,
+    data: { name: string; cropId: number; description?: string },
+  ) => {
+    const response = await httpClient.put(
+      `/api/v1/admin/varieties/${id}`,
+      data,
+    );
     return response.data;
   },
 
@@ -941,7 +1661,9 @@ export const adminVarietyApi = {
 export const adminWarehouseApi = {
   /** GET /api/v1/admin/warehouses - List all warehouses */
   list: async (params?: { keyword?: string; page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/warehouses', { params });
+    const response = await httpClient.get("/api/v1/admin/warehouses", {
+      params,
+    });
     return response.data;
   },
 
@@ -953,19 +1675,30 @@ export const adminWarehouseApi = {
 
   /** GET /api/v1/admin/warehouses/{id}/locations - Get warehouse locations */
   getLocations: async (id: number) => {
-    const response = await httpClient.get(`/api/v1/admin/warehouses/${id}/locations`);
+    const response = await httpClient.get(
+      `/api/v1/admin/warehouses/${id}/locations`,
+    );
     return response.data;
   },
 
   /** GET /api/v1/admin/warehouses/{id}/movements - Get warehouse movements */
-  getMovements: async (id: number, params?: { page?: number; size?: number }) => {
-    const response = await httpClient.get(`/api/v1/admin/warehouses/${id}/movements`, { params });
+  getMovements: async (
+    id: number,
+    params?: { page?: number; size?: number },
+  ) => {
+    const response = await httpClient.get(
+      `/api/v1/admin/warehouses/${id}/movements`,
+      { params },
+    );
     return response.data;
   },
 
   /** GET /api/v1/admin/warehouses/movements - List all movements */
   listAllMovements: async (params?: { page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/warehouses/movements', { params });
+    const response = await httpClient.get(
+      "/api/v1/admin/warehouses/movements",
+      { params },
+    );
     return response.data;
   },
 
@@ -974,20 +1707,30 @@ export const adminWarehouseApi = {
     supplyLotId: number;
     warehouseId: number;
     locationId?: number;
-    movementType: 'IN' | 'OUT' | 'ADJUST';
+    movementType: "IN" | "OUT" | "ADJUST";
     quantity: number; // Can be negative for ADJUST
     seasonId?: number;
     note?: string;
   }) => {
-    const response = await httpClient.post('/api/v1/admin/warehouses/movements', data);
+    const response = await httpClient.post(
+      "/api/v1/admin/warehouses/movements",
+      data,
+    );
     return response.data;
   },
 
   /** GET /api/v1/admin/warehouses/lots/{lotId}/on-hand - Get current stock for a lot */
-  getOnHandQuantity: async (lotId: number, warehouseId: number, locationId?: number): Promise<number> => {
-    const response = await httpClient.get(`/api/v1/admin/warehouses/lots/${lotId}/on-hand`, {
-      params: { warehouseId, locationId }
-    });
+  getOnHandQuantity: async (
+    lotId: number,
+    warehouseId: number,
+    locationId?: number,
+  ): Promise<number> => {
+    const response = await httpClient.get(
+      `/api/v1/admin/warehouses/lots/${lotId}/on-hand`,
+      {
+        params: { warehouseId, locationId },
+      },
+    );
     return response.data?.result ?? 0;
   },
 };
@@ -1052,7 +1795,9 @@ export const adminSupplierApi = {
 
   /** GET /api/v1/admin/suppliers - List all suppliers */
   list: async (params?: { keyword?: string; page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/suppliers', { params });
+    const response = await httpClient.get("/api/v1/admin/suppliers", {
+      params,
+    });
     return response.data;
   },
 
@@ -1064,13 +1809,16 @@ export const adminSupplierApi = {
 
   /** POST /api/v1/admin/suppliers - Create supplier */
   create: async (data: SupplierCreateRequest) => {
-    const response = await httpClient.post('/api/v1/admin/suppliers', data);
+    const response = await httpClient.post("/api/v1/admin/suppliers", data);
     return response.data;
   },
 
   /** PUT /api/v1/admin/suppliers/{id} - Update supplier */
   update: async (id: number, data: SupplierUpdateRequest) => {
-    const response = await httpClient.put(`/api/v1/admin/suppliers/${id}`, data);
+    const response = await httpClient.put(
+      `/api/v1/admin/suppliers/${id}`,
+      data,
+    );
     return response.data;
   },
 
@@ -1082,26 +1830,42 @@ export const adminSupplierApi = {
   // ═══════════════ SUPPLY ITEMS ═══════════════
 
   /** GET /api/v1/admin/suppliers/items - List all supply items */
-  listItems: async (params?: { keyword?: string; category?: string; restricted?: boolean; page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/suppliers/items', { params });
+  listItems: async (params?: {
+    keyword?: string;
+    category?: string;
+    restricted?: boolean;
+    page?: number;
+    size?: number;
+  }) => {
+    const response = await httpClient.get("/api/v1/admin/suppliers/items", {
+      params,
+    });
     return response.data;
   },
 
   /** GET /api/v1/admin/suppliers/items/{id} - Get supply item detail */
   getItem: async (id: number) => {
-    const response = await httpClient.get(`/api/v1/admin/suppliers/items/${id}`);
+    const response = await httpClient.get(
+      `/api/v1/admin/suppliers/items/${id}`,
+    );
     return response.data;
   },
 
   /** POST /api/v1/admin/suppliers/items - Create supply item */
   createItem: async (data: SupplyItemCreateRequest) => {
-    const response = await httpClient.post('/api/v1/admin/suppliers/items', data);
+    const response = await httpClient.post(
+      "/api/v1/admin/suppliers/items",
+      data,
+    );
     return response.data;
   },
 
   /** PUT /api/v1/admin/suppliers/items/{id} - Update supply item */
   updateItem: async (id: number, data: SupplyItemUpdateRequest) => {
-    const response = await httpClient.put(`/api/v1/admin/suppliers/items/${id}`, data);
+    const response = await httpClient.put(
+      `/api/v1/admin/suppliers/items/${id}`,
+      data,
+    );
     return response.data;
   },
 
@@ -1113,8 +1877,16 @@ export const adminSupplierApi = {
   // ═══════════════ SUPPLY LOTS ═══════════════
 
   /** GET /api/v1/admin/suppliers/lots - List all supply lots */
-  listLots: async (params?: { supplierId?: number; itemId?: number; status?: string; page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/suppliers/lots', { params });
+  listLots: async (params?: {
+    supplierId?: number;
+    itemId?: number;
+    status?: string;
+    page?: number;
+    size?: number;
+  }) => {
+    const response = await httpClient.get("/api/v1/admin/suppliers/lots", {
+      params,
+    });
     return response.data;
   },
 
@@ -1126,13 +1898,19 @@ export const adminSupplierApi = {
 
   /** POST /api/v1/admin/suppliers/lots - Create supply lot */
   createLot: async (data: SupplyLotCreateRequest) => {
-    const response = await httpClient.post('/api/v1/admin/suppliers/lots', data);
+    const response = await httpClient.post(
+      "/api/v1/admin/suppliers/lots",
+      data,
+    );
     return response.data;
   },
 
   /** PUT /api/v1/admin/suppliers/lots/{id} - Update supply lot */
   updateLot: async (id: number, data: SupplyLotUpdateRequest) => {
-    const response = await httpClient.put(`/api/v1/admin/suppliers/lots/${id}`, data);
+    const response = await httpClient.put(
+      `/api/v1/admin/suppliers/lots/${id}`,
+      data,
+    );
     return response.data;
   },
 
@@ -1142,8 +1920,14 @@ export const adminSupplierApi = {
   },
 
   /** GET /api/v1/admin/suppliers/lots/{id}/movements - Get lot movements */
-  getLotMovements: async (id: number, params?: { page?: number; size?: number }) => {
-    const response = await httpClient.get(`/api/v1/admin/suppliers/lots/${id}/movements`, { params });
+  getLotMovements: async (
+    id: number,
+    params?: { page?: number; size?: number },
+  ) => {
+    const response = await httpClient.get(
+      `/api/v1/admin/suppliers/lots/${id}/movements`,
+      { params },
+    );
     return response.data;
   },
 };
@@ -1159,7 +1943,9 @@ export const AdminTaskUpdateRequestSchema = z.object({
   notes: z.string().optional(),
 });
 
-export type AdminTaskUpdateRequest = z.infer<typeof AdminTaskUpdateRequestSchema>;
+export type AdminTaskUpdateRequest = z.infer<
+  typeof AdminTaskUpdateRequestSchema
+>;
 
 export const adminTaskApi = {
   /** GET /api/v1/admin/tasks - List all tasks with filtering */
@@ -1169,9 +1955,9 @@ export const adminTaskApi = {
     seasonId?: number;
     status?: string;
     page?: number;
-    size?: number
+    size?: number;
   }) => {
-    const response = await httpClient.get('/api/v1/admin/tasks', { params });
+    const response = await httpClient.get("/api/v1/admin/tasks", { params });
     return response.data;
   },
 
@@ -1184,7 +1970,10 @@ export const adminTaskApi = {
   /** PUT /api/v1/admin/tasks/{id} - Update task (admin intervention) */
   update: async (id: number, data: AdminTaskUpdateRequest) => {
     const validatedPayload = AdminTaskUpdateRequestSchema.parse(data);
-    const response = await httpClient.put(`/api/v1/admin/tasks/${id}`, validatedPayload);
+    const response = await httpClient.put(
+      `/api/v1/admin/tasks/${id}`,
+      validatedPayload,
+    );
     return response.data;
   },
 };
@@ -1195,8 +1984,13 @@ export const adminTaskApi = {
 
 export const adminPlotApi = {
   /** GET /api/v1/admin/plots - List all plots */
-  list: async (params?: { farmId?: number; keyword?: string; page?: number; size?: number }) => {
-    const response = await httpClient.get('/api/v1/admin/plots', { params });
+  list: async (params?: {
+    farmId?: number;
+    keyword?: string;
+    page?: number;
+    size?: number;
+  }) => {
+    const response = await httpClient.get("/api/v1/admin/plots", { params });
     return response.data;
   },
 
@@ -1219,9 +2013,18 @@ export const adminPlotApi = {
 
 export const adminUsersLegacyApi = {
   /** GET /api/v1/admin/users/farmers - List all farmers */
-  listFarmers: async (params?: { keyword?: string; status?: string; page?: number; size?: number }) => {
-    const validatedParams = params ? AdminUserListParamsSchema.partial().parse(params) : undefined;
-    const response = await httpClient.get('/api/v1/admin/users/farmers', { params: validatedParams });
+  listFarmers: async (params?: {
+    keyword?: string;
+    status?: string;
+    page?: number;
+    size?: number;
+  }) => {
+    const validatedParams = params
+      ? AdminUserListParamsSchema.partial().parse(params)
+      : undefined;
+    const response = await httpClient.get("/api/v1/admin/users/farmers", {
+      params: validatedParams,
+    });
     return response.data;
   },
 
@@ -1233,14 +2036,19 @@ export const adminUsersLegacyApi = {
 
   /** PATCH /api/v1/admin/users/farmers/{id}/status - Update farmer status */
   updateFarmerStatus: async (id: number, status: string) => {
-    const response = await httpClient.patch(`/api/v1/admin/users/farmers/${id}/status`, { status });
+    const response = await httpClient.patch(
+      `/api/v1/admin/users/farmers/${id}/status`,
+      { status },
+    );
     return response.data;
   },
 
   /** PUT /api/v1/admin/users/farmers/{id}/roles - Update farmer roles */
   updateFarmerRoles: async (id: number, roles: string[]) => {
-    const response = await httpClient.put(`/api/v1/admin/users/farmers/${id}/roles`, { roles });
+    const response = await httpClient.put(
+      `/api/v1/admin/users/farmers/${id}/roles`,
+      { roles },
+    );
     return response.data;
   },
 };
-

@@ -1,18 +1,18 @@
 import {
-  Users,
-  ShoppingCart,
-  FileText,
-  DollarSign,
+    DollarSign,
+    FileText,
+    ShoppingCart,
+    Users,
 } from 'lucide-react';
 import {
-  KPIData,
-  UserGrowthData,
-  ActivityData,
-  SystemHealthMetric,
-  RecentActivity,
-  PendingApproval,
-  HealthStatus,
-  Priority,
+    ActivityData,
+    HealthStatus,
+    KPIData,
+    PendingApproval,
+    Priority,
+    RecentActivity,
+    SystemHealthMetric,
+    UserGrowthData,
 } from './types';
 
 /**
@@ -28,13 +28,18 @@ export const COLOR_PALETTE = {
 } as const;
 
 /**
- * Mock KPI data for dashboard metrics
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from:
+ * - GET /api/v1/admin/stats/farmers - for farmer counts
+ * - GET /api/v1/admin/stats/buyers - for buyer counts  
+ * - GET /api/v1/admin/stats/contracts - for contract counts
+ * - GET /api/v1/admin/stats/revenue - for revenue data
  */
-export const MOCK_KPI_DATA: KPIData[] = [
+export const PLACEHOLDER_KPI_DATA: KPIData[] = [
   {
     title: 'Total Farmers',
-    value: '1,248',
-    change: '+12.5%',
+    value: '—',
+    change: '—',
     trend: 'up',
     icon: Users,
     color: COLOR_PALETTE.primary,
@@ -43,8 +48,8 @@ export const MOCK_KPI_DATA: KPIData[] = [
   },
   {
     title: 'Total Buyers',
-    value: '856',
-    change: '+8.2%',
+    value: '—',
+    change: '—',
     trend: 'up',
     icon: ShoppingCart,
     color: COLOR_PALETTE.secondary,
@@ -53,8 +58,8 @@ export const MOCK_KPI_DATA: KPIData[] = [
   },
   {
     title: 'Active Contracts',
-    value: '342',
-    change: '-3.1%',
+    value: '—',
+    change: '—',
     trend: 'down',
     icon: FileText,
     color: COLOR_PALETTE.tertiary,
@@ -63,8 +68,8 @@ export const MOCK_KPI_DATA: KPIData[] = [
   },
   {
     title: 'Total Revenue',
-    value: '$2.4M',
-    change: '+18.7%',
+    value: '—',
+    change: '—',
     trend: 'up',
     icon: DollarSign,
     color: COLOR_PALETTE.success,
@@ -74,9 +79,10 @@ export const MOCK_KPI_DATA: KPIData[] = [
 ];
 
 /**
- * Mock user growth data for time series charts
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data
  */
-export const MOCK_USER_GROWTH_DATA: UserGrowthData[] = [
+export const PLACEHOLDER_USER_GROWTH_DATA: UserGrowthData[] = [
   { month: 'Jan', farmers: 980, buyers: 650 },
   { month: 'Feb', farmers: 1050, buyers: 720 },
   { month: 'Mar', farmers: 1100, buyers: 760 },
@@ -86,9 +92,10 @@ export const MOCK_USER_GROWTH_DATA: UserGrowthData[] = [
 ];
 
 /**
- * Mock activity distribution data
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from activity/audit logs
  */
-export const MOCK_ACTIVITY_DATA: ActivityData[] = [
+export const PLACEHOLDER_ACTIVITY_DATA: ActivityData[] = [
   { name: 'Planting', value: 320, color: COLOR_PALETTE.primary },
   { name: 'Harvesting', value: 180, color: COLOR_PALETTE.secondary },
   { name: 'Sales', value: 240, color: COLOR_PALETTE.success },
@@ -96,9 +103,10 @@ export const MOCK_ACTIVITY_DATA: ActivityData[] = [
 ];
 
 /**
- * Mock system health metrics
+ * @deprecated PLACEHOLDER DATA - Do not use in production  
+ * TODO: Replace with real API data from system monitoring
  */
-export const MOCK_SYSTEM_HEALTH: SystemHealthMetric[] = [
+export const PLACEHOLDER_SYSTEM_HEALTH: SystemHealthMetric[] = [
   { metric: 'API Response Time', value: 98, status: 'excellent' },
   { metric: 'Database Performance', value: 95, status: 'excellent' },
   { metric: 'Server Uptime', value: 99.9, status: 'excellent' },
@@ -106,9 +114,10 @@ export const MOCK_SYSTEM_HEALTH: SystemHealthMetric[] = [
 ];
 
 /**
- * Mock recent activities
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from activity/audit logs
  */
-export const MOCK_RECENT_ACTIVITIES: RecentActivity[] = [
+export const PLACEHOLDER_RECENT_ACTIVITIES: RecentActivity[] = [
   {
     id: 1,
     user: 'John Farmer',
@@ -157,9 +166,10 @@ export const MOCK_RECENT_ACTIVITIES: RecentActivity[] = [
 ];
 
 /**
- * Mock pending approvals
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from pending approvals queue
  */
-export const MOCK_PENDING_APPROVALS: PendingApproval[] = [
+export const PLACEHOLDER_PENDING_APPROVALS: PendingApproval[] = [
   {
     id: 1,
     type: 'Farmer Registration',

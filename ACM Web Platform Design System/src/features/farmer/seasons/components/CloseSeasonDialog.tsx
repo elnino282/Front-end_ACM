@@ -1,4 +1,6 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -6,9 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+} from "@/shared/ui";
 
 interface CloseSeasonDialogProps {
   open: boolean;
@@ -31,7 +31,8 @@ export function CloseSeasonDialog({
         <DialogHeader>
           <DialogTitle>Close Season</DialogTitle>
           <DialogDescription>
-            Please provide a reason for closing this season. This will archive the season and mark it as complete.
+            Please provide a reason for closing this season. This will archive
+            the season and mark it as complete.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
@@ -46,7 +47,11 @@ export function CloseSeasonDialog({
           />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="acm-rounded-sm">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="acm-rounded-sm"
+          >
             Cancel
           </Button>
           <Button
@@ -61,7 +66,3 @@ export function CloseSeasonDialog({
     </Dialog>
   );
 }
-
-
-
-

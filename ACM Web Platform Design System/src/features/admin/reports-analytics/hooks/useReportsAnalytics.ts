@@ -76,25 +76,28 @@ export const useReportsAnalytics = () => {
     // ═══════════════════════════════════════════════════════════════
 
     const { data: yieldReport, isLoading: yieldLoading, error: yieldError } = useQuery({
-        queryKey: reportsKeys.yield(selectedYear, cropFilter !== 'all' ? parseInt(cropFilter) : undefined),
+        queryKey: reportsKeys.yield({
+            year: selectedYear,
+            cropId: cropFilter !== 'all' ? parseInt(cropFilter, 10) : undefined,
+        }),
         queryFn: () => adminReportsApi.getYieldReport({
             year: selectedYear,
-            cropId: cropFilter !== 'all' ? parseInt(cropFilter) : undefined,
+            cropId: cropFilter !== 'all' ? parseInt(cropFilter, 10) : undefined,
         }),
         enabled: enableDeferred,
         staleTime: 1000 * 60 * 5,
     });
 
     const { data: costReport, isLoading: costLoading, error: costError } = useQuery({
-        queryKey: reportsKeys.cost(selectedYear),
-        queryFn: () => adminReportsApi.getCostReport(selectedYear),
+        queryKey: reportsKeys.cost({ year: selectedYear }),
+        queryFn: () => adminReportsApi.getCostReport({ year: selectedYear }),
         enabled: enableDeferred,
         staleTime: 1000 * 60 * 5,
     });
 
     const { data: revenueReport, isLoading: revenueLoading, error: revenueError } = useQuery({
-        queryKey: reportsKeys.revenue(selectedYear),
-        queryFn: () => adminReportsApi.getRevenueReport(selectedYear),
+        queryKey: reportsKeys.revenue({ year: selectedYear }),
+        queryFn: () => adminReportsApi.getRevenueReport({ year: selectedYear }),
         enabled: enableDeferred,
         staleTime: 1000 * 60 * 5,
     });

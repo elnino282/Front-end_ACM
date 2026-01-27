@@ -1,9 +1,9 @@
 import {
     Home, MapPin, Calendar, CheckSquare, DollarSign, Package,
     ShoppingCart, BarChart3, Settings, Sprout, FileText,
-    Shield, Warehouse, Users
+    Shield, Warehouse, Users, AlertTriangle, Bell
 } from 'lucide-react';
-import type { PortalType, PortalConfig, Notification } from '../model/types';
+import type { PortalType, PortalConfig } from '../model/types';
 
 /**
  * Portal Configurations
@@ -17,6 +17,9 @@ export const portalConfig: Record<PortalType, PortalConfig> = {
         emoji: '🔐',
         navigation: [
             { id: 'dashboard', label: 'Admin Dashboard', icon: Home },
+            { id: 'inventory', label: 'Inventory', icon: Package },
+            { id: 'incidents', label: 'Incidents', icon: AlertTriangle },
+            { id: 'alerts', label: 'Alerts Center', icon: Bell },
             { id: 'users-roles', label: 'Users & Roles', icon: Users },
             { id: 'farms-plots', label: 'Farms & Plots', icon: Warehouse },
             { id: 'crops-varieties', label: 'Crops & Varieties', icon: Sprout },
@@ -41,6 +44,7 @@ export const portalConfig: Record<PortalType, PortalConfig> = {
             { id: 'inventory', label: 'Inventory', icon: Warehouse },
             { id: 'documents', label: 'Documents', icon: FileText },
             { id: 'incidents', label: 'Incidents', icon: Shield },
+            { id: 'notifications', label: 'Notifications', icon: Bell },
             { id: 'ai-assistant', label: 'AI Assistant', icon: Sprout },
         ],
     },
@@ -67,44 +71,6 @@ export const languageNames = {
     en: 'English',
     vi: 'Vietnamese',
 };
-
-/**
- * Initial Mock Notifications
- */
-export const initialNotifications: Notification[] = [
-    {
-        id: 1,
-        type: 'task',
-        title: 'Task Due Soon',
-        message: 'Apply fertilizer to North Field is due today',
-        time: '10 min ago',
-        read: false,
-    },
-    {
-        id: 2,
-        type: 'weather',
-        title: 'Weather Alert',
-        message: 'Heavy rain expected tomorrow afternoon',
-        time: '1 hour ago',
-        read: false,
-    },
-    {
-        id: 3,
-        type: 'inventory',
-        title: 'Low Inventory',
-        message: 'Fertilizer stock is running low',
-        time: '3 hours ago',
-        read: true,
-    },
-    {
-        id: 4,
-        type: 'incident',
-        title: 'Pest Detection',
-        message: 'Unusual pest activity in East Field C',
-        time: 'Yesterday',
-        read: true,
-    },
-];
 
 /**
  * Search Debounce Delay (ms)

@@ -1,14 +1,13 @@
 /**
  * Sign Up Main Container Component
- * Assembles all sub-components with exact spacing
- * Matches Sign In layout structure
+ * Enterprise-grade card layout with subtle gradient background
  */
 
-import { SignUpProps } from './types';
-import { useSignUp } from './hooks/useSignUp';
-import { SignUpHeader } from './components/SignUpHeader';
-import { GoogleSignUpButton } from './components/GoogleSignUpButton';
-import { SignUpForm } from './components/SignUpForm';
+import { GoogleSignUpButton } from "./components/GoogleSignUpButton";
+import { SignUpForm } from "./components/SignUpForm";
+import { SignUpHeader } from "./components/SignUpHeader";
+import { useSignUp } from "./hooks/useSignUp";
+import type { SignUpProps } from "./types";
 
 export function SignUp({ onSignUp }: SignUpProps) {
   const {
@@ -22,12 +21,13 @@ export function SignUp({ onSignUp }: SignUpProps) {
   } = useSignUp({ onSignUp });
 
   return (
-    <div className="bg-white relative min-h-screen flex items-center justify-center py-[40px] px-[20px]">
-      <div className="w-[410px] relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 flex items-center justify-center py-8 px-4">
+      {/* Centered Card Container */}
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8">
         <SignUpHeader />
-        
+
         <GoogleSignUpButton onClick={handleGoogleSignUp} />
-        
+
         <SignUpForm
           form={form}
           showPassword={showPassword}

@@ -6,16 +6,6 @@ import type {
     CategoryComparisonData,
 } from "./types";
 
-// Note: INITIAL_EXPENSES, AI_TIPS, UPCOMING_PAYABLES, CATEGORY_DATA, 
-// MONTHLY_TREND, CATEGORY_COMPARISON removed - now using entity API hooks
-
-// Budget Configuration
-export const BUDGET_CONFIG = {
-    totalBudget: 50000,
-    warningThreshold: 75,
-    dangerThreshold: 90,
-};
-
 // Category Colors
 export const CATEGORY_COLORS: Record<string, string> = {
     Fertilizer: "var(--primary)",
@@ -52,10 +42,9 @@ export const CATEGORY_OPTIONS = [
 
 export const STATUS_OPTIONS = [
     { value: "all", label: "All Status" },
-    { value: "paid", label: "Paid" },
-    { value: "unpaid", label: "Unpaid" },
-    { value: "pending", label: "Pending" },
-    { value: "recorded", label: "Recorded" },
+    { value: "PAID", label: "Paid" },
+    { value: "PENDING", label: "Pending" },
+    { value: "UNPAID", label: "Unpaid" },
 ];
 
 

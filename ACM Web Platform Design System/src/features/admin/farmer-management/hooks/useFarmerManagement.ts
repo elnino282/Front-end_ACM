@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { PLACEHOLDER_CSV_PREVIEW, PLACEHOLDER_FARMERS, PLACEHOLDER_VALIDATION_ERRORS } from '../constants';
 import {
+    CSVPreviewRow,
     Farmer,
     FarmerFormData,
     FarmerRole,
     FarmerStatus,
-    CSVPreviewRow,
     ValidationError,
 } from '../types';
-import { INITIAL_FARMERS, MOCK_CSV_PREVIEW, MOCK_VALIDATION_ERRORS } from '../constants';
 
 export function useFarmerManagement() {
     // State Management
-    const [farmers, setFarmers] = useState<Farmer[]>(INITIAL_FARMERS);
+    const [farmers, setFarmers] = useState<Farmer[]>(PLACEHOLDER_FARMERS);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFarmers, setSelectedFarmers] = useState<string[]>([]);
     const [filterOpen, setFilterOpen] = useState(false);
@@ -178,9 +178,9 @@ export function useFarmerManagement() {
         const file = e.target.files?.[0];
         if (file) {
             setCsvFile(file);
-            // Mock preview data
-            setCsvPreview(MOCK_CSV_PREVIEW);
-            setValidationErrors(MOCK_VALIDATION_ERRORS);
+            // TODO: Replace with real CSV parsing logic
+            setCsvPreview(PLACEHOLDER_CSV_PREVIEW);
+            setValidationErrors(PLACEHOLDER_VALIDATION_ERRORS);
             setImportStep(2);
         }
     };

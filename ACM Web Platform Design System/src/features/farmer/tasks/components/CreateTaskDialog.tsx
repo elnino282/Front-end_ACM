@@ -1,7 +1,14 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -9,20 +16,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useEffect, useState } from 'react';
+} from "@/shared/ui";
+import { useEffect, useState } from "react";
 
 interface CreateTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateTask: (data: { title: string; plannedDate: string; dueDate: string; description?: string }) => void;
+  onCreateTask: (data: {
+    title: string;
+    plannedDate: string;
+    dueDate: string;
+    description?: string;
+  }) => void;
   uniquePlots: string[];
   uniqueAssignees: string[];
 }
@@ -34,15 +39,15 @@ export function CreateTaskDialog({
   uniquePlots,
   uniqueAssignees,
 }: CreateTaskDialogProps) {
-  const [title, setTitle] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [notes, setNotes] = useState('');
+  const [title, setTitle] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     if (!open) {
-      setTitle('');
-      setDueDate('');
-      setNotes('');
+      setTitle("");
+      setDueDate("");
+      setNotes("");
     }
   }, [open]);
 
@@ -129,16 +134,22 @@ export function CreateTaskDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="acm-rounded-sm">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="acm-rounded-sm"
+          >
             Cancel
           </Button>
           <Button
-            onClick={() => onCreateTask({
-              title: title.trim(),
-              plannedDate: dueDate,
-              dueDate,
-              description: notes.trim() || undefined,
-            })}
+            onClick={() =>
+              onCreateTask({
+                title: title.trim(),
+                plannedDate: dueDate,
+                dueDate,
+                description: notes.trim() || undefined,
+              })
+            }
             className="bg-primary hover:bg-primary/90 text-primary-foreground acm-rounded-sm"
           >
             Create Task
@@ -148,6 +159,3 @@ export function CreateTaskDialog({
     </Dialog>
   );
 }
-
-
-

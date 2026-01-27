@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { usePreferences } from '@/shared/contexts';
+import { convertWeight, getWeightUnitLabel } from '@/shared/lib';
 import type { YieldReport } from '@/services/api.admin';
 
 interface YieldReportCardProps {
@@ -11,6 +13,14 @@ interface YieldReportCardProps {
 }
 
 export const YieldReportCard: React.FC<YieldReportCardProps> = ({ data, isLoading }) => {
+    const { preferences } = usePreferences();
+    const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+    const formatNumber = (value: number) => new Intl.NumberFormat(preferences.locale).format(value);
+    const formatWeightValue = (valueKg: number | null | undefined) => {
+        if (valueKg == null) return '-';
+        return formatNumber(convertWeight(Number(valueKg), preferences.weightUnit));
+    };
+
     const getVarianceIcon = (variance: number | null) => {
         if (variance === null) return <Minus className="w-4 h-4 text-gray-400" />;
         if (variance > 5) return <TrendingUp className="w-4 h-4 text-emerald-500" />;
@@ -73,8 +83,8 @@ export const YieldReportCard: React.FC<YieldReportCardProps> = ({ data, isLoadin
                             <TableHead>Season</TableHead>
                             <TableHead>Crop</TableHead>
                             <TableHead>Plot</TableHead>
-                            <TableHead className="text-right">Expected (kg)</TableHead>
-                            <TableHead className="text-right">Actual (kg)</TableHead>
+                            <TableHead className="text-right">Expected ({unitLabel})</TableHead>
+                            <TableHead className="text-right">Actual ({unitLabel})</TableHead>
                             <TableHead className="text-right">Variance</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -90,10 +100,10 @@ export const YieldReportCard: React.FC<YieldReportCardProps> = ({ data, isLoadin
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-right font-mono">
-                                    {item.expectedYieldKg != null ? Number(item.expectedYieldKg).toLocaleString() : '-'}
+                                    {formatWeightValue(item.expectedYieldKg)}
                                 </TableCell>
                                 <TableCell className="text-right font-mono">
-                                    {item.actualYieldKg != null ? Number(item.actualYieldKg).toLocaleString() : '-'}
+                                    {formatWeightValue(item.actualYieldKg)}
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <div className="flex items-center justify-end gap-2">

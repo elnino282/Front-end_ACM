@@ -12,8 +12,8 @@
 .supplies-header {
     margin-bottom: 16px;
     padding: 16px 24px;
-    background: white;
-    border: 1px solid #e0e0e0;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 12px;
 }
 
@@ -41,12 +41,12 @@
     margin: 0;
     font-size: var(--text-page-title);
     font-weight: var(--font-weight-bold);
-    color: #333;
+    color: var(--foreground);
 }
 
 .supplies-header .subtitle {
     margin: 4px 0 0;
-    color: #777;
+    color: var(--muted-foreground);
     font-size: var(--text-body);
 }
 
@@ -79,14 +79,14 @@
     display: flex;
     gap: 4px;
     margin-bottom: 16px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid var(--border);
 }
 
 .supplies-tabs .tab {
     padding: 12px 24px;
     background: transparent;
     border: none;
-    color: #666;
+    color: var(--muted-foreground);
     font-size: var(--text-body);
     font-weight: var(--font-weight-medium);
     cursor: pointer;
@@ -114,8 +114,8 @@
 
 /* Filters */
 .supplies-toolbar {
-    background: white;
-    border: 1px solid #e0e0e0;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px 24px;
     margin-bottom: 16px;
@@ -133,9 +133,11 @@
 .search-input {
     width: 320px;
     padding: 10px 16px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: var(--text-body);
+    background: var(--input-background);
+    color: var(--foreground);
 }
 
 .search-input:focus {
@@ -146,10 +148,12 @@
 
 .filter-select {
     padding: 10px 16px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: var(--text-body);
     width: 180px;
+    background: var(--input-background);
+    color: var(--foreground);
 }
 
 .filter-checkbox {
@@ -158,7 +162,7 @@
     gap: 8px;
     cursor: pointer;
     font-size: var(--text-body);
-    color: #555;
+    color: var(--muted-foreground);
 }
 
 .filter-checkbox input {
@@ -169,10 +173,11 @@
 
 /* Content */
 .supplies-content {
-    background: white;
+    background: var(--card);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     overflow: hidden;
+    border: 1px solid var(--border);
 }
 
 /* Tables */
@@ -188,32 +193,32 @@
 .supplies-table th {
     text-align: left;
     padding: 14px 16px;
-    background: #f8f9fa;
+    background: var(--muted);
     font-weight: var(--font-weight-semibold);
     font-size: var(--text-body-sm);
-    color: #555;
-    border-bottom: 1px solid #e0e0e0;
+    color: var(--muted-foreground);
+    border-bottom: 1px solid var(--border);
 }
 
 .supplies-table td {
     padding: 14px 16px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border);
     font-size: var(--text-body);
 }
 
 .supplies-table tr:hover {
-    background: #fafafa;
+    background: var(--muted);
 }
 
 .supplies-table .name-cell {
     font-weight: var(--font-weight-medium);
-    color: #333;
+    color: var(--foreground);
 }
 
 .supplies-table .batch-cell {
     font-family: var(--font-family-mono);
     font-size: var(--text-body);
-    color: #666;
+    color: var(--muted-foreground);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
 }
@@ -277,7 +282,7 @@
 .empty-state {
     padding: 48px;
     text-align: center;
-    color: #888;
+    color: var(--muted-foreground);
     font-size: var(--text-body);
 }
 
@@ -288,21 +293,22 @@
     align-items: center;
     gap: 16px;
     padding: 16px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--border);
 }
 
 .pagination button {
     padding: 8px 16px;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
+    background: var(--muted);
+    border: 1px solid var(--border);
     border-radius: 6px;
     cursor: pointer;
     font-size: var(--text-body);
+    color: var(--foreground);
     transition: all 0.2s ease;
 }
 
 .pagination button:hover:not(:disabled) {
-    background: #e8e8e8;
+    background: var(--accent);
 }
 
 .pagination button:disabled {
@@ -311,7 +317,7 @@
 }
 
 .pagination span {
-    color: #666;
+    color: var(--muted-foreground);
     font-size: var(--text-body);
 }
 
@@ -334,7 +340,7 @@
 }
 
 .modal-content {
-    background: white;
+    background: var(--card);
     border-radius: 16px;
     width: 100%;
     max-width: 560px;
@@ -350,7 +356,7 @@
 .stock-in-modal h2 {
     margin: 0 0 24px;
     font-size: var(--text-section-title);
-    color: #333;
+    color: var(--foreground);
 }
 
 /* Stepper */
@@ -373,8 +379,8 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #e0e0e0;
-    color: #888;
+    background: var(--muted);
+    color: var(--muted-foreground);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -395,7 +401,7 @@
 
 .step-label {
     font-size: var(--text-body-xs);
-    color: #888;
+    color: var(--muted-foreground);
     white-space: nowrap;
 }
 
@@ -407,7 +413,7 @@
 .step-line {
     flex: 1;
     height: 2px;
-    background: #e0e0e0;
+    background: var(--border);
     margin: 0 12px;
     margin-bottom: 24px;
 }
@@ -426,7 +432,7 @@
     margin-bottom: 6px;
     font-weight: var(--font-weight-medium);
     font-size: var(--text-body-sm);
-    color: #444;
+    color: var(--foreground);
 }
 
 .form-group input,
@@ -434,10 +440,12 @@
 .form-group textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: var(--text-body);
     transition: all 0.2s ease;
+    background: var(--input-background);
+    color: var(--foreground);
 }
 
 .form-group input:focus,
@@ -517,7 +525,7 @@
     align-items: center;
     gap: 12px;
     padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--border);
 }
 
 .action-group {
@@ -528,29 +536,29 @@
 .btn-cancel {
     padding: 10px 20px;
     background: transparent;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
-    color: #666;
+    color: var(--muted-foreground);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .btn-cancel:hover {
-    background: #f5f5f5;
+    background: var(--muted);
 }
 
 .btn-secondary {
     padding: 10px 20px;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
+    background: var(--muted);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    color: #333;
+    color: var(--foreground);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
-    background: #e8e8e8;
+    background: var(--accent);
 }
 
 .modal-actions .btn-primary:disabled {

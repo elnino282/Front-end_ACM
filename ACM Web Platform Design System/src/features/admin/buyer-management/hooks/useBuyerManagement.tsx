@@ -1,24 +1,28 @@
+import {
+    AlertCircle,
+    Edit,
+    FileCheck, Lock,
+    Plus,
+    Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import {
-    Plus, Edit, Trash2, FileCheck, Lock, AlertCircle,
-} from 'lucide-react';
-import type {
-    Buyer,
-    BuyerRole,
-    KYCStatus,
-    AccountStatus,
-    BuyerFormData,
-    BuyerStats,
-    AuditLog,
-} from '../types';
-import {
-    INITIAL_BUYERS,
-    ROLE_BADGE_COLORS,
-    KYC_BADGE_COLORS,
-    STATUS_BADGE_COLORS,
     DEFAULT_ITEMS_PER_PAGE,
+    KYC_BADGE_COLORS,
+    PLACEHOLDER_BUYERS,
+    ROLE_BADGE_COLORS,
+    STATUS_BADGE_COLORS,
 } from '../constants';
+import type {
+    AccountStatus,
+    AuditLog,
+    Buyer,
+    BuyerFormData,
+    BuyerRole,
+    BuyerStats,
+    KYCStatus,
+} from '../types';
 
 export function useBuyerManagement() {
     // State Management
@@ -61,7 +65,8 @@ export function useBuyerManagement() {
     });
 
     // Buyer data
-    const [buyers, setBuyers] = useState<Buyer[]>(INITIAL_BUYERS);
+    // TODO: Replace with real API data
+    const [buyers, setBuyers] = useState<Buyer[]>(PLACEHOLDER_BUYERS);
 
     // Filter and sort buyers
     const filteredBuyers = buyers.filter((buyer) => {

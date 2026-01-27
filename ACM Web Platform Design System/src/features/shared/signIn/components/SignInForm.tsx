@@ -2,8 +2,8 @@
  * SignInForm - Main sign-in form with email, password, and actions
  */
 
+import { useI18n } from "@/hooks/useI18n";
 import { Link } from "react-router-dom";
-import { FORM_CONFIG } from "../constants";
 
 // SVG path data for icons
 const EYE_ICON_PATH = "M10 4.16663C5.83334 4.16663 2.27501 6.73329 0.833344 10.4166C2.27501 14.1 5.83334 16.6666 10 16.6666C14.1667 16.6666 17.725 14.1 19.1667 10.4166C17.725 6.73329 14.1667 4.16663 10 4.16663ZM10 14.5833C7.70001 14.5833 5.83334 12.7166 5.83334 10.4166C5.83334 8.11663 7.70001 6.24996 10 6.24996C12.3 6.24996 14.1667 8.11663 14.1667 10.4166C14.1667 12.7166 12.3 14.5833 10 14.5833ZM10 7.91663C8.61668 7.91663 7.50001 9.03329 7.50001 10.4166C7.50001 11.8 8.61668 12.9166 10 12.9166C11.3833 12.9166 12.5 11.8 12.5 10.4166C12.5 9.03329 11.3833 7.91663 10 7.91663Z";
@@ -34,6 +34,8 @@ export function SignInForm({
     onToggleShowPassword,
     onSubmit,
 }: SignInFormProps) {
+    const { t } = useI18n();
+    
     return (
         <form onSubmit={onSubmit}>
             {/* Email Field */}
@@ -43,7 +45,7 @@ export function SignInForm({
                     className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
                     style={{ fontVariationSettings: "'opsz' 14" }}
                 >
-                    <span style={{ fontVariationSettings: "'opsz' 14" }}>Email</span>
+                    <span style={{ fontVariationSettings: "'opsz' 14" }}>{t('auth.signIn.email')}</span>
                     <span
                         className="text-[#4318ff]"
                         style={{ fontVariationSettings: "'opsz' 14" }}
@@ -58,7 +60,7 @@ export function SignInForm({
                         autoComplete="email"
                         value={email}
                         onChange={(e) => onEmailChange(e.target.value)}
-                        placeholder={FORM_CONFIG.emailPlaceholder}
+                        placeholder={t('auth.signIn.emailPlaceholder')}
                         className="w-full h-full px-[24px] rounded-[16px] border border-[#e0e5f2] border-solid font-['DM_Sans:Regular',sans-serif] font-normal text-[14px] text-[#2b3674] placeholder:text-[#a3aed0] tracking-[-0.28px] focus:outline-none focus:border-[#3ba55d] disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{ fontVariationSettings: "'opsz' 14" }}
                         disabled={isLoading}
@@ -74,7 +76,7 @@ export function SignInForm({
                     className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
                     style={{ fontVariationSettings: "'opsz' 14" }}
                 >
-                    <span style={{ fontVariationSettings: "'opsz' 14" }}>Password</span>
+                    <span style={{ fontVariationSettings: "'opsz' 14" }}>{t('auth.signIn.password')}</span>
                     <span
                         className="text-[#4318ff]"
                         style={{ fontVariationSettings: "'opsz' 14" }}
@@ -89,7 +91,7 @@ export function SignInForm({
                         autoComplete="current-password"
                         value={password}
                         onChange={(e) => onPasswordChange(e.target.value)}
-                        placeholder={FORM_CONFIG.passwordPlaceholder}
+                        placeholder={t('auth.signIn.passwordPlaceholder')}
                         className="w-full h-full px-[24px] rounded-[16px] border border-[#e0e5f2] border-solid font-['DM_Sans:Regular',sans-serif] font-normal text-[14px] text-[#2b3674] placeholder:text-[#a3aed0] tracking-[-0.28px] focus:outline-none focus:border-[#3ba55d] disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{ fontVariationSettings: "'opsz' 14" }}
                         disabled={isLoading}
@@ -155,7 +157,7 @@ export function SignInForm({
                         className="font-['DM_Sans:Regular',sans-serif] font-normal leading-[20px] text-[#2b3674] text-[14px] tracking-[-0.28px]"
                         style={{ fontVariationSettings: "'opsz' 14" }}
                     >
-                        Keep me logged in
+                        {t('auth.signIn.keepLoggedIn')}
                     </span>
                 </label>
                 <Link
@@ -163,7 +165,7 @@ export function SignInForm({
                     className="font-['DM_Sans:Medium',sans-serif] font-medium leading-[20px] text-[#3ba55d] text-[14px] tracking-[-0.28px] hover:underline"
                     style={{ fontVariationSettings: "'opsz' 14" }}
                 >
-                    Forget password?
+                    {t('auth.signIn.forgotPassword')}
                 </Link>
             </div>
 
@@ -177,7 +179,7 @@ export function SignInForm({
                     className="font-['DM_Sans:Bold',sans-serif] font-bold leading-none text-[14px] text-center text-white tracking-[-0.28px]"
                     style={{ fontVariationSettings: "'opsz' 14" }}
                 >
-                    {isLoading ? "Signing In..." : "Sign In"}
+                    {isLoading ? t('auth.signIn.signingIn') : t('auth.signIn.signInButton')}
                 </p>
             </button>
 
@@ -186,13 +188,13 @@ export function SignInForm({
                 className="font-['DM_Sans:Regular',sans-serif] font-normal leading-[26px] text-[#2b3674] text-[14px] text-center tracking-[-0.28px] mt-[28px]"
                 style={{ fontVariationSettings: "'opsz' 14" }}
             >
-                Not registered yet?{" "}
+                {t('auth.signIn.notRegistered')}{" "}
                 <Link
                     to="/sign-up"
                     className="font-['DM_Sans:Bold',sans-serif] font-bold text-[#3ba55d] cursor-pointer hover:underline"
                     style={{ fontVariationSettings: "'opsz' 14" }}
                 >
-                    Create an Account
+                    {t('auth.signIn.createAccount')}
                 </Link>
             </p>
         </form>

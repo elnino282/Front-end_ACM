@@ -1,3 +1,5 @@
+import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTaskWorkspace } from './hooks/useTaskWorkspace';
@@ -11,6 +13,7 @@ import { ReassignDialog } from './components/ReassignDialog';
 import { BulkActionToolbar } from './components/BulkActionToolbar';
 
 export function TaskWorkspace() {
+  const [searchParams] = useSearchParams();
   const {
     viewMode,
     setViewMode,
@@ -40,6 +43,21 @@ export function TaskWorkspace() {
     handleCreateTask,
   } = useTaskWorkspace();
 
+  const qParam = searchParams.get('q') ?? '';
+  const seasonIdParam = Number(searchParams.get('seasonId'));
+  const seasonFilter = Number.isFinite(seasonIdParam) ? seasonIdParam : null;
+
+  useEffect(() => {
+    if (qParam !== searchQuery) {
+      setSearchQuery(qParam);
+    }
+  }, [qParam, searchQuery, setSearchQuery]);
+
+  const scopedTasks = useMemo(() => {
+    if (!seasonFilter) return filteredTasks;
+    return filteredTasks.filter((task) => task.seasonId === seasonFilter);
+  }, [filteredTasks, seasonFilter]);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen bg-background pb-20">
@@ -60,11 +78,11 @@ export function TaskWorkspace() {
           />
 
           {viewMode === 'board' && (
-            <BoardView tasks={filteredTasks} onTaskMove={handleTaskMove} onDelete={handleDeleteTask} />
+            <BoardView tasks={scopedTasks} onTaskMove={handleTaskMove} onDelete={handleDeleteTask} />
           )}
           {viewMode === 'list' && (
             <ListView
-              tasks={filteredTasks}
+              tasks={scopedTasks}
               selectedTasks={selectedTasks}
               onSelectAll={handleSelectAll}
               onSelectTask={handleSelectTask}
@@ -73,7 +91,7 @@ export function TaskWorkspace() {
           )}
           {viewMode === 'calendar' && (
             <CalendarView
-              tasks={filteredTasks}
+              tasks={scopedTasks}
               mode={calendarMode}
               currentDate={currentDate}
               onModeChange={setCalendarMode}

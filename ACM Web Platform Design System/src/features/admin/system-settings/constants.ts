@@ -1,23 +1,31 @@
-import { Globe, Shield, Bell, Plug, Database, FileText, Lock } from 'lucide-react';
+import { Bell, Database, FileText, Globe, Lock, Plug, Shield } from 'lucide-react';
 import type {
-    Role,
-    Permission,
-    Device,
-    NotificationSetting,
-    BackupPoint,
     AuditLog,
-    SectionNavItem,
+    BackupPoint,
+    Device,
     Integration,
+    NotificationSetting,
+    Permission,
+    Role,
+    SectionNavItem,
 } from './types';
 
-export const INITIAL_ROLES: Role[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from roles endpoint
+ */
+export const PLACEHOLDER_ROLES: Role[] = [
     { id: '1', name: 'Admin', description: 'Full system access', userCount: 5 },
     { id: '2', name: 'Farmer', description: 'Farm management access', userCount: 342 },
     { id: '3', name: 'Buyer', description: 'Marketplace access', userCount: 156 },
     { id: '4', name: 'Viewer', description: 'Read-only access', userCount: 23 },
 ];
 
-export const INITIAL_PERMISSIONS: Record<string, Permission> = {
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from permissions endpoint
+ */
+export const PLACEHOLDER_PERMISSIONS: Record<string, Permission> = {
     plots: { module: 'Plot Management', view: true, create: true, edit: true, delete: true },
     seasons: { module: 'Season Management', view: true, create: true, edit: true, delete: false },
     tasks: { module: 'Task Workspace', view: true, create: true, edit: true, delete: true },
@@ -28,7 +36,11 @@ export const INITIAL_PERMISSIONS: Record<string, Permission> = {
     reports: { module: 'Reports & Analytics', view: true, create: false, edit: false, delete: false },
 };
 
-export const INITIAL_DEVICES: Device[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from devices/sessions endpoint
+ */
+export const PLACEHOLDER_DEVICES: Device[] = [
     {
         id: '1',
         type: 'desktop',
@@ -55,7 +67,11 @@ export const INITIAL_DEVICES: Device[] = [
     },
 ];
 
-export const INITIAL_NOTIFICATION_SETTINGS: NotificationSetting[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from notification settings endpoint
+ */
+export const PLACEHOLDER_NOTIFICATION_SETTINGS: NotificationSetting[] = [
     { id: '1', topic: 'System Updates', email: true, inApp: true, sms: false },
     { id: '2', topic: 'Security Alerts', email: true, inApp: true, sms: true },
     { id: '3', topic: 'New User Registration', email: true, inApp: true, sms: false },
@@ -65,7 +81,11 @@ export const INITIAL_NOTIFICATION_SETTINGS: NotificationSetting[] = [
     { id: '7', topic: 'Critical Errors', email: true, inApp: true, sms: true },
 ];
 
-export const INITIAL_INTEGRATIONS: Record<string, Integration> = {
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from integrations endpoint
+ */
+export const PLACEHOLDER_INTEGRATIONS: Record<string, Integration> = {
     weather: {
         enabled: true,
         apiKey: 'wapi_1234567890abcdef',
@@ -93,7 +113,11 @@ export const INITIAL_INTEGRATIONS: Record<string, Integration> = {
     },
 };
 
-export const INITIAL_BACKUP_POINTS: BackupPoint[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from backup service
+ */
+export const PLACEHOLDER_BACKUP_POINTS: BackupPoint[] = [
     { id: '1', date: '2025-11-11 02:00', size: '4.2 GB', type: 'auto', status: 'success' },
     { id: '2', date: '2025-11-10 02:00', size: '4.1 GB', type: 'auto', status: 'success' },
     { id: '3', date: '2025-11-09 15:30', size: '3.9 GB', type: 'manual', status: 'success' },
@@ -101,7 +125,11 @@ export const INITIAL_BACKUP_POINTS: BackupPoint[] = [
     { id: '5', date: '2025-11-08 02:00', size: '3.8 GB', type: 'auto', status: 'failed' },
 ];
 
-export const INITIAL_AUDIT_LOGS: AuditLog[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from audit logs endpoint
+ */
+export const PLACEHOLDER_AUDIT_LOGS: AuditLog[] = [
     {
         id: '1',
         time: '2025-11-11 15:30',

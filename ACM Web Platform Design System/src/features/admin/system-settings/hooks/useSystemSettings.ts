@@ -1,27 +1,27 @@
+import { Laptop, Monitor, Smartphone } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Monitor, Smartphone, Laptop } from 'lucide-react';
-import type {
-    SettingsSection,
-    Role,
-    Permission,
-    Device,
-    NotificationSetting,
-    SystemPreferences,
-    SecuritySettings,
-    Integration,
-    BackupPoint,
-    AuditLog,
-} from '../types';
 import {
-    INITIAL_ROLES,
-    INITIAL_PERMISSIONS,
-    INITIAL_DEVICES,
-    INITIAL_NOTIFICATION_SETTINGS,
-    INITIAL_INTEGRATIONS,
-    INITIAL_BACKUP_POINTS,
-    INITIAL_AUDIT_LOGS,
+    PLACEHOLDER_AUDIT_LOGS,
+    PLACEHOLDER_BACKUP_POINTS,
+    PLACEHOLDER_DEVICES,
+    PLACEHOLDER_INTEGRATIONS,
+    PLACEHOLDER_NOTIFICATION_SETTINGS,
+    PLACEHOLDER_PERMISSIONS,
+    PLACEHOLDER_ROLES,
 } from '../constants';
+import type {
+    AuditLog,
+    BackupPoint,
+    Device,
+    Integration,
+    NotificationSetting,
+    Permission,
+    Role,
+    SecuritySettings,
+    SettingsSection,
+    SystemPreferences,
+} from '../types';
 
 export function useSystemSettings() {
     const [activeSection, setActiveSection] = useState<SettingsSection>('system');
@@ -47,15 +47,16 @@ export function useSystemSettings() {
     });
 
     // Data States
-    const [roles] = useState<Role[]>(INITIAL_ROLES);
-    const [permissions, setPermissions] = useState<Record<string, Permission>>(INITIAL_PERMISSIONS);
-    const [devices] = useState<Device[]>(INITIAL_DEVICES);
+    // TODO: Replace all placeholder data with real API calls
+    const [roles] = useState<Role[]>(PLACEHOLDER_ROLES);
+    const [permissions, setPermissions] = useState<Record<string, Permission>>(PLACEHOLDER_PERMISSIONS);
+    const [devices] = useState<Device[]>(PLACEHOLDER_DEVICES);
     const [notificationSettings, setNotificationSettings] = useState<NotificationSetting[]>(
-        INITIAL_NOTIFICATION_SETTINGS
+        PLACEHOLDER_NOTIFICATION_SETTINGS
     );
-    const [integrations, setIntegrations] = useState<Record<string, Integration>>(INITIAL_INTEGRATIONS);
-    const [backupPoints] = useState<BackupPoint[]>(INITIAL_BACKUP_POINTS);
-    const [auditLogs] = useState<AuditLog[]>(INITIAL_AUDIT_LOGS);
+    const [integrations, setIntegrations] = useState<Record<string, Integration>>(PLACEHOLDER_INTEGRATIONS);
+    const [backupPoints] = useState<BackupPoint[]>(PLACEHOLDER_BACKUP_POINTS);
+    const [auditLogs] = useState<AuditLog[]>(PLACEHOLDER_AUDIT_LOGS);
 
     // Handlers
     const handleSaveAll = (): void => {

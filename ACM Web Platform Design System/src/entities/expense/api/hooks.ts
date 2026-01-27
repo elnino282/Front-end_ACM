@@ -13,6 +13,11 @@ import type {
     Expense,
     ExpenseCreateRequest,
     ExpenseUpdateRequest,
+    BudgetTracker,
+    ExpenseCategoryAnalytics,
+    ExpenseTaskAnalytics,
+    ExpenseVendorAnalytics,
+    ExpenseTimeSeries,
 } from '../model/types';
 
 // Context types for optimistic updates
@@ -47,7 +52,7 @@ export const useExpensesBySeason = (
  * Uses the new /api/v1/expenses endpoint
  */
 export const useAllFarmerExpenses = (
-    params?: ExpenseListParams & { seasonId?: number; q?: string },
+    params?: ExpenseListParams,
     options?: Omit<UseQueryOptions<PageResponse<Expense>, Error>, 'queryKey' | 'queryFn'>
 ) => useQuery({
     queryKey: expenseKeys.listAll(params),
@@ -66,6 +71,57 @@ export const useExpenseById = (
     queryKey: expenseKeys.detail(id),
     queryFn: () => expenseApi.getById(id),
     enabled: id > 0,
+    staleTime: 5 * 60 * 1000,
+    ...options,
+});
+
+export const useBudgetTracker = (
+    seasonId: number,
+    options?: Omit<UseQueryOptions<BudgetTracker, Error>, 'queryKey' | 'queryFn'>
+) => useQuery({
+    queryKey: expenseKeys.tracker(seasonId),
+    queryFn: () => expenseApi.getBudgetTracker(seasonId),
+    enabled: seasonId > 0,
+    staleTime: 5 * 60 * 1000,
+    ...options,
+});
+
+export const useExpenseAnalyticsByCategory = (
+    params?: ExpenseListParams,
+    options?: Omit<UseQueryOptions<ExpenseCategoryAnalytics[], Error>, 'queryKey' | 'queryFn'>
+) => useQuery({
+    queryKey: expenseKeys.analyticsByCategory(params),
+    queryFn: () => expenseApi.analyticsByCategory(params),
+    staleTime: 5 * 60 * 1000,
+    ...options,
+});
+
+export const useExpenseAnalyticsByTask = (
+    params?: ExpenseListParams,
+    options?: Omit<UseQueryOptions<ExpenseTaskAnalytics[], Error>, 'queryKey' | 'queryFn'>
+) => useQuery({
+    queryKey: expenseKeys.analyticsByTask(params),
+    queryFn: () => expenseApi.analyticsByTask(params),
+    staleTime: 5 * 60 * 1000,
+    ...options,
+});
+
+export const useExpenseAnalyticsByVendor = (
+    params?: ExpenseListParams,
+    options?: Omit<UseQueryOptions<ExpenseVendorAnalytics[], Error>, 'queryKey' | 'queryFn'>
+) => useQuery({
+    queryKey: expenseKeys.analyticsByVendor(params),
+    queryFn: () => expenseApi.analyticsByVendor(params),
+    staleTime: 5 * 60 * 1000,
+    ...options,
+});
+
+export const useExpenseAnalyticsTimeSeries = (
+    params?: ExpenseListParams & { granularity?: 'DAY' | 'WEEK' | 'MONTH' },
+    options?: Omit<UseQueryOptions<ExpenseTimeSeries[], Error>, 'queryKey' | 'queryFn'>
+) => useQuery({
+    queryKey: expenseKeys.analyticsTimeSeries(params),
+    queryFn: () => expenseApi.analyticsTimeSeries(params),
     staleTime: 5 * 60 * 1000,
     ...options,
 });
@@ -106,6 +162,8 @@ export const useCreateExpense = (
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: expenseKeys.listBySeason(seasonId) });
+            queryClient.invalidateQueries({ queryKey: expenseKeys.tracker(seasonId) });
+            queryClient.invalidateQueries({ queryKey: expenseKeys.analytics() });
         },
         ...options,
     });
@@ -157,6 +215,8 @@ export const useUpdateExpense = (
         onSettled: (_, __, { id }) => {
             queryClient.invalidateQueries({ queryKey: expenseKeys.detail(id) });
             queryClient.invalidateQueries({ queryKey: expenseKeys.listBySeason(seasonId) });
+            queryClient.invalidateQueries({ queryKey: expenseKeys.tracker(seasonId) });
+            queryClient.invalidateQueries({ queryKey: expenseKeys.analytics() });
         },
         ...options,
     });
@@ -194,6 +254,8 @@ export const useDeleteExpense = (
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: expenseKeys.listBySeason(seasonId) });
+            queryClient.invalidateQueries({ queryKey: expenseKeys.tracker(seasonId) });
+            queryClient.invalidateQueries({ queryKey: expenseKeys.analytics() });
         },
         ...options,
     });

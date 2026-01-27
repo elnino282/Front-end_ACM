@@ -16,8 +16,8 @@
 .inventory-header {
   margin-bottom: 1rem;
   padding: 1rem 1.5rem;
-  background: white;
-  border: 1px solid var(--color-gray-200, #e5e7eb);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 12px;
 }
 
@@ -38,13 +38,13 @@
 .inventory-header h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-gray-900, #111827);
+  color: var(--foreground);
   margin: 0;
 }
 
 .inventory-header .subtitle {
   font-size: 0.875rem;
-  color: var(--color-gray-500, #6b7280);
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -77,7 +77,7 @@
 .control-group label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-gray-600, #4b5563);
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
@@ -87,10 +87,11 @@
 .control-group input[type="date"],
 .control-group input[type="number"] {
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-gray-300, #d1d5db);
+  border: 1px solid var(--border);
   border-radius: 0.375rem;
   font-size: 0.875rem;
-  background: white;
+  background: var(--card);
+  color: var(--foreground);
   width: 220px;
 }
 
@@ -107,7 +108,7 @@
 
 .inventory-tabs {
   display: flex;
-  border-bottom: 2px solid var(--color-gray-200, #e5e7eb);
+  border-bottom: 2px solid var(--border);
   margin-bottom: 1.5rem;
 }
 
@@ -115,7 +116,7 @@
   padding: 0.75rem 1.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-gray-500, #6b7280);
+  color: var(--muted-foreground);
   background: none;
   border: none;
   cursor: pointer;
@@ -124,7 +125,7 @@
 }
 
 .inventory-tabs .tab:hover {
-  color: var(--color-gray-700, #374151);
+  color: var(--foreground);
 }
 
 .inventory-tabs .tab.active {
@@ -146,8 +147,8 @@
    ═══════════════════════════════════════════════════════════════ */
 
 .inventory-content {
-  background: white;
-  border: 1px solid var(--color-gray-200, #e5e7eb);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
   overflow: hidden;
 }
@@ -165,21 +166,21 @@
 .inventory-table th {
   text-align: left;
   padding: 0.75rem 1rem;
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--muted);
   font-weight: 600;
-  color: var(--color-gray-700, #374151);
-  border-bottom: 1px solid var(--color-gray-200, #e5e7eb);
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 
 .inventory-table td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-gray-100, #f3f4f6);
-  color: var(--color-gray-700, #374151);
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
 }
 
 .inventory-table tr:hover {
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--muted);
 }
 
 .inventory-table .quantity {
@@ -307,24 +308,23 @@
   justify-content: center;
   gap: 1rem;
   padding: 1rem;
-  border-top: 1px solid var(--color-gray-200, #e5e7eb);
+  border-top: 1px solid var(--border);
 }
 
 .pagination button {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-gray-700, #374151);
-  background: white;
-  border: 1px solid var(--color-gray-300, #d1d5db);
+  color: var(--foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 0.375rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .pagination button:hover:not(:disabled) {
-  background: var(--color-gray-50, #f9fafb);
-  border-color: var(--color-gray-400, #9ca3af);
+  background: var(--muted);
 }
 
 .pagination button:disabled {
@@ -340,7 +340,7 @@
 .empty-state {
   padding: 3rem;
   text-align: center;
-  color: var(--color-gray-500, #6b7280);
+  color: var(--muted-foreground);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -361,7 +361,7 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--card);
   border-radius: 0.5rem;
   padding: 1.5rem;
   width: 100%;
@@ -376,20 +376,20 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
-  color: var(--color-gray-900, #111827);
+  color: var(--foreground);
 }
 
 .modal-subtitle {
   font-size: 0.875rem;
-  color: var(--color-gray-500, #6b7280);
+  color: var(--muted-foreground);
   margin: 0 0 0.5rem 0;
 }
 
 .on-hand-info {
   font-size: 0.875rem;
-  color: var(--color-gray-600, #4b5563);
+  color: var(--muted-foreground);
   padding: 0.75rem;
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--muted);
   border-radius: 0.375rem;
   margin-bottom: 1rem;
 }
@@ -402,7 +402,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-gray-700, #374151);
+  color: var(--foreground);
   margin-bottom: 0.375rem;
 }
 
@@ -410,9 +410,11 @@
 .form-group textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-gray-300, #d1d5db);
+  border: 1px solid var(--border);
   border-radius: 0.375rem;
   font-size: 0.875rem;
+  background: var(--input-background);
+  color: var(--foreground);
 }
 
 .form-group textarea {
@@ -423,7 +425,7 @@
 .form-group .preview {
   margin: 0.5rem 0 0 0;
   font-size: 0.875rem;
-  color: var(--color-gray-600, #4b5563);
+  color: var(--muted-foreground);
 }
 
 .form-group .preview .negative {
@@ -450,23 +452,23 @@
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-gray-700, #374151);
-  background: white;
-  border: 1px solid var(--color-gray-300, #d1d5db);
+  color: var(--foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 0.375rem;
   cursor: pointer;
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--muted);
 }
 
 .btn-submit {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: white;
-  background: var(--color-primary, #3b82f6);
+  color: var(--primary-foreground);
+  background: var(--primary);
   border: none;
   border-radius: 0.375rem;
   cursor: pointer;

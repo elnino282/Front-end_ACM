@@ -1,5 +1,7 @@
 export type {
-    Document,
-    DocumentPageResponse,
-    DocumentListParams,
-} from './schemas';
+  CropOption,
+  Document,
+  DocumentListParams,
+  DocumentMeta,
+  DocumentPageResponse,
+} from "./schemas";

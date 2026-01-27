@@ -1,9 +1,9 @@
-import { AppShell } from '@/features/shared/layout';
-import { AI_FloatButton } from '@/features/shared/aiButton/AI_FloatButton';
+import { AI_FloatButton } from "@/features/shared/aiButton/AI_FloatButton";
+import { AppShell } from "@/features/shared/layout";
 
-import type { AdminView } from './types';
-import { useAdminPortalShell } from './hooks/useAdminPortalShell';
-import { AdminPortalContent } from './components/AdminPortalContent';
+import { AdminPortalContent } from "./components/AdminPortalContent";
+import { useAdminPortalShell } from "./hooks/useAdminPortalShell";
+import type { AdminView } from "./types";
 
 export function AdminPortalWithShell() {
   const {
@@ -12,16 +12,16 @@ export function AdminPortalWithShell() {
     breadcrumbs,
     userName,
     userEmail,
-    setCurrentView,
+    handleViewChange,
     setAiChatOpen,
     handleLogout,
-  } = useAdminPortalShell('dashboard');
+  } = useAdminPortalShell("dashboard");
 
   return (
     <AppShell
       portalType="ADMIN"
       currentView={currentView}
-      onViewChange={(view) => setCurrentView(view as AdminView)}
+      onViewChange={(view) => handleViewChange(view as AdminView)}
       breadcrumbs={breadcrumbs}
       userName={userName}
       userEmail={userEmail}
@@ -32,7 +32,10 @@ export function AdminPortalWithShell() {
       <AdminPortalContent currentView={currentView} />
 
       {/* Global AI Assistant Float Button */}
-      <AI_FloatButton onClick={() => setAiChatOpen(true)} />
+      <AI_FloatButton
+        onClick={() => setAiChatOpen(true)}
+        isHidden={aiChatOpen}
+      />
     </AppShell>
   );
 }

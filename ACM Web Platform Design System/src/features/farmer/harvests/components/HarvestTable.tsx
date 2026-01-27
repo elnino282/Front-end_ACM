@@ -33,6 +33,8 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import type { HarvestBatch, HarvestGrade, HarvestStatus } from "../types";
+import { usePreferences } from "@/shared/contexts";
+import { formatWeight, getWeightUnitLabel } from "@/shared/lib";
 
 interface HarvestTableProps {
     batches: HarvestBatch[];
@@ -55,6 +57,9 @@ export function HarvestTable({
     getStatusBadge,
     getGradeBadge,
 }: HarvestTableProps) {
+    const { preferences } = usePreferences();
+    const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+
     return (
         <Card className="border-border rounded-2xl shadow-sm">
             <CardHeader>
@@ -96,7 +101,7 @@ export function HarvestTable({
                                 <TableHead className="text-foreground">Date</TableHead>
                                 <TableHead className="text-foreground">Batch ID</TableHead>
                                 <TableHead className="text-foreground text-right">
-                                    Quantity (kg)
+                                    Quantity ({unitLabel})
                                 </TableHead>
                                 <TableHead className="text-foreground">Grade</TableHead>
                                 <TableHead className="text-foreground text-right">
@@ -138,7 +143,7 @@ export function HarvestTable({
                                             {batch.batchId}
                                         </TableCell>
                                         <TableCell className="text-right numeric text-foreground">
-                                            {batch.quantity.toLocaleString()}
+                                            {formatWeight(batch.quantity, preferences.weightUnit, preferences.locale)}
                                         </TableCell>
                                         <TableCell>{getGradeBadge(batch.grade)}</TableCell>
                                         <TableCell className="text-right numeric text-foreground">

@@ -1,171 +1,177 @@
-import { Search, Filter, FileText } from "lucide-react";
-import {
-    Card,
-    CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useI18n } from "@/hooks/useI18n";
 import { PageHeader } from "@/shared/ui";
-import { useDocuments } from "./hooks/useDocuments";
-import { DocumentFilters } from "./components/DocumentFilters";
+import { FileText } from "lucide-react";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { DocumentFilterBar } from "./components/DocumentFilterBar";
 import { DocumentGrid } from "./components/DocumentGrid";
-import { EmptyState } from "./components/EmptyState";
 import { DocumentPreview } from "./components/DocumentPreview";
+import { EmptyState } from "./components/EmptyState";
+import { useDocumentFilters } from "./hooks/useDocumentFilters";
+import { useDocuments } from "./hooks/useDocuments";
 
 export function Documents() {
-    const {
-        searchQuery,
-        activeTab,
-        selectedDoc,
-        isPreviewOpen,
-        isFilterOpen,
-        hoveredDocId,
-        filters,
-        filteredDocuments,
-        activeFilterCount,
-        isLoading,
-        isEmpty,
-        setSearchQuery,
-        setActiveTab,
-        setIsPreviewOpen,
-        setIsFilterOpen,
-        setHoveredDocId,
-        setSelectedDoc,
-        handleToggleFavorite,
-        handleDownload,
-        handlePreview,
-        handleOpenDocument,
-        handleFilterChange,
-        clearAllFilters,
-        getDocumentIcon,
-        getRelatedDocuments,
-    } = useDocuments();
+  const { t } = useI18n();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // URL-based filter management
+  const {
+    filters,
+    setFilter,
+    clearFilters,
+    hasActiveFilters,
+    activeFilterCount,
+    apiParams,
+  } = useDocumentFilters();
 
-    return (
-        <div className="min-h-screen bg-background pb-20">
-            <div className="max-w-[1920px] mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-0">
-                    {/* Left Sidebar - Filters */}
-                    <DocumentFilters
-                        filters={filters}
-                        activeFilterCount={activeFilterCount}
-                        isFilterOpen={isFilterOpen}
-                        onFilterChange={handleFilterChange}
-                        onClearFilters={clearAllFilters}
-                    />
+  // Document data and handlers
+  const {
+    selectedDoc,
+    isPreviewOpen,
+    hoveredDocId,
+    filteredDocuments,
+    isLoading,
+    isEmpty,
+    setIsPreviewOpen,
+    setHoveredDocId,
+    setSelectedDoc,
+    handleToggleFavorite,
+    handleDownload,
+    handlePreview,
+    handleOpenDocument,
+    getDocumentIcon,
+    getRelatedDocuments,
+  } = useDocuments(apiParams);
 
-                    {/* Main Content */}
-                    <main className="p-6">
-                        <Card className="mb-6 border border-border rounded-xl shadow-sm">
-                            <CardContent className="px-6 py-4">
-                                <PageHeader
-                                    className="mb-0"
-                                    icon={<FileText className="w-8 h-8" />}
-                                    title="Documents"
-                                    subtitle="Access farming guides, tutorials, and resources"
-                                />
-                            </CardContent>
-                        </Card>
+  const documentIdParam = Number(searchParams.get("documentId"));
+  const parsedDocumentId = Number.isFinite(documentIdParam)
+    ? documentIdParam
+    : null;
 
-                        {/* Search & Filters */}
-                        <Card className="border-border rounded-2xl shadow-sm mb-6">
-                            <CardContent className="px-6 py-4">
-                                <div className="flex flex-wrap items-center justify-start gap-4">
-                                    <div className="relative w-[320px]">
-                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                        <Input
-                                            placeholder="Search documents..."
-                                            value={searchQuery}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                                            className="pl-10 rounded-xl border-border focus:border-primary"
-                                        />
-                                    </div>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="lg:hidden rounded-xl border-primary text-primary"
-                                        onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                    >
-                                        <Filter className="w-4 h-4" />
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        {/* Tabs and Content */}
-                        <Card className="border-border rounded-2xl shadow-sm">
-                            <CardContent className="px-6 py-4">
-                                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "all" | "favorites" | "recent")}>
-                                    <TabsList className="w-full md:w-auto grid grid-cols-3 mb-6 bg-muted rounded-xl p-1">
-                                        <TabsTrigger
-                                            value="all"
-                                            className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary"
-                                        >
-                                            All Documents
-                                        </TabsTrigger>
-                                        <TabsTrigger
-                                            value="favorites"
-                                            className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary"
-                                        >
-                                            ⭐ Favorites
-                                        </TabsTrigger>
-                                        <TabsTrigger
-                                            value="recent"
-                                            className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary"
-                                        >
-                                            🕐 Recent
-                                        </TabsTrigger>
-                                    </TabsList>
+  const handlePreviewOpenChange = (open: boolean) => {
+    // If preview was opened via deep-link (?documentId=...), clear it so closing stays closed.
+    if (!open && searchParams.get("documentId")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("documentId");
+      setSearchParams(next, { replace: true });
+    }
+    setIsPreviewOpen(open);
+  };
 
-                                    <TabsContent value={activeTab} className="mt-0">
-                                        {isLoading ? (
-                                            <div className="p-6 text-sm text-muted-foreground">
-                                                Loading documents...
-                                            </div>
-                                        ) : isEmpty || filteredDocuments.length === 0 ? (
-                                            <EmptyState
-                                                searchQuery={searchQuery}
-                                                activeFilterCount={activeFilterCount}
-                                                onClearAll={() => {
-                                                    setSearchQuery("");
-                                                    clearAllFilters();
-                                                }}
-                                            />
-                                        ) : (
-                                            <DocumentGrid
-                                                documents={filteredDocuments}
-                                                hoveredDocId={hoveredDocId}
-                                                onHoverChange={setHoveredDocId}
-                                                onPreview={handlePreview}
-                                                onToggleFavorite={handleToggleFavorite}
-                                                onDownload={handleDownload}
-                                                onOpen={handleOpenDocument}
-                                                getDocumentIcon={getDocumentIcon}
-                                            />
-                                        )}
-                                    </TabsContent>
-                                </Tabs>
-                            </CardContent>
-                        </Card>
-                    </main>
-                </div>
-            </div>
-
-            {/* Preview Drawer */}
-            <DocumentPreview
-                document={selectedDoc}
-                isOpen={isPreviewOpen}
-                onOpenChange={setIsPreviewOpen}
-                onDownload={handleDownload}
-                getDocumentIcon={getDocumentIcon}
-                getRelatedDocuments={getRelatedDocuments}
-                onSelectRelated={setSelectedDoc}
-            />
-        </div>
+  useEffect(() => {
+    if (!parsedDocumentId) return;
+    if (selectedDoc?.documentId === parsedDocumentId && isPreviewOpen) return;
+    const match = filteredDocuments.find(
+      (doc) => doc.documentId === parsedDocumentId,
     );
+    if (match) {
+      setSelectedDoc(match);
+      setIsPreviewOpen(true);
+    }
+  }, [
+    parsedDocumentId,
+    selectedDoc?.documentId,
+    isPreviewOpen,
+    filteredDocuments,
+    setSelectedDoc,
+    setIsPreviewOpen,
+  ]);
+
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      <div className="max-w-[1920px] mx-auto p-6">
+        {/* Page Header */}
+        <Card className="mb-6 border border-border rounded-xl shadow-sm">
+          <CardContent className="px-6 py-4">
+            <PageHeader
+              className="mb-0"
+              icon={<FileText className="w-8 h-8" />}
+              title={t('documents.title')}
+              subtitle={t('documents.subtitle')}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Compact Filter Bar */}
+        <div className="mb-6">
+          <DocumentFilterBar
+            filters={filters}
+            onFilterChange={setFilter}
+            onClearFilters={clearFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
+        </div>
+
+        {/* Tabs and Content */}
+        <Card className="border-border rounded-2xl shadow-sm">
+          <CardContent className="px-6 py-4">
+            <Tabs
+              value={filters.tab}
+              onValueChange={(value) =>
+                setFilter("tab", value as "all" | "favorites" | "recent")
+              }
+            >
+              <TabsList className="w-full md:w-auto grid grid-cols-3 mb-6 bg-muted rounded-xl p-1">
+                <TabsTrigger
+                  value="all"
+                  className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary"
+                >
+                  All Documents
+                </TabsTrigger>
+                <TabsTrigger
+                  value="favorites"
+                  className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary"
+                >
+                  ⭐ Favorites
+                </TabsTrigger>
+                <TabsTrigger
+                  value="recent"
+                  className="rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary"
+                >
+                  🕐 Recent
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value={filters.tab} className="mt-0">
+                {isLoading ? (
+                  <div className="p-6 text-sm text-muted-foreground">
+                    Loading documents...
+                  </div>
+                ) : isEmpty || filteredDocuments.length === 0 ? (
+                  <EmptyState
+                    searchQuery={filters.q}
+                    activeFilterCount={activeFilterCount}
+                    onClearAll={clearFilters}
+                  />
+                ) : (
+                  <DocumentGrid
+                    documents={filteredDocuments}
+                    hoveredDocId={hoveredDocId}
+                    onHoverChange={setHoveredDocId}
+                    onPreview={handlePreview}
+                    onToggleFavorite={handleToggleFavorite}
+                    onDownload={handleDownload}
+                    onOpen={handleOpenDocument}
+                    getDocumentIcon={getDocumentIcon}
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Preview Drawer */}
+      <DocumentPreview
+        document={selectedDoc}
+        isOpen={isPreviewOpen}
+        onOpenChange={handlePreviewOpenChange}
+        onDownload={handleDownload}
+        getDocumentIcon={getDocumentIcon}
+        getRelatedDocuments={getRelatedDocuments}
+        onSelectRelated={setSelectedDoc}
+      />
+    </div>
+  );
 }
-
-
-
-
-

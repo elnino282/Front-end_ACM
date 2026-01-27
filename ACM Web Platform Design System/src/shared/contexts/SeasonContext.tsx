@@ -22,6 +22,8 @@ interface SeasonContextValue {
     error: Error | null;
     /** Refetch seasons */
     refetch: () => void;
+    /** Requires explicit season selection before proceeding */
+    requiresSeasonSelection: boolean;
 }
 
 const SeasonContext = createContext<SeasonContextValue | null>(null);
@@ -45,7 +47,31 @@ interface SeasonProviderProps {
  * Used by: tasks, harvests, and other season-dependent features
  */
 export function SeasonProvider({ children }: SeasonProviderProps) {
-    const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
+    const STORAGE_KEY = 'activeSeasonId';
+    
+    // Initialize from localStorage if available
+    const [selectedSeasonId, setSelectedSeasonIdState] = useState<number | null>(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const parsed = parseInt(stored, 10);
+                if (!isNaN(parsed)) return parsed;
+            }
+        }
+        return null;
+    });
+
+    // Wrapper to persist to localStorage when season changes
+    const setSelectedSeasonId = (id: number | null) => {
+        setSelectedSeasonIdState(id);
+        if (typeof window !== 'undefined') {
+            if (id !== null) {
+                localStorage.setItem(STORAGE_KEY, String(id));
+            } else {
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        }
+    };
 
     // Fetch all seasons for current farmer
     const { data: seasonsData, isLoading, error, refetch } = useSeasons();
@@ -60,12 +86,19 @@ export function SeasonProvider({ children }: SeasonProviderProps) {
         return seasons.filter(s => s.status === 'ACTIVE');
     }, [seasons]);
 
-    // Auto-select first active season if none selected
+    // Validate stored season still exists after seasons load
     useEffect(() => {
-        if (selectedSeasonId === null && activeSeasons.length > 0) {
-            setSelectedSeasonId(activeSeasons[0].id);
+        if (!isLoading && selectedSeasonId !== null && seasons.length > 0) {
+            const seasonExists = seasons.some(s => s.id === selectedSeasonId);
+            if (!seasonExists) {
+                // Stored season no longer valid, clear it
+                setSelectedSeasonId(null);
+            }
         }
-    }, [selectedSeasonId, activeSeasons]);
+    }, [isLoading, selectedSeasonId, seasons]);
+
+    // Flag indicating user must select a season before proceeding
+    const requiresSeasonSelection = !isLoading && selectedSeasonId === null;
 
     // Get selected season object
     const selectedSeason = useMemo(() => {
@@ -82,6 +115,7 @@ export function SeasonProvider({ children }: SeasonProviderProps) {
         isLoading,
         error: error ?? null,
         refetch,
+        requiresSeasonSelection,
     };
 
     return (

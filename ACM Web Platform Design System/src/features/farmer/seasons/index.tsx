@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useSeasonManagement } from './hooks/useSeasonManagement';
 import { SeasonListView } from './components/SeasonListView';
 import { SeasonDetailView } from './components/SeasonDetailView';
@@ -37,6 +39,7 @@ export function SeasonManagement() {
     totalPages,
     paginatedSeasons,
     filteredSeasons,
+    seasons,
 
     // Dialogs
     deleteDialogOpen,
@@ -92,6 +95,28 @@ export function SeasonManagement() {
     isCompleting,
     isCancelling,
   } = useSeasonManagement();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const seasonIdParam = searchParams.get('seasonId');
+
+  const handleBackFromDetail = () => {
+    // If the detail view was opened via deep-link (?seasonId=...), clear it so it won't immediately re-open.
+    if (seasonIdParam) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('seasonId');
+      setSearchParams(next, { replace: true });
+    }
+    handleBackToList();
+  };
+
+  useEffect(() => {
+    if (!seasonIdParam) return;
+    if (selectedSeason?.id === seasonIdParam && viewMode === 'detail') return;
+    const match = seasons.find((season) => season.id === seasonIdParam);
+    if (match) {
+      handleViewDetails(match);
+    }
+  }, [seasonIdParam, seasons, selectedSeason?.id, viewMode, handleViewDetails]);
 
   // Loading state
   if (isLoading) {
@@ -162,7 +187,7 @@ export function SeasonManagement() {
             activities={[]} // Activities would come from field-log entity in future
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            onBack={handleBackToList}
+            onBack={handleBackFromDetail}
             onEditSeason={handleEditSeason}
             onStartSeason={handleStartSeason}
             onCompleteSeason={handleCompleteSeason}

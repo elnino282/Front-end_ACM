@@ -7,7 +7,7 @@ import { useDebounce } from '@/shared/lib/hooks/useDebounce';
  * Wraps entity-level useFarms with state management and debouncing
  */
 export function useFarmsList() {
-    // console.log('[useFarmsList] Hook called');
+    console.log('[useFarmsList] Hook called');
 
     const [keyword, setKeyword] = useState<string>('');
     const [activeFilter, setActiveFilter] = useState<boolean | null>(null);
@@ -24,7 +24,7 @@ export function useFarmsList() {
             page,
             size,
         };
-        // console.log('[useFarmsList] Params:', p);
+        console.log('[useFarmsList] Params:', p);
         return p;
     }, [debouncedKeyword, activeFilter, page, size]);
 
@@ -36,13 +36,13 @@ export function useFarmsList() {
         refetch,
     } = useFarms(params);
 
-    // console.log('[useFarmsList] Query result:', {
-    //     farmsResponse,
-    //     isLoading,
-    //     isError,
-    //     error,
-    //     farmsCount: farmsResponse?.content?.length,
-    // });
+    console.log('[useFarmsList] Query result:', {
+        farmsResponse,
+        isLoading,
+        isError,
+        error,
+        farmsCount: farmsResponse?.content?.length,
+    });
 
     const handleKeywordChange = useCallback((value: string) => {
         setKeyword(value);

@@ -1,4 +1,6 @@
 import { TrendingUp, Calendar, Package, BarChart3 } from 'lucide-react';
+import { usePreferences } from '@/shared/contexts';
+import { formatWeight } from '@/shared/lib';
 import type { Season } from '../types';
 
 interface SeasonMetricsCardsProps {
@@ -6,6 +8,8 @@ interface SeasonMetricsCardsProps {
 }
 
 export function SeasonMetricsCards({ seasons }: SeasonMetricsCardsProps) {
+  const { preferences } = usePreferences();
+
   // Calculate metrics
   const totalSeasons = seasons.length;
   const activeSeasons = seasons.filter(s => s.status === 'ACTIVE').length;
@@ -23,6 +27,7 @@ export function SeasonMetricsCards({ seasons }: SeasonMetricsCardsProps) {
   const expectedYield = seasons
     .filter(s => s.status === 'ACTIVE')
     .reduce((sum, s) => sum + (s.yieldPerHa || 0), 0);
+  const expectedYieldLabel = `${formatWeight(expectedYield, preferences.weightUnit, preferences.locale)}/ha`;
 
   const metrics = [
     {
@@ -51,7 +56,7 @@ export function SeasonMetricsCards({ seasons }: SeasonMetricsCardsProps) {
     },
     {
       title: 'Expected Yield',
-      value: `${expectedYield.toFixed(0)} kg`,
+      value: expectedYieldLabel,
       subtitle: 'Active seasons',
       icon: BarChart3,
       color: 'text-purple-600',

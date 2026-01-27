@@ -1,14 +1,15 @@
-import { Plus, Package } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useI18n } from "@/hooks/useI18n";
+import { Package, Plus } from "lucide-react";
 import { InventoryItem } from "../types";
 
 interface LowStockInventoryProps {
@@ -25,13 +26,15 @@ interface LowStockInventoryProps {
  * - Quick action button to order supplies
  */
 export function LowStockInventory({ inventory }: LowStockInventoryProps) {
+  const { t } = useI18n();
+
   return (
     <Card className="border-border rounded-2xl shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Low Stock Inventory</CardTitle>
-            <CardDescription>Items below minimum level</CardDescription>
+            <CardTitle>{t('dashboard.lowStock.title')}</CardTitle>
+            <CardDescription>{t('dashboard.lowStock.subtitle')}</CardDescription>
           </div>
           <Badge className="bg-destructive/10 text-destructive border-destructive/20">
             {inventory.length}
@@ -67,7 +70,7 @@ export function LowStockInventory({ inventory }: LowStockInventoryProps) {
             className="w-full mt-2 rounded-lg border-primary text-primary hover:bg-primary/10"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Order Supplies
+            {t('dashboard.lowStock.orderButton')}
           </Button>
         </div>
       </CardContent>

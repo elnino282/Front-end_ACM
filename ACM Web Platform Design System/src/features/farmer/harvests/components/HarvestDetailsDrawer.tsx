@@ -18,6 +18,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { HarvestBatch, HarvestGrade, HarvestStatus } from "../types";
+import { usePreferences } from "@/shared/contexts";
+import { formatWeight } from "@/shared/lib";
 
 interface HarvestDetailsDrawerProps {
     batch: HarvestBatch | null;
@@ -37,6 +39,7 @@ export function HarvestDetailsDrawer({
     getGradeBadge,
 }: HarvestDetailsDrawerProps) {
     if (!batch) return null;
+    const { preferences } = usePreferences();
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
@@ -84,7 +87,7 @@ export function HarvestDetailsDrawer({
                             <div className="flex items-center justify-between">
                                 <span className="text-sm text-muted-foreground">Quantity</span>
                                 <span className="numeric text-foreground">
-                                    {batch.quantity.toLocaleString()} kg
+                                    {formatWeight(batch.quantity, preferences.weightUnit, preferences.locale)}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between">

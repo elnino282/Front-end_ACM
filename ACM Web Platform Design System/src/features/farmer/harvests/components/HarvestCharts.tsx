@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { BarChart3, PieChart as PieChartIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -13,6 +14,8 @@ import {
     ResponsiveContainer,
 } from "recharts";
 import type { ChartDataPoint } from "../types";
+import { usePreferences } from "@/shared/contexts";
+import { convertWeight, getWeightUnitLabel } from "@/shared/lib";
 
 interface HarvestChartsProps {
     dailyTrend: ChartDataPoint[];
@@ -23,6 +26,18 @@ export function HarvestCharts({
     dailyTrend,
     gradeDistribution,
 }: HarvestChartsProps) {
+    const { preferences } = usePreferences();
+    const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+
+    const displayTrend = useMemo(() => {
+        return dailyTrend.map((entry) => ({
+            ...entry,
+            quantity: entry.quantity != null
+                ? convertWeight(entry.quantity, preferences.weightUnit)
+                : entry.quantity,
+        }));
+    }, [dailyTrend, preferences.weightUnit]);
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Daily Harvest Trend */}
@@ -35,12 +50,14 @@ export function HarvestCharts({
                 </CardHeader>
                 <CardContent>
                     <ResponsiveContainer width="100%" height={250}>
-                        <BarChart data={dailyTrend}>
+                        <BarChart data={displayTrend}>
                             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                             <XAxis dataKey="date" tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} />
                             <YAxis tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} />
                             <RechartsTooltip
-                                formatter={(value: number) => `${value.toLocaleString()} kg`}
+                                formatter={(value: number) =>
+                                    `${new Intl.NumberFormat(preferences.locale, { maximumFractionDigits: 2 }).format(value)} ${unitLabel}`
+                                }
                             />
                             <Bar dataKey="quantity" fill="var(--primary)" radius={[8, 8, 0, 0]} />
                         </BarChart>

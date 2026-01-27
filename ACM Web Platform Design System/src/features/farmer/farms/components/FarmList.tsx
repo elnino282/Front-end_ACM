@@ -1,7 +1,8 @@
-import { Farm } from '../types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
+import { useI18n } from '@/hooks/useI18n';
 import { Badge } from '@/shared/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
 import { MapPin, Wheat } from 'lucide-react';
+import { Farm } from '../types';
 
 interface FarmListProps {
     farms: Farm[];
@@ -11,20 +12,22 @@ interface FarmListProps {
 }
 
 export function FarmList({ farms, selectedFarmId, onSelectFarm, isLoading }: FarmListProps) {
+    const { t } = useI18n();
+
     if (isLoading) {
-        return <div className="p-4 text-center">Loading farms...</div>;
+        return <div className="p-4 text-center">{t('farms.loading')}</div>;
     }
 
     return (
         <Card className="h-full border-r-0 rounded-r-none">
             <CardHeader className="pb-4">
-                <CardTitle>My Farms</CardTitle>
-                <CardDescription>Manage your farms</CardDescription>
+                <CardTitle>{t('farms.myFarms')}</CardTitle>
+                <CardDescription>{t('farms.manageFarms')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
                 {farms.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                        No farms found. Create one to get started.
+                        {t('farms.empty')}
                     </div>
                 ) : (
                     farms.map(farm => (
@@ -41,7 +44,7 @@ export function FarmList({ farms, selectedFarmId, onSelectFarm, isLoading }: Far
                                     <span className="font-semibold">{farm.farmName}</span>
                                 </div>
                                 <Badge variant={farm.active ? 'default' : 'secondary'} className={farm.active ? "bg-green-600" : ""}>
-                                    {farm.active ? 'Active' : 'Inactive'}
+                                    {farm.active ? t('common.active') : t('common.inactive')}
                                 </Badge>
                             </div>
                             
@@ -50,7 +53,7 @@ export function FarmList({ farms, selectedFarmId, onSelectFarm, isLoading }: Far
                                     <MapPin className="h-3 w-3" />
                                     <span className="truncate">{farm.wardName}, {farm.provinceName}</span>
                                 </div>
-                                <div>Area: {farm.area} ha</div>
+                                <div>{t('farms.form.area')}: {farm.area} ha</div>
                             </div>
                         </div>
                     ))

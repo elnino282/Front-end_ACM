@@ -7,6 +7,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { usePreferences } from "@/shared/contexts";
+import { formatMoney, formatWeight, convertToDisplayCurrency } from "@/shared/lib";
 import type { DashboardOverview } from "@/entities/dashboard";
 
 interface PerformanceKPICardsProps {
@@ -26,6 +28,8 @@ interface PerformanceKPICardsProps {
  * Each card shows the current value, trend comparison, and contextual icon.
  */
 export function PerformanceKPICards({ selectedSeason, overview, isLoading }: PerformanceKPICardsProps) {
+  const { preferences } = usePreferences();
+
   // Extract KPI values from overview or show N/A
   const avgYield = overview?.kpis?.avgYieldTonsPerHa;
   const costPerHectare = overview?.kpis?.costPerHectare;
@@ -34,11 +38,24 @@ export function PerformanceKPICards({ selectedSeason, overview, isLoading }: Per
   // Format display values
   const formatNumber = (val: number | null | undefined, decimals = 1) => {
     if (val === null || val === undefined) return "N/A";
-    return val.toLocaleString(undefined, { 
+    return val.toLocaleString(preferences.locale, {
       minimumFractionDigits: decimals, 
       maximumFractionDigits: decimals 
     });
   };
+
+  const avgYieldKgPerHa = avgYield !== null && avgYield !== undefined
+    ? avgYield * 1000
+    : null;
+  const avgYieldLabel = avgYieldKgPerHa === null
+    ? "N/A"
+    : `${formatWeight(avgYieldKgPerHa, preferences.weightUnit, preferences.locale)}/ha`;
+  const costPerHectareLabel = costPerHectare !== null && costPerHectare !== undefined
+    ? formatMoney(convertToDisplayCurrency(costPerHectare, preferences.currency), preferences.currency, preferences.locale)
+    : "N/A";
+  const totalExpenseLabel = overview?.expenses?.totalExpense != null
+    ? formatMoney(convertToDisplayCurrency(overview.expenses.totalExpense, preferences.currency), preferences.currency, preferences.locale)
+    : "N/A";
 
   return (
     <div>
@@ -77,11 +94,8 @@ export function PerformanceKPICards({ selectedSeason, overview, isLoading }: Per
                   ) : (
                     <>
                       <span className="numeric text-3xl text-foreground">
-                        {formatNumber(avgYield)}
+                        {avgYieldLabel}
                       </span>
-                      {avgYield !== null && avgYield !== undefined && (
-                        <span className="text-sm text-muted-foreground">tons/ha</span>
-                      )}
                     </>
                   )}
                 </div>
@@ -122,20 +136,15 @@ export function PerformanceKPICards({ selectedSeason, overview, isLoading }: Per
                   ) : (
                     <>
                       <span className="numeric text-3xl text-foreground">
-                        {costPerHectare !== null && costPerHectare !== undefined
-                          ? formatNumber(costPerHectare, 0)
-                          : "N/A"}
+                        {costPerHectareLabel}
                       </span>
-                      {costPerHectare !== null && costPerHectare !== undefined && (
-                        <span className="text-sm text-muted-foreground">USD</span>
-                      )}
                     </>
                   )}
                 </div>
                 {costPerHectare !== null && costPerHectare !== undefined && (
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground">
-                      Total: {formatNumber(overview?.expenses?.totalExpense, 0)} USD
+                      Total: {totalExpenseLabel}
                     </span>
                   </div>
                 )}

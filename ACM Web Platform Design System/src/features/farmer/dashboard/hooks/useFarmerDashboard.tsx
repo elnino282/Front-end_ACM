@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import {
   CheckCircle2,
   AlertTriangle,
@@ -9,7 +9,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useSeasons } from "@/entities/season";
+import { useSeason } from "@/shared/contexts";
 import {
   useDashboardOverview,
   useTodayTasks,
@@ -18,7 +18,7 @@ import {
   useUpcomingTasks,
 } from "@/entities/dashboard";
 import type { DashboardOverview, TodayTask } from "@/entities/dashboard";
-import {
+import type {
   Task,
   Plot,
   InventoryItem,
@@ -79,61 +79,63 @@ export interface UseFarmerDashboardReturn {
 }
 
 export const useFarmerDashboard = (): UseFarmerDashboardReturn => {
-  // 1. Fetch Seasons (Critical - blocks UI)
-  const { data: seasonsData, isLoading: seasonsLoading, error: seasonsError } = useSeasons();
+  // 1. Use SeasonContext instead of local state (NO AUTO-PICK)
+  const { 
+    selectedSeasonId, 
+    setSelectedSeasonId, 
+    seasons: seasonsData, 
+    isLoading: seasonsLoading, 
+    error: seasonsError 
+  } = useSeason();
 
   const seasonOptions = useMemo(() => {
-    return seasonsData?.items?.map(s => ({
+    return seasonsData?.map(s => ({
       value: String(s.id),
       label: s.seasonName
     })) ?? [];
   }, [seasonsData]);
 
-  // Default to first season if available
-  const [selectedSeason, setSelectedSeason] = useState<string>("");
-  const [hasInitialized, setHasInitialized] = useState(false);
+  // Convert context values to match hook interface
+  const selectedSeason = selectedSeasonId !== null ? String(selectedSeasonId) : "";
+  const setSelectedSeason = (season: string) => {
+    const id = parseInt(season, 10);
+    setSelectedSeasonId(isNaN(id) ? null : id);
+  };
 
-  useEffect(() => {
-    // Only run initialization once when seasons are loaded
-    if (!hasInitialized && !seasonsLoading) {
-      if (seasonOptions.length > 0) {
-        setSelectedSeason(seasonOptions[0].value);
-      }
-      setHasInitialized(true);
-    }
-  }, [seasonOptions, seasonsLoading, hasInitialized]);
+  // hasInitialized is true once seasons have loaded (context handles this)
+  const hasInitialized = !seasonsLoading;
 
-  const seasonId = parseInt(selectedSeason, 10);
-  const hasSeason = !isNaN(seasonId) && seasonId > 0;
+  const seasonId = selectedSeasonId ?? 0;
+  const hasSeason = selectedSeasonId !== null && selectedSeasonId > 0;
 
   // 2. Fetch Dashboard Data from Live APIs
-  const {
-    data: overviewData,
-    isLoading: overviewLoading,
-    error: overviewError
+  const { 
+    data: overviewData, 
+    isLoading: overviewLoading, 
+    error: overviewError 
   } = useDashboardOverview(hasSeason ? seasonId : undefined, { enabled: hasInitialized });
 
-  const {
-    data: todayTasksData,
-    isLoading: todayTasksLoading,
-    error: todayTasksError
+  const { 
+    data: todayTasksData, 
+    isLoading: todayTasksLoading, 
+    error: todayTasksError 
   } = useTodayTasks({ seasonId: hasSeason ? seasonId : undefined }, { enabled: hasInitialized });
 
-  const {
-    data: plotStatusData,
-    isLoading: plotsLoading,
-    error: plotsError
+  const { 
+    data: plotStatusData, 
+    isLoading: plotsLoading, 
+    error: plotsError 
   } = usePlotStatus(hasSeason ? seasonId : undefined, { enabled: hasInitialized });
 
-  const {
-    data: lowStockData,
-    isLoading: lowStockLoading,
-    error: lowStockError
+  const { 
+    data: lowStockData, 
+    isLoading: lowStockLoading, 
+    error: _lowStockError 
   } = useLowStock({ limit: 5 }, { enabled: hasInitialized });
 
-  const {
-    data: upcomingTasksData,
-    isLoading: upcomingLoading
+  const { 
+    data: upcomingTasksData, 
+    isLoading: upcomingLoading 
   } = useUpcomingTasks({ days: 7, seasonId: hasSeason ? seasonId : undefined }, { enabled: hasInitialized });
 
   // 3. Transform Data
@@ -156,11 +158,11 @@ export const useFarmerDashboard = (): UseFarmerDashboardReturn => {
   // Upcoming Tasks (from live API) - converted to UpcomingTaskDay format
   const upcomingTasks = useMemo((): UpcomingTaskDay[] => {
     if (!upcomingTasksData || upcomingTasksData.length === 0) return [];
-
+    
     // Group tasks by due date and count
     const grouped = new Map<string, { count: number; overdue: number }>();
     const today = new Date().toISOString().split('T')[0];
-
+    
     upcomingTasksData.forEach(task => {
       const day = task.dueDate ?? 'Unknown';
       if (!grouped.has(day)) {
@@ -208,7 +210,7 @@ export const useFarmerDashboard = (): UseFarmerDashboardReturn => {
   const incidents = useMemo((): Incident[] => {
     const openCount = overviewData?.alerts?.openIncidents ?? 0;
     if (openCount === 0) return [];
-
+    
     // Return placeholder for alert count display
     return [{
       id: "alert",
@@ -224,7 +226,7 @@ export const useFarmerDashboard = (): UseFarmerDashboardReturn => {
 
   // Handlers
   const toggleTask = (taskId: string) => {
-    // console.log("Toggle task", taskId);
+    console.log("Toggle task", taskId);
   };
 
   // Helpers
@@ -269,28 +271,28 @@ export const useFarmerDashboard = (): UseFarmerDashboardReturn => {
   // Separate loading states: Critical vs Non-critical
   // Critical loading: Blocks entire UI until seasons are loaded
   const isCriticalLoading = !hasInitialized || seasonsLoading;
-
+  
   // Non-critical loading: Allow partial UI rendering
   const isDataLoading = overviewLoading || todayTasksLoading || plotsLoading || lowStockLoading || upcomingLoading;
-
+  
   // Check if we have no seasons after initialization
   const hasNoSeasons = hasInitialized && !seasonsLoading && seasonOptions.length === 0;
 
-  // Debug logging (disabled for production)
-  // useEffect(() => {
-  //   console.log('[Dashboard] State Update:', {
-  //     hasInitialized,
-  //     seasonsLoading,
-  //     seasonOptionsCount: seasonOptions.length,
-  //     selectedSeason,
-  //     hasSeason,
-  //     isCriticalLoading,
-  //     isDataLoading,
-  //     hasNoSeasons,
-  //     overview: overviewData ? 'loaded' : 'null',
-  //   });
-  // }, [hasInitialized, seasonsLoading, seasonOptions.length, selectedSeason, hasSeason, 
-  //     isCriticalLoading, isDataLoading, hasNoSeasons, overviewData]);
+  // Debug logging
+  useEffect(() => {
+    console.log('[Dashboard] State Update:', {
+      hasInitialized,
+      seasonsLoading,
+      seasonOptionsCount: seasonOptions.length,
+      selectedSeason,
+      hasSeason,
+      isCriticalLoading,
+      isDataLoading,
+      hasNoSeasons,
+      overview: overviewData ? 'loaded' : 'null',
+    });
+  }, [hasInitialized, seasonsLoading, seasonOptions.length, selectedSeason, hasSeason, 
+      isCriticalLoading, isDataLoading, hasNoSeasons, overviewData]);
 
   return {
     selectedSeason,

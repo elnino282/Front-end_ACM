@@ -5,6 +5,7 @@ import type { BreadcrumbPath } from '@/features/shared/layout/types';
  */
 export type FarmerView =
   | 'dashboard'
+  | 'search'
   | 'farms'
   | 'plots'
   | 'seasons'

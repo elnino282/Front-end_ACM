@@ -1,5 +1,12 @@
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -7,14 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+} from "@/shared/ui";
 
 interface ReassignDialogProps {
   open: boolean;
@@ -56,7 +56,11 @@ export function ReassignDialog({
           </Select>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="acm-rounded-sm">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="acm-rounded-sm"
+          >
             Cancel
           </Button>
           <Button
@@ -70,6 +74,3 @@ export function ReassignDialog({
     </Dialog>
   );
 }
-
-
-

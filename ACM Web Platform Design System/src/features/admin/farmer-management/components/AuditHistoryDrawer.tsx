@@ -1,8 +1,8 @@
-import { History, Filter, Download, Plus, Edit, Trash2, User, Lock, AlertCircle } from 'lucide-react';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { AlertCircle, Download, Edit, Filter, History, Lock, Plus, Trash2, User } from 'lucide-react';
+import { PLACEHOLDER_AUDIT_LOGS } from '../constants';
 import { AuditLogType } from '../types';
-import { AUDIT_LOGS } from '../constants';
 
 interface AuditHistoryDrawerProps {
     open: boolean;
@@ -56,7 +56,7 @@ export function AuditHistoryDrawer({
                     </div>
 
                     <div className="space-y-3">
-                        {AUDIT_LOGS.map((log) => (
+                        {PLACEHOLDER_AUDIT_LOGS.map((log) => (
                             <div
                                 key={log.id}
                                 className="flex gap-3 p-4 rounded-lg border bg-card hover:bg-muted/30 transition-colors"

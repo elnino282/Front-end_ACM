@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Building2, MapPin, Search, RefreshCw, AlertCircle, ChevronRight, Filter } from 'lucide-react';
 import { adminFarmApi, adminPlotApi } from '@/services/api.admin';
 
@@ -51,12 +52,48 @@ export function FarmsPlotsPage() {
 
   // Filter state
   const [farmFilter, setFarmFilter] = useState<number | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const qParam = searchParams.get("q") ?? "";
+  const farmIdParam = Number(searchParams.get("farmId"));
+  const plotIdParam = Number(searchParams.get("plotId"));
+  const seasonIdParam = Number(searchParams.get("seasonId"));
+  const parsedFarmId = Number.isFinite(farmIdParam) ? farmIdParam : null;
+  const parsedPlotId = Number.isFinite(plotIdParam) ? plotIdParam : null;
+  const parsedSeasonId = Number.isFinite(seasonIdParam) ? seasonIdParam : null;
 
-  const fetchFarms = async () => {
+  const clearQueryParams = (keys: string[]) => {
+    const next = new URLSearchParams(searchParams);
+    let changed = false;
+    keys.forEach((key) => {
+      if (next.has(key)) {
+        next.delete(key);
+        changed = true;
+      }
+    });
+    if (changed) {
+      setSearchParams(next, { replace: true });
+    }
+  };
+
+  const closeFarmDetail = () => {
+    // Farm detail is opened via ?farmId=... on the farms tab; clear it so it won't re-open.
+    clearQueryParams(["farmId", "seasonId"]);
+    setShowFarmDetail(false);
+  };
+
+  const closePlotDetail = () => {
+    // Plot detail is opened via ?plotId=...; clear it so it won't re-open.
+    clearQueryParams(["plotId", "seasonId"]);
+    setShowPlotDetail(false);
+  };
+
+  const fetchFarms = async (keywordOverride?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await adminFarmApi.list({ page, size: 20, keyword: searchTerm || undefined });
+      const keyword = keywordOverride ?? searchTerm;
+      const response = await adminFarmApi.list({ page, size: 20, keyword: keyword || undefined });
       if (response?.result?.items) {
         setFarms(response.result.items);
         setTotalPages(response.result.totalPages || 0);
@@ -69,15 +106,17 @@ export function FarmsPlotsPage() {
     }
   };
 
-  const fetchPlots = async () => {
+  const fetchPlots = async (keywordOverride?: string, farmOverride?: number | null) => {
     setLoading(true);
     setError(null);
     try {
+      const keyword = keywordOverride ?? searchTerm;
+      const farmId = farmOverride ?? farmFilter;
       const response = await adminPlotApi.list({
         page,
         size: 20,
-        keyword: searchTerm || undefined,
-        farmId: farmFilter || undefined
+        keyword: keyword || undefined,
+        farmId: farmId || undefined
       });
       if (response?.result?.items) {
         setPlots(response.result.items);
@@ -92,12 +131,44 @@ export function FarmsPlotsPage() {
   };
 
   useEffect(() => {
+    if (tabParam === "farms" || tabParam === "plots") {
+      setActiveTab(tabParam);
+      return;
+    }
+    if (parsedPlotId || parsedSeasonId) {
+      setActiveTab("plots");
+      return;
+    }
+    if (parsedFarmId) {
+      setActiveTab("farms");
+    }
+  }, [tabParam, parsedFarmId, parsedPlotId, parsedSeasonId]);
+
+  useEffect(() => {
+    if (parsedFarmId && farmFilter !== parsedFarmId) {
+      setFarmFilter(parsedFarmId);
+      setPage(0);
+    }
+  }, [parsedFarmId, farmFilter]);
+
+  useEffect(() => {
     if (activeTab === 'farms') {
       fetchFarms();
     } else {
       fetchPlots();
     }
   }, [activeTab, page, farmFilter]);
+
+  useEffect(() => {
+    if (qParam === searchTerm) return;
+    setSearchTerm(qParam);
+    setPage(0);
+    if (activeTab === "farms") {
+      fetchFarms(qParam);
+    } else {
+      fetchPlots(qParam, farmFilter);
+    }
+  }, [qParam, activeTab, farmFilter, searchTerm]);
 
   const handleSearch = () => {
     setPage(0);
@@ -141,6 +212,60 @@ export function FarmsPlotsPage() {
       setDetailLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!parsedFarmId || activeTab !== "farms") return;
+    if (selectedFarm?.id === parsedFarmId && showFarmDetail) return;
+
+    const match = farms.find((farm) => farm.id === parsedFarmId);
+    if (match) {
+      handleViewFarm(match);
+      return;
+    }
+
+    adminFarmApi
+      .getById(parsedFarmId)
+      .then((detail) => {
+        if (!detail) return;
+        handleViewFarm({
+          id: detail.id,
+          name: detail.name,
+          area: detail.area ?? null,
+          active: detail.active,
+          ownerUsername: detail.ownerUsername ?? null,
+          provinceName: detail.provinceName ?? null,
+          wardName: detail.wardName ?? null,
+        });
+      })
+      .catch(() => {});
+  }, [parsedFarmId, activeTab, farms, selectedFarm?.id, showFarmDetail, handleViewFarm]);
+
+  useEffect(() => {
+    if (!parsedPlotId || activeTab !== "plots") return;
+    if (selectedPlot?.id === parsedPlotId && showPlotDetail) return;
+
+    const match = plots.find((plot) => plot.id === parsedPlotId);
+    if (match) {
+      handleViewPlot(match);
+      return;
+    }
+
+    adminPlotApi
+      .getById(parsedPlotId)
+      .then((response) => {
+        const payload = response?.result ?? response;
+        if (!payload) return;
+        handleViewPlot({
+          id: payload.id,
+          plotName: payload.plotName,
+          area: payload.area ?? null,
+          soilType: payload.soilType ?? null,
+          farmId: payload.farmId ?? 0,
+          farmName: payload.farmName ?? "",
+        });
+      })
+      .catch(() => {});
+  }, [parsedPlotId, activeTab, plots, selectedPlot?.id, showPlotDetail, handleViewPlot]);
 
   const STATUS_COLORS: Record<string, string> = {
     PLANNED: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
@@ -434,7 +559,7 @@ export function FarmsPlotsPage() {
       {showFarmDetail && selectedFarm && (
         <div
           className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm cursor-pointer"
-          onClick={() => setShowFarmDetail(false)}
+          onClick={closeFarmDetail}
         >
           <div
             className="fixed right-0 top-0 h-full w-full max-w-md bg-card border-l border-border shadow-lg overflow-auto cursor-default"
@@ -444,7 +569,7 @@ export function FarmsPlotsPage() {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold">Farm Details</h2>
                 <button
-                  onClick={() => setShowFarmDetail(false)}
+                  onClick={closeFarmDetail}
                   className="p-2 hover:bg-muted rounded"
                 >
                   ✕
@@ -499,7 +624,10 @@ export function FarmsPlotsPage() {
                               </p>
                             </div>
                             <button
-                              onClick={() => { setShowFarmDetail(false); handleViewPlot(plot); }}
+                              onClick={() => {
+                                closeFarmDetail();
+                                handleViewPlot(plot);
+                              }}
                               className="text-xs text-primary hover:underline"
                             >
                               View Seasons
@@ -520,7 +648,7 @@ export function FarmsPlotsPage() {
       {showPlotDetail && selectedPlot && (
         <div
           className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm cursor-pointer"
-          onClick={() => setShowPlotDetail(false)}
+          onClick={closePlotDetail}
         >
           <div
             className="fixed right-0 top-0 h-full w-full max-w-md bg-card border-l border-border shadow-lg overflow-auto cursor-default"
@@ -530,7 +658,7 @@ export function FarmsPlotsPage() {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold">Plot Details</h2>
                 <button
-                  onClick={() => setShowPlotDetail(false)}
+                  onClick={closePlotDetail}
                   className="p-2 hover:bg-muted rounded"
                 >
                   ✕

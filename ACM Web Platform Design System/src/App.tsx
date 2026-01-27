@@ -1,9 +1,15 @@
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster, ErrorBoundary } from '@/shared/ui';
+import { I18nProvider } from '@/providers/I18nProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { ErrorBoundary, Toaster } from '@/shared/ui';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './app/routes';
 import { AuthProvider } from './features/auth/context/AuthContext';
+import { AccountLockedModal } from './shared/components/AccountLockedModal';
+import { PreferencesProvider } from './shared/contexts';
+
+// Initialize i18n
+import '@/i18n';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,16 +30,21 @@ const queryClient = new QueryClient({
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <ErrorBoundary>
-          <AuthProvider>
-            <BrowserRouter>
-              <AppRoutes />
-              <Toaster />
-            </BrowserRouter>
-          </AuthProvider>
-        </ErrorBoundary>
-      </ThemeProvider>
+      <I18nProvider>
+        <ThemeProvider>
+          <ErrorBoundary>
+            <AuthProvider>
+              <PreferencesProvider>
+                <BrowserRouter>
+                  <AppRoutes />
+                  <Toaster />
+                  <AccountLockedModal />
+                </BrowserRouter>
+              </PreferencesProvider>
+            </AuthProvider>
+          </ErrorBoundary>
+        </ThemeProvider>
+      </I18nProvider>
     </QueryClientProvider>
   );
 }

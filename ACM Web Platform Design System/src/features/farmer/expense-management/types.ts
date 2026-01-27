@@ -1,9 +1,9 @@
-export type ExpenseStatus = "paid" | "unpaid" | "pending" | "recorded";
+export type ExpenseStatus = "PAID" | "PENDING" | "UNPAID";
 export type TipType = "saving" | "warning" | "optimization";
 export type UrgencyLevel = "high" | "medium" | "low";
 
 export interface Expense {
-    id: string;
+    id: number;
     date: string;
     category: string;
     description: string;
@@ -15,9 +15,11 @@ export interface Expense {
     linkedPlotName?: string;
     amount: number;
     status: ExpenseStatus;
-    attachment?: string;
+    attachmentUrl?: string;
+    attachmentName?: string;
     notes?: string;
     vendor?: string;
+    vendorId?: number;
 }
 
 export interface AITip {
@@ -50,6 +52,18 @@ export interface ExpenseFormData {
     status: ExpenseStatus;
     notes: string;
     vendor: string;
+    vendorId?: number;
+    attachmentFile?: File | null;
+    attachmentName?: string;
+    attachmentUrl?: string;
+}
+
+export interface ExpenseFormErrors {
+    date?: string;
+    category?: string;
+    linkedSeasonId?: string;
+    amount?: string;
+    status?: string;
 }
 
 export interface TaskOption {

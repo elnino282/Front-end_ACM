@@ -1,13 +1,27 @@
-import { useState } from 'react';
-import { Bot, Sparkles } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../components/ui/tooltip';
+import { Bot, Sparkles } from "lucide-react";
+import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../../../components/ui/tooltip";
 
 interface AI_FloatButtonProps {
   onClick: () => void;
+  /** When true, hides the button (e.g., when chat is open) */
+  isHidden?: boolean;
 }
 
-export function AI_FloatButton({ onClick }: AI_FloatButtonProps) {
+export function AI_FloatButton({
+  onClick,
+  isHidden = false,
+}: AI_FloatButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <TooltipProvider>
@@ -22,13 +36,13 @@ export function AI_FloatButton({ onClick }: AI_FloatButtonProps) {
                        w-14 h-14 md:w-16 md:h-16
                        focus:outline-none focus:ring-4 focus:ring-green-500/30"
             style={{
-              borderRadius: '100%',
-              background: 'linear-gradient(135deg, #16A34A 0%, #2563EB 100%)',
+              borderRadius: "100%",
+              background: "linear-gradient(135deg, #16A34A 0%, #2563EB 100%)",
               boxShadow: isHovered
-                ? '0 8px 24px rgba(22, 163, 74, 0.4), 0 4px 12px rgba(37, 99, 235, 0.3)'
-                : '0 4px 16px rgba(0, 0, 0, 0.15)',
-              transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-              border: '2px solid rgba(255, 255, 255, 0.2)',
+                ? "0 8px 24px rgba(22, 163, 74, 0.4), 0 4px 12px rgba(37, 99, 235, 0.3)"
+                : "0 4px 16px rgba(0, 0, 0, 0.15)",
+              transform: isHovered ? "scale(1.05)" : "scale(1)",
+              border: "2px solid rgba(255, 255, 255, 0.2)",
             }}
             aria-label="Ask AI Assistant"
             tabIndex={0}
@@ -37,7 +51,8 @@ export function AI_FloatButton({ onClick }: AI_FloatButtonProps) {
             <div
               className="absolute inset-0 rounded-full opacity-40 animate-pulse"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%)',
+                background:
+                  "radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%)",
               }}
             />
 
@@ -59,16 +74,18 @@ export function AI_FloatButton({ onClick }: AI_FloatButtonProps) {
                 <div
                   className="absolute inset-0 rounded-full animate-ping opacity-20"
                   style={{
-                    background: 'linear-gradient(135deg, #16A34A 0%, #2563EB 100%)',
-                    animationDuration: '1.5s',
+                    background:
+                      "linear-gradient(135deg, #16A34A 0%, #2563EB 100%)",
+                    animationDuration: "1.5s",
                   }}
                 />
                 <div
                   className="absolute inset-0 rounded-full animate-ping opacity-10"
                   style={{
-                    background: 'linear-gradient(135deg, #16A34A 0%, #2563EB 100%)',
-                    animationDuration: '2s',
-                    animationDelay: '0.3s',
+                    background:
+                      "linear-gradient(135deg, #16A34A 0%, #2563EB 100%)",
+                    animationDuration: "2s",
+                    animationDelay: "0.3s",
                   }}
                 />
               </>

@@ -8,7 +8,6 @@ import {
 import {
   type RiskLevel,
   type TransformedRiskySeason,
-  type TransformedInventoryHealth,
 } from '../types';
 
 /**
@@ -97,13 +96,7 @@ const transformDashboardData = (data: DashboardStats) => {
     riskLevel: getRiskLevel(s.riskScore),
   }));
 
-  // Inventory health with warning flags
-  const inventory: TransformedInventoryHealth[] = data.inventoryHealth.map((i) => ({
-    ...i,
-    hasWarning: i.totalAtRisk > 0,
-  }));
-
-  return { kpiMetrics, charts, risks, inventory };
+  return { kpiMetrics, charts, risks };
 };
 
 /**
@@ -135,8 +128,6 @@ export const useAdminDashboard = () => {
     kpiMetrics: query.data?.kpiMetrics ?? [],
     charts: query.data?.charts ?? { userRoles: [], userStatus: [], seasonStatus: [] },
     risks: query.data?.risks ?? [],
-    inventory: query.data?.inventory ?? [],
-
     // Refetch manually if needed
     refetch: query.refetch,
   };

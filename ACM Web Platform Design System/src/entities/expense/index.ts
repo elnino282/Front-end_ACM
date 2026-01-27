@@ -5,6 +5,12 @@ export type {
     Expense,
     ExpenseCreateRequest,
     ExpenseUpdateRequest,
+    PaymentStatus,
+    BudgetTracker,
+    ExpenseCategoryAnalytics,
+    ExpenseTaskAnalytics,
+    ExpenseVendorAnalytics,
+    ExpenseTimeSeries,
 } from './model/types';
 
 export {
@@ -12,6 +18,12 @@ export {
     ExpenseSchema,
     ExpenseCreateRequestSchema,
     ExpenseUpdateRequestSchema,
+    PaymentStatusSchema,
+    BudgetTrackerSchema,
+    ExpenseCategoryAnalyticsSchema,
+    ExpenseTaskAnalyticsSchema,
+    ExpenseVendorAnalyticsSchema,
+    ExpenseTimeSeriesSchema,
 } from './model/schemas';
 
 export { expenseKeys } from './model/keys';
@@ -21,6 +33,11 @@ export {
     useExpensesBySeason,
     useAllFarmerExpenses,
     useExpenseById,
+    useBudgetTracker,
+    useExpenseAnalyticsByCategory,
+    useExpenseAnalyticsByTask,
+    useExpenseAnalyticsByVendor,
+    useExpenseAnalyticsTimeSeries,
     useCreateExpense,
     useUpdateExpense,
     useDeleteExpense,

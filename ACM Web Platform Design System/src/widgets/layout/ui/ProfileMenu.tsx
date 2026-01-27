@@ -1,28 +1,30 @@
-import { ChevronDown, User, Settings, Sun, Moon, Monitor, Globe, LogOut } from 'lucide-react';
+import { useI18n } from '@/hooks/useI18n';
+import { changeLanguage, type SupportedLocale } from '@/i18n';
 import {
-    Button,
     Avatar,
     AvatarFallback,
     AvatarImage,
+    Button,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
     DropdownMenuSeparator,
-    DropdownMenuTrigger,
     DropdownMenuSub,
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
+    DropdownMenuTrigger,
 } from '@/shared/ui';
-import type { ProfileMenuProps, Theme, Language } from '../model/types';
+import { Check, ChevronDown, Globe, LogOut, Monitor, Moon, Settings, Sun, User } from 'lucide-react';
+import type { Language, ProfileMenuProps, Theme } from '../model/types';
 
 /**
  * ProfileMenu Component
  * 
  * User profile dropdown menu with settings, preferences, and sign out.
- * Includes theme switcher and language selector.
+ * Includes theme switcher and language selector with i18n support.
  * 
  * Single Responsibility: User profile menu UI
  */
@@ -38,10 +40,19 @@ export function ProfileMenu({
     onViewChange,
     onLogout,
 }: ProfileMenuProps) {
+    const { t, locale } = useI18n();
+    
     const userInitials = userName
         .split(' ')
         .map((n) => n[0])
         .join('');
+
+    // Handle language change with i18n integration
+    const handleLanguageChange = async (value: string) => {
+        const newLocale = value === 'vi' ? 'vi-VN' : 'en-US';
+        await changeLanguage(newLocale as SupportedLocale);
+        onLanguageChange(value as Language);
+    };
 
     return (
         <DropdownMenu>
@@ -71,11 +82,11 @@ export function ProfileMenu({
 
                 <DropdownMenuItem onClick={() => onViewChange('profile')}>
                     <User className="w-4 h-4 mr-2" />
-                    Profile
+                    {t('userMenu.profile')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onViewChange('settings')}>
                     <Settings className="w-4 h-4 mr-2" />
-                    Preferences
+                    {t('userMenu.preferences')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
 
@@ -85,21 +96,21 @@ export function ProfileMenu({
                         {theme === 'light' && <Sun className="w-4 h-4 mr-2" />}
                         {theme === 'dark' && <Moon className="w-4 h-4 mr-2" />}
                         {theme === 'system' && <Monitor className="w-4 h-4 mr-2" />}
-                        Theme
+                        {t('userMenu.theme')}
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                         <DropdownMenuRadioGroup value={theme} onValueChange={(v) => onThemeChange(v as Theme)}>
                             <DropdownMenuRadioItem value="light">
                                 <Sun className="w-4 h-4 mr-2" />
-                                Light
+                                {t('userMenu.themeLight')}
                             </DropdownMenuRadioItem>
                             <DropdownMenuRadioItem value="dark">
                                 <Moon className="w-4 h-4 mr-2" />
-                                Dark
+                                {t('userMenu.themeDark')}
                             </DropdownMenuRadioItem>
                             <DropdownMenuRadioItem value="system">
                                 <Monitor className="w-4 h-4 mr-2" />
-                                System
+                                {t('userMenu.themeSystem')}
                             </DropdownMenuRadioItem>
                         </DropdownMenuRadioGroup>
                     </DropdownMenuSubContent>
@@ -109,12 +120,18 @@ export function ProfileMenu({
                 <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                         <Globe className="w-4 h-4 mr-2" />
-                        Language
+                        {t('userMenu.language')}
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
-                        <DropdownMenuRadioGroup value={language} onValueChange={(v) => onLanguageChange(v as Language)}>
-                            <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="vi">Vietnamese</DropdownMenuRadioItem>
+                        <DropdownMenuRadioGroup value={language} onValueChange={handleLanguageChange}>
+                            <DropdownMenuRadioItem value="en">
+                                {locale === 'en-US' && <Check className="w-4 h-4 mr-2" />}
+                                {t('userMenu.languageEnglish')}
+                            </DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem value="vi">
+                                {locale === 'vi-VN' && <Check className="w-4 h-4 mr-2" />}
+                                {t('userMenu.languageVietnamese')}
+                            </DropdownMenuRadioItem>
                         </DropdownMenuRadioGroup>
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
@@ -125,7 +142,7 @@ export function ProfileMenu({
                     onClick={onLogout}
                 >
                     <LogOut className="w-4 h-4 mr-2" />
-                    Sign out
+                    {t('userMenu.signOut')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

@@ -1,4 +1,4 @@
-import httpClient from '@/shared/api/http';
+import { httpClient } from '../shared/api/httpClient';
 import type {
   Task,
   CreateTaskRequest,

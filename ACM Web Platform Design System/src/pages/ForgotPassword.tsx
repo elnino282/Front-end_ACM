@@ -1,9 +1,11 @@
-import { useState, type FormEvent } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
 import { forgotPassword } from '@/api/auth';
+import { useI18n } from '@/hooks/useI18n';
+import { useMutation } from '@tanstack/react-query';
+import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 
 export function ForgotPasswordPage() {
+    const { t } = useI18n();
     const [email, setEmail] = useState('');
     const [submitted, setSubmitted] = useState(false);
 
@@ -28,13 +30,13 @@ export function ForgotPasswordPage() {
                         className="font-['DM_Sans:Bold',sans-serif] font-bold leading-[56px] text-[#2b3674] text-[36px] tracking-[-0.72px] mb-2"
                         style={{ fontVariationSettings: "'opsz' 14" }}
                     >
-                        Forgot Password
+                        {t('auth.forgotPassword.title')}
                     </p>
                     <p
                         className="font-['DM_Sans:Regular',sans-serif] font-normal leading-none text-[#a3aed0] text-[16px] tracking-[-0.32px]"
                         style={{ fontVariationSettings: "'opsz' 14" }}
                     >
-                        Enter your email to receive a reset link.
+                        {t('auth.forgotPassword.subtitle')}
                     </p>
                 </div>
 
@@ -44,14 +46,14 @@ export function ForgotPasswordPage() {
                             className="font-['DM_Sans:Regular',sans-serif] font-normal text-[#2b3674] text-[14px] leading-[20px]"
                             style={{ fontVariationSettings: "'opsz' 14" }}
                         >
-                            If that email exists, we sent a reset link. Please check your inbox.
+                            {t('auth.forgotPassword.successMessage')}
                         </p>
                         <Link
                             to="/sign-in"
                             className="inline-block mt-[12px] font-['DM_Sans:Bold',sans-serif] font-bold text-[#3ba55d] text-[14px] hover:underline"
                             style={{ fontVariationSettings: "'opsz' 14" }}
                         >
-                            Back to Sign In
+                            {t('auth.forgotPassword.backToSignIn')}
                         </Link>
                     </div>
                 ) : (
@@ -62,7 +64,7 @@ export function ForgotPasswordPage() {
                                 className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
                                 style={{ fontVariationSettings: "'opsz' 14" }}
                             >
-                                <span style={{ fontVariationSettings: "'opsz' 14" }}>Email</span>
+                                <span style={{ fontVariationSettings: "'opsz' 14" }}>{t('auth.forgotPassword.email')}</span>
                                 <span
                                     className="text-[#4318ff]"
                                     style={{ fontVariationSettings: "'opsz' 14" }}
@@ -77,7 +79,7 @@ export function ForgotPasswordPage() {
                                     autoComplete="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="your@email.com"
+                                    placeholder={t('auth.forgotPassword.emailPlaceholder')}
                                     className="w-full h-full px-[24px] rounded-[16px] border border-[#e0e5f2] border-solid font-['DM_Sans:Regular',sans-serif] font-normal text-[14px] text-[#2b3674] placeholder:text-[#a3aed0] tracking-[-0.28px] focus:outline-none focus:border-[#3ba55d] disabled:opacity-50 disabled:cursor-not-allowed"
                                     style={{ fontVariationSettings: "'opsz' 14" }}
                                     disabled={isPending}
@@ -95,7 +97,7 @@ export function ForgotPasswordPage() {
                                 className="font-['DM_Sans:Bold',sans-serif] font-bold leading-none text-[14px] text-center text-white tracking-[-0.28px]"
                                 style={{ fontVariationSettings: "'opsz' 14" }}
                             >
-                                {isPending ? 'Sending...' : 'Send Reset Link'}
+                                {isPending ? t('auth.forgotPassword.sending') : t('auth.forgotPassword.sendResetLink')}
                             </p>
                         </button>
 
@@ -103,13 +105,13 @@ export function ForgotPasswordPage() {
                             className="font-['DM_Sans:Regular',sans-serif] font-normal leading-[26px] text-[#2b3674] text-[14px] text-center tracking-[-0.28px] mt-[28px]"
                             style={{ fontVariationSettings: "'opsz' 14" }}
                         >
-                            Remembered your password?{' '}
+                            {t('auth.forgotPassword.rememberedPassword')}{' '}
                             <Link
                                 to="/sign-in"
                                 className="font-['DM_Sans:Bold',sans-serif] font-bold text-[#3ba55d] cursor-pointer hover:underline"
                                 style={{ fontVariationSettings: "'opsz' 14" }}
                             >
-                                Sign In
+                                {t('auth.signIn.signInButton')}
                             </Link>
                         </p>
                     </form>

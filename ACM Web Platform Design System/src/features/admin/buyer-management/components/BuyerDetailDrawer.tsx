@@ -1,25 +1,25 @@
-import {
-    Building2,
-    Upload,
-    FileText,
-    Eye,
-    CheckCircle,
-    XCircle,
-    Filter,
-    Download,
-} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Buyer, BuyerFormData, BuyerRole, AccountStatus, KYCDocument, AuditLog, KYCStatus } from '../types';
-import { KYC_DOCUMENTS, AUDIT_LOGS } from '../constants';
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Building2,
+    CheckCircle,
+    Download,
+    Eye,
+    FileText,
+    Filter,
+    Upload,
+    XCircle,
+} from 'lucide-react';
+import { PLACEHOLDER_AUDIT_LOGS, PLACEHOLDER_KYC_DOCUMENTS } from '../constants';
+import type { AccountStatus, AuditLog, Buyer, BuyerFormData, BuyerRole, KYCStatus } from '../types';
 
 interface BuyerDetailDrawerProps {
     open: boolean;
@@ -229,7 +229,7 @@ export function BuyerDetailDrawer({
                                         </Button>
                                     </div>
                                     <div className="space-y-3">
-                                        {KYC_DOCUMENTS.map((doc) => (
+                                        {PLACEHOLDER_KYC_DOCUMENTS.map((doc) => (
                                             <div
                                                 key={doc.id}
                                                 className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-muted/30 transition-colors"
@@ -375,7 +375,7 @@ export function BuyerDetailDrawer({
                                 </div>
 
                                 <div className="space-y-3">
-                                    {AUDIT_LOGS.map((log) => (
+                                    {PLACEHOLDER_AUDIT_LOGS.map((log) => (
                                         <div
                                             key={log.id}
                                             className="flex gap-3 p-4 rounded-lg border bg-card hover:bg-muted/30 transition-colors"

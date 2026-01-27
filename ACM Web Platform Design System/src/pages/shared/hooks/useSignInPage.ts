@@ -54,6 +54,22 @@ export function useSignInPage() {
     
     // Track if we've already performed the redirect to prevent infinite loops
     const hasRedirected = useRef(false);
+    // Track if we've shown the locked toast to prevent duplicate toasts
+    const hasShownLockedToast = useRef(false);
+
+    // Check for ?locked=true query param on mount
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('locked') === 'true' && !hasShownLockedToast.current) {
+            hasShownLockedToast.current = true;
+            toast.error('Tài khoản bị khóa', {
+                description: 'Tài khoản của bạn đã bị khóa do vi phạm chính sách hệ thống. Vui lòng liên hệ quản trị viên để được hỗ trợ.',
+                duration: 8000,
+            });
+            // Clean up the URL
+            navigate('/sign-in', { replace: true });
+        }
+    }, [location.search, navigate]);
 
     // Redirect if already authenticated (only once)
     useEffect(() => {

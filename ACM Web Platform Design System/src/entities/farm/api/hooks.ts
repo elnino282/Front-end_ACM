@@ -26,16 +26,16 @@ export const useFarms = (
     params?: FarmListParams,
     options?: Omit<UseQueryOptions<FarmResponse, Error>, 'queryKey' | 'queryFn'>
 ) => {
-    // console.log('[useFarms Entity Hook] Called with params:', params);
-    // console.log('[useFarms Entity Hook] Query key:', farmKeys.list(params));
+    console.log('[useFarms Entity Hook] Called with params:', params);
+    console.log('[useFarms Entity Hook] Query key:', farmKeys.list(params));
 
     const result = useQuery({
         queryKey: farmKeys.list(params),
         queryFn: async () => {
-            // console.log('[useFarms Entity Hook] queryFn executing...');
+            console.log('[useFarms Entity Hook] queryFn executing...');
             try {
                 const data = await farmApi.list(params);
-                // console.log('[useFarms Entity Hook] API response:', data);
+                console.log('[useFarms Entity Hook] API response:', data);
                 return data;
             } catch (err) {
                 console.error('[useFarms Entity Hook] API error:', err);
@@ -46,13 +46,13 @@ export const useFarms = (
         ...options,
     });
 
-    // console.log('[useFarms Entity Hook] Query state:', {
-    //     status: result.status,
-    //     isLoading: result.isLoading,
-    //     isError: result.isError,
-    //     data: result.data,
-    //     error: result.error,
-    // });
+    console.log('[useFarms Entity Hook] Query state:', {
+        status: result.status,
+        isLoading: result.isLoading,
+        isError: result.isError,
+        data: result.data,
+        error: result.error,
+    });
 
     return result;
 };
@@ -81,10 +81,10 @@ export const useCreateFarm = (
     return useMutation({
         ...options,
         mutationFn: async (variables) => {
-            // console.log('[useCreateFarm Entity Hook] Mutation started with variables:', variables);
+            console.log('[useCreateFarm Entity Hook] Mutation started with variables:', variables);
             try {
                 const result = await farmApi.create(variables);
-                // console.log('[useCreateFarm Entity Hook] Mutation success:', result);
+                console.log('[useCreateFarm Entity Hook] Mutation success:', result);
                 return result;
             } catch (error) {
                 console.error('[useCreateFarm Entity Hook] Mutation error:', error);
@@ -92,14 +92,14 @@ export const useCreateFarm = (
             }
         },
         onSuccess: (data, variables, context) => {
-            // console.log('[useCreateFarm Entity Hook] onSuccess called, invalidating queries');
+            console.log('[useCreateFarm Entity Hook] onSuccess called, invalidating queries');
             // Always invalidate cache first
             queryClient.invalidateQueries({
                 queryKey: farmKeys.lists(),
                 exact: false,
                 refetchType: 'active'
             });
-            // console.log('[useCreateFarm Entity Hook] Queries invalidated, calling feature callback');
+            console.log('[useCreateFarm Entity Hook] Queries invalidated, calling feature callback');
             // Then call the feature layer's callback if provided
             options?.onSuccess?.(data, variables, context);
         },
@@ -145,8 +145,8 @@ export const useDeleteFarm = (
     return useMutation({
         ...options,
         mutationFn: (params) => {
-            // console.log('[useDeleteFarm Entity] Deleting farm with params:', params);
-            // console.log('[useDeleteFarm Entity] Farm ID:', params.id);
+            console.log('[useDeleteFarm Entity] Deleting farm with params:', params);
+            console.log('[useDeleteFarm Entity] Farm ID:', params.id);
             return farmApi.delete(params.id);
         },
         onSuccess: (data, variables, context) => {

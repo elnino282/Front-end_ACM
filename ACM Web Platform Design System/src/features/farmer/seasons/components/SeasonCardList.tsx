@@ -1,4 +1,6 @@
 import { MoreVertical, MapPin, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
+import { usePreferences } from '@/shared/contexts';
+import { formatWeight } from '@/shared/lib';
 import type { Season, SeasonStatus } from '../types';
 
 interface SeasonCardListProps {
@@ -34,7 +36,8 @@ export function SeasonCardList({
   formatDateRange,
   calculateProgress,
 }: SeasonCardListProps) {
-  
+  const { preferences } = usePreferences();
+
   const getStatusIcon = (status: SeasonStatus) => {
     switch (status) {
       case 'PLANNED': return 'bg-blue-100 text-blue-700';
@@ -64,7 +67,9 @@ export function SeasonCardList({
         seasons.map((season) => {
           const progress = calculateProgress(season.startDate, season.endDate || season.startDate);
           const isSelected = selectedSeasons.includes(season.id);
-          
+          const yieldValueKg = season.actualYieldKg ?? season.expectedYieldKg ?? season.yieldPerHa ?? 0;
+          const yieldLabel = formatWeight(yieldValueKg, preferences.weightUnit, preferences.locale);
+
           return (
             <div
               key={season.id}
@@ -83,7 +88,7 @@ export function SeasonCardList({
                       onChange={(e) => onSelectSeason(season.id, e.target.checked)}
                       className="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
                     />
-                    
+
                     {/* Season Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -97,25 +102,25 @@ export function SeasonCardList({
                           </span>
                         )}
                       </div>
-                      
+
                       <h3
                         className="text-lg font-semibold text-gray-900 hover:text-green-600 cursor-pointer"
                         onClick={() => onViewDetails(season)}
                       >
                         {season.name}
                       </h3>
-                      
+
                       {/* Farm/Plot Context */}
                       <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                         <MapPin className="w-4 h-4" />
                         <span>
-                          {season.farmName || 'Farm'} › {season.plotName || `Plot #${season.plotId}`}
-                          {season.plotId && ' › ' + '2.5 ha'}
+                          {season.farmName || 'Farm'} / {season.plotName || `Plot #${season.plotId}`}
+                          {season.plotId && ' / ' + '2.5 ha'}
                         </span>
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Actions Menu */}
                   <button className="p-2 hover:bg-gray-100 rounded-lg">
                     <MoreVertical className="w-5 h-5 text-gray-400" />
@@ -133,7 +138,7 @@ export function SeasonCardList({
                     <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`absolute top-0 left-0 h-full rounded-full transition-all ${
-                          season.status === 'ACTIVE' ? 'bg-green-500' : 
+                          season.status === 'ACTIVE' ? 'bg-green-500' :
                           season.status === 'COMPLETED' ? 'bg-yellow-500' : 'bg-blue-400'
                         }`}
                         style={{ width: `${Math.min(progress, 100)}%` }}
@@ -162,7 +167,7 @@ export function SeasonCardList({
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <TrendingUp className="w-4 h-4" />
                       <span className="font-medium">
-                        {season.actualYieldKg || season.expectedYieldKg || season.yieldPerHa || 0} kg
+                        {yieldLabel}
                       </span>
                     </div>
                     <div className="text-xs text-gray-500">
@@ -178,6 +183,3 @@ export function SeasonCardList({
     </div>
   );
 }
-
-
-

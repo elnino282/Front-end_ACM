@@ -1,9 +1,9 @@
-import { AlertCircle, Activity } from 'lucide-react';
+﻿import { AlertCircle, Activity } from 'lucide-react';
 import { SystemAlert } from './types';
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ALERT UTILITIES
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export const getAlertIcon = (type: SystemAlert['type']) => {
     switch (type) {
@@ -34,9 +34,9 @@ export const getHealthStatus = (status: string) => {
     return colors[status as keyof typeof colors] || 'text-gray-600';
 };
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // DATE UTILITIES (Timezone-safe)
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
  * Format date for API requests (YYYY-MM-DD format, timezone-agnostic)
@@ -74,9 +74,9 @@ export const isValidDateRange = (fromDate: string, toDate: string): boolean => {
     return new Date(fromDate) <= new Date(toDate);
 };
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // NUMBER FORMATTING UTILITIES
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
  * Format number with Vietnamese locale (e.g., 1,234,567)
@@ -85,33 +85,55 @@ export const formatNumber = (num: number): string => {
     return new Intl.NumberFormat('vi-VN').format(num);
 };
 
-/**
- * Format currency in VND
- */
-export const formatCurrency = (num: number): string => {
-    return new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(num) + ' ₫';
-};
 
-// ═══════════════════════════════════════════════════════════════
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // EXPORT UTILITIES
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 interface ExportConfig {
-    reportType: 'yield' | 'cost' | 'revenue' | 'profit';
-    farmName?: string;
-    dateRange?: { from: string; to: string };
+    tab: 'yield' | 'cost' | 'revenue' | 'profit' | 'summary';
+    dateFrom?: string;
+    dateTo?: string;
+    farmId?: string;
+    plotId?: string;
 }
 
 /**
- * Generate smart export filename with context
- * Example: Yield_Report_FarmA_2026-01-03.csv
+ * Generate export filename with filters applied.
+ * Example: reports_yield_20260101-20260131_farm-1_plot-2.csv
  */
 export const getExportFileName = (config: ExportConfig): string => {
-    const timestamp = new Date().toISOString().slice(0, 10);
-    const reportName = config.reportType.charAt(0).toUpperCase() + config.reportType.slice(1);
-    const farmPart = config.farmName || 'AllFarms';
+    const tab = config.tab.toLowerCase();
+    const range = config.dateFrom && config.dateTo
+        ? `${config.dateFrom.replace(/-/g, '')}-${config.dateTo.replace(/-/g, '')}`
+        : 'all';
+    const farmPart = config.farmId ? `farm-${config.farmId}` : 'farm-all';
+    const plotPart = config.plotId ? `plot-${config.plotId}` : 'plot-all';
+    return `reports_${tab}_${range}_${farmPart}_${plotPart}.csv`;
+};
 
-    return `${reportName}_Report_${farmPart}_${timestamp}.csv`;
+export const parseFilenameFromDisposition = (disposition?: string | null): string | null => {
+    if (!disposition) return null;
+    const utf8Match = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (utf8Match?.[1]) {
+        return decodeURIComponent(utf8Match[1].replace(/"/g, ''));
+    }
+    const asciiMatch = disposition.match(/filename="?([^";]+)"?/i);
+    return asciiMatch?.[1] ?? null;
+};
+
+export const downloadBlob = (data: Blob | BlobPart, filename: string, mimeType = 'text/csv;charset=utf-8;'): void => {
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 };
 
 /**
@@ -126,7 +148,6 @@ export const generateCSV = <T extends Record<string, any>>(
     const dataRows = data.map(row =>
         headers.map(h => {
             const value = row[h.key];
-            // Escape commas and quotes in values
             const stringValue = String(value ?? '');
             if (stringValue.includes(',') || stringValue.includes('"')) {
                 return `"${stringValue.replace(/"/g, '""')}"`;
@@ -142,15 +163,5 @@ export const generateCSV = <T extends Record<string, any>>(
  * Trigger file download in browser
  */
 export const downloadFile = (content: string, filename: string, mimeType = 'text/csv;charset=utf-8;'): void => {
-    const blob = new Blob([content], { type: mimeType });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadBlob(content, filename, mimeType);
 };
-

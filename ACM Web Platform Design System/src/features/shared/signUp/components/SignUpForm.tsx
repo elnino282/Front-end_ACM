@@ -1,18 +1,15 @@
 /**
  * Sign Up Form Component
- * Main form with all input fields
- * Matches Sign In form styling exactly
+ * Compact single-column layout matching Sign In style
  */
 
-import type { BaseSyntheticEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { Controller, type UseFormReturn } from 'react-hook-form';
-import type { SignUpFormData } from '../types';
-import { RoleSelector } from './RoleSelector';
-
-// SVG path data for icons
-const EYE_ICON_PATH = "M10 4.16663C5.83334 4.16663 2.27501 6.73329 0.833344 10.4166C2.27501 14.1 5.83334 16.6666 10 16.6666C14.1667 16.6666 17.725 14.1 19.1667 10.4166C17.725 6.73329 14.1667 4.16663 10 4.16663ZM10 14.5833C7.70001 14.5833 5.83334 12.7166 5.83334 10.4166C5.83334 8.11663 7.70001 6.24996 10 6.24996C12.3 6.24996 14.1667 8.11663 14.1667 10.4166C14.1667 12.7166 12.3 14.5833 10 14.5833ZM10 7.91663C8.61668 7.91663 7.50001 9.03329 7.50001 10.4166C7.50001 11.8 8.61668 12.9166 10 12.9166C11.3833 12.9166 12.5 11.8 12.5 10.4166C12.5 9.03329 11.3833 7.91663 10 7.91663Z";
-const CHECKMARK_PATH = "M6.00001 11.17L1.83001 7L0.410011 8.41L6.00001 14L18 2.00001L16.59 0.590012L6.00001 11.17Z";
+import { useI18n } from "@/hooks/useI18n";
+import { Eye, EyeOff } from "lucide-react";
+import type { BaseSyntheticEvent } from "react";
+import { Controller, type UseFormReturn } from "react-hook-form";
+import { Link } from "react-router-dom";
+import type { SignUpFormData } from "../types";
+import { RoleSelector } from "./RoleSelector";
 
 interface SignUpFormProps {
   form: UseFormReturn<SignUpFormData>;
@@ -31,127 +28,87 @@ export function SignUpForm({
   onToggleShowConfirmPassword,
   onSubmit,
 }: SignUpFormProps) {
+  const { t } = useI18n();
   const {
     register,
     control,
     formState: { errors, isSubmitting },
-    watch,
   } = form;
 
-  const termsAccepted = watch('termsAccepted');
-
-  const inputClassName = (hasError: boolean, hasTrailingIcon = false) =>
-    [
-      'w-full h-full px-[24px] rounded-[16px] border border-solid font-[\'DM_Sans:Regular\',sans-serif] font-normal text-[14px] text-[#2b3674] placeholder:text-[#a3aed0] tracking-[-0.28px] focus:outline-none',
-      hasTrailingIcon ? 'pr-[52px]' : '',
-      hasError ? 'border-[#E53E3E] focus:border-[#E53E3E]' : 'border-[#e0e5f2] focus:border-[#3ba55d]',
-      isSubmitting ? 'opacity-70 cursor-not-allowed' : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const inputClass = (hasError: boolean) => `
+    w-full h-12 px-4 rounded-xl border text-sm text-slate-700 placeholder:text-slate-400
+    transition-all duration-200
+    focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500
+    disabled:bg-slate-50 disabled:text-slate-400
+    ${hasError ? "border-red-300" : "border-slate-200 hover:border-slate-300"}
+  `;
 
   return (
-    <form onSubmit={onSubmit} className="w-full">
-      {/* Full Name Field */}
-      <div className="mb-[24px]">
+    <form onSubmit={onSubmit} className="w-full max-w-md mx-auto space-y-4">
+      {/* Full Name */}
+      <div>
         <label
           htmlFor="fullName"
-          className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
-          style={{ fontVariationSettings: "'opsz' 14" }}
+          className="block text-sm font-medium text-slate-700 mb-1.5"
         >
-          <span>Full Name</span>
-          <span className="text-[#4318ff]">*</span>
+          {t('auth.signUp.fullName')}<span className="text-red-500 ml-0.5">*</span>
         </label>
-        <div className="relative h-[50px] w-full">
-          <input
-            type="text"
-            id="fullName"
-            autoComplete="name"
-            placeholder="John Doe"
-            className={inputClassName(!!errors.fullName)}
-            style={{ fontVariationSettings: "'opsz' 14" }}
-            aria-invalid={!!errors.fullName}
-            aria-describedby={errors.fullName ? 'fullName-error' : undefined}
-            disabled={isSubmitting}
-            {...register('fullName')}
-          />
-        </div>
+        <input
+          type="text"
+          id="fullName"
+          autoComplete="name"
+          placeholder={t('auth.signUp.fullNamePlaceholder')}
+          className={inputClass(!!errors.fullName)}
+          disabled={isSubmitting}
+          {...register("fullName")}
+        />
         {errors.fullName && (
-          <p
-            id="fullName-error"
-            className="mt-[8px] text-[12px] text-[#E53E3E] font-['DM_Sans:Regular',sans-serif]"
-            style={{ fontVariationSettings: "'opsz' 14" }}
-          >
-            {errors.fullName.message}
-          </p>
+          <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>
         )}
       </div>
 
-      {/* Email Field */}
-      <div className="mb-[24px]">
+      {/* Email */}
+      <div>
         <label
           htmlFor="email"
-          className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
-          style={{ fontVariationSettings: "'opsz' 14" }}
+          className="block text-sm font-medium text-slate-700 mb-1.5"
         >
-          <span>Email</span>
-          <span className="text-[#4318ff]">*</span>
+          {t('auth.signUp.email')}<span className="text-red-500 ml-0.5">*</span>
         </label>
-        <div className="relative h-[50px] w-full">
-          <input
-            type="email"
-            id="email"
-            autoComplete="email"
-            placeholder="john.doe@example.com"
-            className={inputClassName(!!errors.email)}
-            style={{ fontVariationSettings: "'opsz' 14" }}
-            aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? 'email-error' : undefined}
-            disabled={isSubmitting}
-            {...register('email')}
-          />
-        </div>
+        <input
+          type="email"
+          id="email"
+          autoComplete="email"
+          placeholder={t('auth.signUp.emailPlaceholder')}
+          className={inputClass(!!errors.email)}
+          disabled={isSubmitting}
+          {...register("email")}
+        />
         {errors.email && (
-          <p
-            id="email-error"
-            className="mt-[8px] text-[12px] text-[#E53E3E] font-['DM_Sans:Regular',sans-serif]"
-            style={{ fontVariationSettings: "'opsz' 14" }}
-          >
-            {errors.email.message}
-          </p>
+          <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
         )}
       </div>
 
-      {/* Phone Number Field */}
-      <div className="mb-[24px]">
+      {/* Phone Number */}
+      <div>
         <label
           htmlFor="phoneNumber"
-          className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
-          style={{ fontVariationSettings: "'opsz' 14" }}
+          className="block text-sm font-medium text-slate-700 mb-1.5"
         >
-          <span>Phone Number</span>
+          {t('auth.signUp.phoneNumber')}{" "}
+          <span className="text-slate-400 font-normal">({t('common.optional')})</span>
         </label>
-        <div className="relative h-[50px] w-full">
-          <input
-            type="tel"
-            id="phoneNumber"
-            autoComplete="tel"
-            inputMode="tel"
-            placeholder="+84 123 456 789"
-            className={inputClassName(!!errors.phoneNumber)}
-            style={{ fontVariationSettings: "'opsz' 14" }}
-            aria-invalid={!!errors.phoneNumber}
-            aria-describedby={errors.phoneNumber ? 'phoneNumber-error' : undefined}
-            disabled={isSubmitting}
-            {...register('phoneNumber')}
-          />
-        </div>
+        <input
+          type="tel"
+          id="phoneNumber"
+          autoComplete="tel"
+          placeholder={t('auth.signUp.phoneNumberPlaceholder')}
+          className={inputClass(!!errors.phoneNumber)}
+          disabled={isSubmitting}
+          {...register("phoneNumber")}
+        />
         {errors.phoneNumber && (
-          <p
-            id="phoneNumber-error"
-            className="mt-[8px] text-[12px] text-[#E53E3E] font-['DM_Sans:Regular',sans-serif]"
-            style={{ fontVariationSettings: "'opsz' 14" }}
-          >
+          <p className="mt-1 text-xs text-red-500">
             {errors.phoneNumber.message}
           </p>
         )}
@@ -164,7 +121,7 @@ export function SignUpForm({
         render={({ field }) => (
           <RoleSelector
             name={field.name}
-            selectedRole={field.value ?? 'FARMER'}
+            selectedRole={field.value ?? "FARMER"}
             onRoleChange={field.onChange}
             onBlur={field.onBlur}
             errorMessage={errors.role?.message}
@@ -172,173 +129,143 @@ export function SignUpForm({
         )}
       />
 
-      {/* Password Field */}
-      <div className="mb-[24px]">
+      {/* Password */}
+      <div>
         <label
           htmlFor="password"
-          className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
-          style={{ fontVariationSettings: "'opsz' 14" }}
+          className="block text-sm font-medium text-slate-700 mb-1.5"
         >
-          <span>Password</span>
-          <span className="text-[#4318ff]">*</span>
+          {t('auth.signUp.password')}<span className="text-red-500 ml-0.5">*</span>
         </label>
-        <div className="relative h-[50px] w-full">
+        <div className="relative">
           <input
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             id="password"
             autoComplete="new-password"
-            placeholder="Min. 8 characters"
-            className={inputClassName(!!errors.password, true)}
-            style={{ fontVariationSettings: "'opsz' 14" }}
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? 'password-error' : undefined}
+            placeholder={t('auth.signUp.passwordPlaceholder')}
+            className={`${inputClass(!!errors.password)} pr-12`}
             disabled={isSubmitting}
-            {...register('password')}
+            {...register("password")}
           />
           <button
             type="button"
             onClick={onToggleShowPassword}
-            className="absolute right-[18px] top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"
-            aria-label="Toggle password visibility"
-            aria-pressed={showPassword}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
+            aria-label={showPassword ? t('auth.signIn.hidePassword') : t('auth.signIn.showPassword')}
           >
-            <svg
-              className="w-[20px] h-[20px]"
-              fill="none"
-              preserveAspectRatio="none"
-              viewBox="0 0 20 20"
-            >
-              <g clipPath="url(#clip0_password)">
-                <g></g>
-                <path d={EYE_ICON_PATH} fill="#A3AED0" />
-              </g>
-              <defs>
-                <clipPath id="clip0_password">
-                  <rect fill="white" height="20" width="20" />
-                </clipPath>
-              </defs>
-            </svg>
+            {showPassword ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
           </button>
         </div>
         {errors.password && (
-          <p
-            id="password-error"
-            className="mt-[8px] text-[12px] text-[#E53E3E] font-['DM_Sans:Regular',sans-serif]"
-            style={{ fontVariationSettings: "'opsz' 14" }}
-          >
-            {errors.password.message}
-          </p>
+          <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
         )}
       </div>
 
-      {/* Confirm Password Field */}
-      <div className="mb-[24px]">
+      {/* Confirm Password */}
+      <div>
         <label
           htmlFor="confirmPassword"
-          className="font-['DM_Sans:Medium',sans-serif] font-medium leading-none text-[#2b3674] text-[14px] tracking-[-0.28px] mb-[11px]"
-          style={{ fontVariationSettings: "'opsz' 14" }}
+          className="block text-sm font-medium text-slate-700 mb-1.5"
         >
-          <span>Confirm Password</span>
-          <span className="text-[#4318ff]">*</span>
+          {t('auth.signUp.confirmPassword')}<span className="text-red-500 ml-0.5">*</span>
         </label>
-        <div className="relative h-[50px] w-full">
+        <div className="relative">
           <input
-            type={showConfirmPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? "text" : "password"}
             id="confirmPassword"
             autoComplete="new-password"
-            placeholder="Re-enter your password"
-            className={inputClassName(!!errors.confirmPassword, true)}
-            style={{ fontVariationSettings: "'opsz' 14" }}
-            aria-invalid={!!errors.confirmPassword}
-            aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+            placeholder={t('auth.signUp.confirmPasswordPlaceholder')}
+            className={`${inputClass(!!errors.confirmPassword)} pr-12`}
             disabled={isSubmitting}
-            {...register('confirmPassword')}
+            {...register("confirmPassword")}
           />
           <button
             type="button"
             onClick={onToggleShowConfirmPassword}
-            className="absolute right-[18px] top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"
-            aria-label="Toggle confirm password visibility"
-            aria-pressed={showConfirmPassword}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
+            aria-label={showConfirmPassword ? t('auth.signIn.hidePassword') : t('auth.signIn.showPassword')}
           >
-            <svg
-              className="w-[20px] h-[20px]"
-              fill="none"
-              preserveAspectRatio="none"
-              viewBox="0 0 20 20"
-            >
-              <g clipPath="url(#clip0_confirm_password)">
-                <g></g>
-                <path d={EYE_ICON_PATH} fill="#A3AED0" />
-              </g>
-              <defs>
-                <clipPath id="clip0_confirm_password">
-                  <rect fill="white" height="20" width="20" />
-                </clipPath>
-              </defs>
-            </svg>
+            {showConfirmPassword ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
           </button>
         </div>
         {errors.confirmPassword && (
-          <p
-            id="confirmPassword-error"
-            className="mt-[8px] text-[12px] text-[#E53E3E] font-['DM_Sans:Regular',sans-serif]"
-            style={{ fontVariationSettings: "'opsz' 14" }}
-          >
+          <p className="mt-1 text-xs text-red-500">
             {errors.confirmPassword.message}
           </p>
         )}
       </div>
 
-      {/* Terms and Conditions Checkbox */}
-      <div className="mb-[33px]">
-        <label className="flex items-start gap-[11px] cursor-pointer">
-          <input
-            type="checkbox"
-            id="termsAccepted"
-            className="sr-only peer"
-            disabled={isSubmitting}
-            aria-invalid={!!errors.termsAccepted}
-            aria-describedby={errors.termsAccepted ? 'termsAccepted-error' : undefined}
-            {...register('termsAccepted')}
-          />
-          <div
-            className={`w-[18px] h-[18px] rounded-[2px] border border-solid flex items-center justify-center transition-colors flex-shrink-0 mt-[1px] peer-focus-visible:ring-2 peer-focus-visible:ring-[#3ba55d]/30 ${termsAccepted
-              ? 'bg-[#3ba55d] border-[#3ba55d]'
-              : 'bg-white border-[#e0e5f2]'
-              }`}
-          >
-            {termsAccepted && (
-              <svg
-                className="w-[16px] h-[16px]"
-                fill="none"
-                viewBox="0 0 16 16"
+      {/* Terms Checkbox */}
+      <div className="pt-2">
+        <Controller
+          control={control}
+          name="termsAccepted"
+          render={({ field: { onChange, value, ref } }) => (
+            <div className="flex items-start gap-3">
+              <button
+                type="button"
+                ref={ref}
+                onClick={() => onChange(!value)}
+                disabled={isSubmitting}
+                style={{
+                  backgroundColor: value === true ? "#10b981" : "#ffffff",
+                  borderColor: value === true ? "#10b981" : errors.termsAccepted ? "#f87171" : "#cbd5e1",
+                }}
+                className="w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 hover:border-slate-400"
+                aria-checked={value === true}
+                role="checkbox"
               >
-                <path d={CHECKMARK_PATH} fill="white" />
-              </svg>
-            )}
-          </div>
-          <span
-            className="font-['DM_Sans:Regular',sans-serif] font-normal leading-[20px] text-[#2b3674] text-[14px] tracking-[-0.28px]"
-            style={{ fontVariationSettings: "'opsz' 14" }}
-          >
-            I agree to the{' '}
-            <span className="font-['DM_Sans:Bold',sans-serif] font-bold text-[#3ba55d] hover:underline">
-              Terms and Conditions
-            </span>{' '}
-            and{' '}
-            <span className="font-['DM_Sans:Bold',sans-serif] font-bold text-[#3ba55d] hover:underline">
-              Privacy Policy
-            </span>
-            <span className="text-[#4318ff]">*</span>
-          </span>
-        </label>
+                {value === true && (
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="#ffffff"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </button>
+              <span
+                className="text-sm text-slate-600 leading-relaxed cursor-pointer"
+                onClick={() => onChange(!value)}
+              >
+                {t('auth.signUp.termsPrefix')}{" "}
+                <Link
+                  to="/terms"
+                  className="text-emerald-600 font-medium hover:underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {t('auth.signUp.termsLink')}
+                </Link>{" "}
+                {t('common.and')}{" "}
+                <Link
+                  to="/privacy"
+                  className="text-emerald-600 font-medium hover:underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {t('auth.signUp.privacyLink')}
+                </Link>
+                <span className="text-red-500 ml-0.5">*</span>
+              </span>
+            </div>
+          )}
+        />
         {errors.termsAccepted && (
-          <p
-            id="termsAccepted-error"
-            className="mt-[8px] text-[12px] text-[#E53E3E] font-['DM_Sans:Regular',sans-serif]"
-            style={{ fontVariationSettings: "'opsz' 14" }}
-          >
+          <p className="mt-1 text-xs text-red-500 ml-8">
             {errors.termsAccepted.message}
           </p>
         )}
@@ -348,32 +275,27 @@ export function SignUpForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-[#3ba55d] h-[54px] rounded-[16px] flex items-center justify-center gap-[10px] px-[8px] py-[10px] hover:bg-[#2F9E44] transition-colors disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-[#3ba55d]"
-        aria-busy={isSubmitting}
+        className={`
+          w-full h-12 rounded-xl font-semibold text-sm text-white mt-2
+          flex items-center justify-center gap-2 transition-all
+          focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500
+          ${isSubmitting ? "bg-emerald-400 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-700"}
+        `}
       >
         {isSubmitting && (
-          <span className="w-[16px] h-[16px] border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
         )}
-        <span
-          className="font-['DM_Sans:Bold',sans-serif] font-bold leading-none text-[14px] text-center text-white tracking-[-0.28px]"
-          style={{ fontVariationSettings: "'opsz' 14" }}
-        >
-          {isSubmitting ? 'Creating Account...' : 'Create Account'}
-        </span>
+        {isSubmitting ? t('auth.signUp.creatingAccount') : t('auth.signUp.createAccount')}
       </button>
 
-      {/* Already have account link */}
-      <p
-        className="font-['DM_Sans:Regular',sans-serif] font-normal leading-[26px] text-[#2b3674] text-[14px] text-center tracking-[-0.28px] mt-[28px]"
-        style={{ fontVariationSettings: "'opsz' 14" }}
-      >
-        Already have an account?{' '}
+      {/* Sign In Link */}
+      <p className="text-sm text-slate-600 text-center pt-4">
+        {t('auth.signUp.hasAccount')}{" "}
         <Link
           to="/sign-in"
-          className="font-['DM_Sans:Bold',sans-serif] font-bold text-[#3ba55d] cursor-pointer hover:underline"
-          style={{ fontVariationSettings: "'opsz' 14" }}
+          className="text-emerald-600 font-semibold hover:underline"
         >
-          Sign In
+          {t('auth.signUp.signIn')}
         </Link>
       </p>
     </form>

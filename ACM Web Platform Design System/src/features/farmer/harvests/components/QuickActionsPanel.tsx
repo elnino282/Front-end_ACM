@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { SummaryStats } from "../types";
+import { usePreferences } from "@/shared/contexts";
+import { formatWeight } from "@/shared/lib";
 
 interface QuickActionsPanelProps {
     onQuickAction: (action: string) => void;
@@ -13,6 +15,8 @@ export function QuickActionsPanel({
     onQuickAction,
     summaryStats,
 }: QuickActionsPanelProps) {
+    const { preferences } = usePreferences();
+
     return (
         <div className="space-y-4">
             {/* Quick Actions */}
@@ -81,19 +85,19 @@ export function QuickActionsPanel({
                     <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Total Stored</span>
                         <span className="numeric text-foreground">
-                            {summaryStats.totalStored.toLocaleString()} kg
+                            {formatWeight(summaryStats.totalStored, preferences.weightUnit, preferences.locale)}
                         </span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Total Sold</span>
                         <span className="numeric text-primary">
-                            {summaryStats.totalSold.toLocaleString()} kg
+                            {formatWeight(summaryStats.totalSold, preferences.weightUnit, preferences.locale)}
                         </span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Processing</span>
                         <span className="numeric text-accent">
-                            {summaryStats.totalProcessing.toLocaleString()} kg
+                            {formatWeight(summaryStats.totalProcessing, preferences.weightUnit, preferences.locale)}
                         </span>
                     </div>
                     <Separator className="bg-border my-2" />

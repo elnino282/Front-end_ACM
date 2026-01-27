@@ -80,14 +80,14 @@ export const farmApi = {
      */
     list: async (params?: FarmListParams): Promise<FarmResponse> => {
         const validatedParams = params ? FarmListParamsSchema.parse(params) : undefined;
-        // console.log('[Farm API Client] Fetching farms with params:', validatedParams);
+        console.log('[Farm API Client] Fetching farms with params:', validatedParams);
 
         const response = await httpClient.get('/api/v1/farms', { params: validatedParams });
-        // console.log('[Farm API Client] Raw response:', response.data);
+        console.log('[Farm API Client] Raw response:', response.data);
 
         // Extract result from ApiResponse wrapper
         const rawResult = extractApiResult(response.data);
-        // console.log('[Farm API Client] Extracted result:', rawResult);
+        console.log('[Farm API Client] Extracted result:', rawResult);
 
         // Handle array payloads or 'content'/'items' formats from backend
         const content = Array.isArray(rawResult)
@@ -102,15 +102,15 @@ export const farmApi = {
             totalElements: Array.isArray(rawResult) ? content.length : (rawResult.totalElements ?? content.length),
             totalPages: Array.isArray(rawResult) ? 1 : (rawResult.totalPages ?? 1),
         };
-        // console.log('[Farm API Client] Transformed result:', transformedResult);
+        console.log('[Farm API Client] Transformed result:', transformedResult);
 
         // Parse and validate with schema
         try {
             const parsed = FarmResponseSchema.parse(transformedResult);
-            // console.log('[Farm API Client] Successfully parsed:', {
-            //     totalFarms: parsed.totalElements,
-            //     farmNames: parsed.content.map(f => f.name),
-            // });
+            console.log('[Farm API Client] Successfully parsed:', {
+                totalFarms: parsed.totalElements,
+                farmNames: parsed.content.map(f => f.name),
+            });
             return parsed;
         } catch (error) {
             console.error('[Farm API Client] Schema validation error:', error);
@@ -133,10 +133,10 @@ export const farmApi = {
      * Create a new farm
      */
     create: async (data: FarmCreateRequest): Promise<FarmDetailResponse> => {
-        // console.log('[Farm API Client] Validating payload:', data);
+        console.log('[Farm API Client] Validating payload:', data);
         const validatedPayload = FarmCreateRequestSchema.parse(data);
-        // console.log('[Farm API Client] Validated payload:', validatedPayload);
-        // console.log('[Farm API Client] POST /api/v1/farms');
+        console.log('[Farm API Client] Validated payload:', validatedPayload);
+        console.log('[Farm API Client] POST /api/v1/farms');
 
         try {
             const requestPayload = {
@@ -146,17 +146,17 @@ export const farmApi = {
                 area: validatedPayload.area ?? null,
             };
             const response = await httpClient.post('/api/v1/farms', requestPayload);
-            // console.log('[Farm API Client] Create response status:', response.status);
-            // console.log('[Farm API Client] Create response data:', response.data);
+            console.log('[Farm API Client] Create response status:', response.status);
+            console.log('[Farm API Client] Create response data:', response.data);
 
             const rawData = extractApiResult(response.data);
-            // console.log('[Farm API Client] Extracted data:', rawData);
-
+            console.log('[Farm API Client] Extracted data:', rawData);
+            
             const transformedData = transformFarmDetailResponse(rawData);
-            // console.log('[Farm API Client] Transformed data:', transformedData);
-
+            console.log('[Farm API Client] Transformed data:', transformedData);
+            
             const parsed = FarmDetailResponseSchema.parse(transformedData);
-            // console.log('[Farm API Client] Successfully created farm:', parsed);
+            console.log('[Farm API Client] Successfully created farm:', parsed);
             return parsed;
         } catch (error: any) {
             console.error('[Farm API Client] Create error:', error);
@@ -185,8 +185,8 @@ export const farmApi = {
      * Delete/deactivate a farm (soft delete)
      */
     delete: async (id: number): Promise<void> => {
-        // console.log('[Farm API Client] delete called with id:', id, 'type:', typeof id);
-        // console.log('[Farm API Client] DELETE URL:', `/api/v1/farms/${id}`);
+        console.log('[Farm API Client] delete called with id:', id, 'type:', typeof id);
+        console.log('[Farm API Client] DELETE URL:', `/api/v1/farms/${id}`);
         await httpClient.delete(`/api/v1/farms/${id}`);
     },
 };

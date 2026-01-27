@@ -1,4 +1,4 @@
-import httpClient from '@/shared/api/http';
+import { httpClient } from '../shared/api/httpClient';
 
 export interface Farm {
   id: number;

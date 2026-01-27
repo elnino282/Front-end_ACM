@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Map, Plus } from 'lucide-react';
-import { FarmList } from '@/features/farmer/farms/components/FarmList';
-import { PlotList } from '@/features/farmer/farms/components/PlotList';
+import { farmApi } from '@/features/farmer/farms/api';
 import { CreateFarmModal } from '@/features/farmer/farms/components/CreateFarmModal';
 import { CreatePlotModal } from '@/features/farmer/farms/components/CreatePlotModal';
-import { farmApi } from '@/features/farmer/farms/api';
-import { Farm, Plot, CreateFarmRequest, CreatePlotRequest } from '@/features/farmer/farms/types';
+import { FarmList } from '@/features/farmer/farms/components/FarmList';
+import { PlotList } from '@/features/farmer/farms/components/PlotList';
+import { CreateFarmRequest, CreatePlotRequest, Farm, Plot } from '@/features/farmer/farms/types';
+import { useI18n } from '@/hooks/useI18n';
 import { Button, Card, CardContent, PageHeader } from '@/shared/ui';
+import { Map, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function FarmsPlotsPage() {
+    const { t } = useI18n();
     const [farms, setFarms] = useState<Farm[]>([]);
     const [selectedFarm, setSelectedFarm] = useState<Farm | undefined>(undefined);
     const [plots, setPlots] = useState<Plot[]>([]);
@@ -35,7 +37,7 @@ export default function FarmsPlotsPage() {
             }
         } catch (error) {
             console.error('Failed to fetch farms', error);
-            toast.error('Failed to load farms');
+            toast.error(t('farms.toast.loadFarmsError'));
         } finally {
             setIsLoadingFarms(false);
         }
@@ -55,7 +57,7 @@ export default function FarmsPlotsPage() {
                     setPlots(data);
                 } catch (error) {
                     console.error('Failed to fetch plots', error);
-                    toast.error('Failed to load plots');
+                    toast.error(t('farms.toast.loadPlotsError'));
                 } finally {
                     setIsLoadingPlots(false);
                 }
@@ -69,13 +71,13 @@ export default function FarmsPlotsPage() {
     const handleCreateFarm = async (data: CreateFarmRequest) => {
         try {
             const newFarm = await farmApi.createFarm(data);
-            toast.success('Farm created successfully');
+            toast.success(t('farms.toast.createFarmSuccess'));
             await fetchFarms();
             setSelectedFarm(newFarm); // Auto select new farm
             setIsCreateFarmOpen(false);
         } catch (error) {
             console.error(error);
-            toast.error('Failed to create farm');
+            toast.error(t('farms.toast.createFarmError'));
             throw error;
         }
     };
@@ -84,23 +86,23 @@ export default function FarmsPlotsPage() {
         if (!selectedFarm) return;
         try {
             await farmApi.createPlot(selectedFarm.id, data);
-            toast.success('Plot created successfully');
+            toast.success(t('farms.toast.createPlotSuccess'));
             const updatedPlots = await farmApi.getPlotsByFarm(selectedFarm.id);
             setPlots(updatedPlots);
             setIsCreatePlotOpen(false);
         } catch (error) {
             console.error(error);
-            toast.error('Failed to create plot');
+            toast.error(t('farms.toast.createPlotError'));
             throw error;
         }
     };
 
     const canCreatePlot = !!selectedFarm && selectedFarm.active;
     const createPlotTitle = !selectedFarm
-        ? 'Select a farm to add plots'
+        ? t('farms.tooltip.selectFarm')
         : selectedFarm.active
-            ? 'Create new plot'
-            : 'Cannot create plot in inactive farm';
+            ? t('farms.tooltip.createPlot')
+            : t('farms.tooltip.inactiveFarm');
 
     return (
         <div className="min-h-screen bg-background pb-20">
@@ -110,13 +112,13 @@ export default function FarmsPlotsPage() {
                         <PageHeader
                             className="mb-0"
                             icon={<Map className="w-8 h-8" />}
-                            title="Farms & Plots"
-                            subtitle="Manage your farms and plots"
+                            title={t('farms.title')}
+                            subtitle={t('farms.subtitle')}
                             actions={
                                 <>
                                     <Button onClick={() => setIsCreateFarmOpen(true)}>
                                         <Plus className="w-4 h-4 mr-2" />
-                                        New Farm
+                                        {t('farms.newFarmButton')}
                                     </Button>
                                     <Button
                                         variant="outline"
@@ -125,7 +127,7 @@ export default function FarmsPlotsPage() {
                                         title={createPlotTitle}
                                     >
                                         <Plus className="w-4 h-4 mr-2" />
-                                        New Plot
+                                        {t('farms.newPlotButton')}
                                     </Button>
                                 </>
                             }

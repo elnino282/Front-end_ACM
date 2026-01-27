@@ -1,10 +1,11 @@
-export { documentApi } from './api/client';
+export { documentApi } from "./api/client";
 export {
-    useDocumentsList,
-    useDocument,
-    useRecordDocumentOpen,
-    useAddFavorite,
-    useRemoveFavorite,
-} from './api/hooks';
-export * from './model/types';
-export { documentKeys } from './model/keys';
+  useAddFavorite,
+  useDocument,
+  useDocumentsList,
+  useDocumentsMeta,
+  useRecordDocumentOpen,
+  useRemoveFavorite,
+} from "./api/hooks";
+export { documentKeys } from "./model/keys";
+export * from "./model/types";

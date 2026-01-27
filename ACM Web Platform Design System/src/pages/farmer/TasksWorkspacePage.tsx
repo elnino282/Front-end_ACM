@@ -1,43 +1,45 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, ClipboardList, Search, Calendar } from 'lucide-react';
-import { taskApi, taskKeys } from '@/entities/task';
 import type { TaskListParams } from '@/entities/task';
-import {
-  Button,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Badge,
-  Card,
-  CardContent,
-  PageContainer,
-  PageHeader,
-  AsyncState,
-  ConfirmDialog,
-  DataTablePagination,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Label,
-} from '@/shared/ui';
+import { taskApi, taskKeys } from '@/entities/task';
+import { useI18n } from '@/hooks/useI18n';
 import { useDebounce } from '@/shared/lib';
+import {
+    AsyncState,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    ConfirmDialog,
+    DataTablePagination,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    Input,
+    Label,
+    PageContainer,
+    PageHeader,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/shared/ui';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Calendar, ClipboardList, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export function TasksWorkspacePage() {
   const queryClient = useQueryClient();
+  const { t } = useI18n();
   const [filters, setFilters] = useState<TaskListParams>({
     page: 0,
     size: 20,
@@ -71,12 +73,12 @@ export function TasksWorkspacePage() {
     mutationFn: (id: number) => taskApi.updateStatus(id, { status: 'IN_PROGRESS' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: taskKeys.listWorkspace() });
-      toast.success('Task started successfully');
+      toast.success(t('tasks.toast.startSuccess'));
       setStartConfirmOpen(false);
       setSelectedTaskId(null);
     },
     onError: () => {
-      toast.error('Failed to start task');
+      toast.error(t('tasks.toast.startError'));
     },
   });
 
@@ -86,12 +88,12 @@ export function TasksWorkspacePage() {
       taskApi.updateStatus(id, { status: 'DONE', actualEndDate: data.actualEndDate }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: taskKeys.listWorkspace() });
-      toast.success('Task completed successfully');
+      toast.success(t('tasks.toast.completeSuccess'));
       setCompleteDialogOpen(false);
       setSelectedTaskId(null);
     },
     onError: () => {
-      toast.error('Failed to complete task');
+      toast.error(t('tasks.toast.completeError'));
     },
   });
 
@@ -149,12 +151,12 @@ export function TasksWorkspacePage() {
           <PageHeader
             className="mb-0"
             icon={<ClipboardList className="w-8 h-8" />}
-            title="Tasks Workspace"
-            subtitle="Manage and track all your farm tasks"
+            title={t('tasks.title')}
+            subtitle={t('tasks.subtitle')}
             actions={
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                Create Task
+                {t('tasks.createButton')}
               </Button>
             }
           />
@@ -168,7 +170,7 @@ export function TasksWorkspacePage() {
             <div className="relative w-[320px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search tasks..."
+                placeholder={t('tasks.searchPlaceholder')}
                 className="pl-10"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -185,14 +187,14 @@ export function TasksWorkspacePage() {
               }
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All Statuses" />
+                <SelectValue placeholder={t('tasks.filters.allStatuses')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                <SelectItem value="DONE">Done</SelectItem>
-                <SelectItem value="OVERDUE">Overdue</SelectItem>
+                <SelectItem value="all">{t('tasks.filters.allStatuses')}</SelectItem>
+                <SelectItem value="PENDING">{t('tasks.status.pending')}</SelectItem>
+                <SelectItem value="IN_PROGRESS">{t('tasks.status.inProgress')}</SelectItem>
+                <SelectItem value="DONE">{t('tasks.status.done')}</SelectItem>
+                <SelectItem value="OVERDUE">{t('tasks.status.overdue')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -207,14 +209,14 @@ export function TasksWorkspacePage() {
             isEmpty={items.length === 0}
             error={error as Error | null}
             onRetry={() => refetch()}
-            loadingText="Loading tasks..."
+            loadingText={t('tasks.loading')}
             emptyIcon={<ClipboardList className="w-6 h-6 text-[#777777]" />}
-            emptyTitle="No tasks found"
-            emptyDescription="Create your first task to get started with managing your farm activities."
+            emptyTitle={t('tasks.empty.title')}
+            emptyDescription={t('tasks.empty.description')}
             emptyAction={
               <Button className="mt-2">
                 <Plus className="w-4 h-4 mr-2" />
-                Create Task
+                {t('tasks.createButton')}
               </Button>
             }
           >
@@ -222,19 +224,19 @@ export function TasksWorkspacePage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Season</TableHead>
-                    <TableHead>Planned Date</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('tasks.table.title')}</TableHead>
+                    <TableHead>{t('tasks.table.season')}</TableHead>
+                    <TableHead>{t('tasks.table.plannedDate')}</TableHead>
+                    <TableHead>{t('tasks.table.dueDate')}</TableHead>
+                    <TableHead>{t('tasks.table.status')}</TableHead>
+                    <TableHead className="text-right">{t('tasks.table.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {items.map((task) => (
                     <TableRow key={task.taskId}>
                       <TableCell className="font-medium">{task.title}</TableCell>
-                      <TableCell>{task.seasonName || 'No Season'}</TableCell>
+                      <TableCell>{task.seasonName || t('tasks.noSeason')}</TableCell>
                       <TableCell>{task.plannedDate || '-'}</TableCell>
                       <TableCell>{task.dueDate || '-'}</TableCell>
                       <TableCell>{getStatusBadge(task.status)}</TableCell>
@@ -246,7 +248,7 @@ export function TasksWorkspacePage() {
                               onClick={() => handleOpenStartConfirm(task.taskId)}
                               disabled={startTaskMutation.isPending}
                             >
-                              Start
+                              {t('tasks.actions.start')}
                             </Button>
                           )}
                           {(task.status === 'IN_PROGRESS' || task.status === 'OVERDUE') && (
@@ -256,7 +258,7 @@ export function TasksWorkspacePage() {
                               onClick={() => handleOpenCompleteDialog(task.taskId)}
                               disabled={completeTaskMutation.isPending}
                             >
-                              Complete
+                              {t('tasks.actions.complete')}
                             </Button>
                           )}
                         </div>
@@ -286,9 +288,9 @@ export function TasksWorkspacePage() {
       <ConfirmDialog
         open={startConfirmOpen}
         onOpenChange={setStartConfirmOpen}
-        title="Start Task"
-        description="Are you sure you want to start this task? The task status will be changed to 'In Progress'."
-        confirmText="Start Task"
+        title={t('tasks.dialog.startTitle')}
+        description={t('tasks.dialog.startDescription')}
+        confirmText={t('tasks.dialog.startConfirm')}
         onConfirm={handleStartTask}
         isLoading={startTaskMutation.isPending}
       />
@@ -297,14 +299,14 @@ export function TasksWorkspacePage() {
       <Dialog open={completeDialogOpen} onOpenChange={setCompleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Complete Task</DialogTitle>
+            <DialogTitle>{t('tasks.dialog.completeTitle')}</DialogTitle>
             <DialogDescription>
-              Enter the completion date to mark this task as done.
+              {t('tasks.dialog.completeDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="completionDate">Completion Date</Label>
+              <Label htmlFor="completionDate">{t('tasks.dialog.completionDateLabel')}</Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -323,13 +325,13 @@ export function TasksWorkspacePage() {
               onClick={() => setCompleteDialogOpen(false)}
               disabled={completeTaskMutation.isPending}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleCompleteTask}
               disabled={completeTaskMutation.isPending || !completionDate}
             >
-              {completeTaskMutation.isPending ? 'Completing...' : 'Complete Task'}
+              {completeTaskMutation.isPending ? t('tasks.dialog.completing') : t('tasks.dialog.completeConfirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

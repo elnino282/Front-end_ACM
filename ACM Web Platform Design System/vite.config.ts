@@ -1,7 +1,6 @@
 /// <reference types="vitest" />
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import compression from 'vite-plugin-compression';
 import path from 'path';
 
 export default defineConfig(({ mode }) => {
@@ -12,19 +11,7 @@ export default defineConfig(({ mode }) => {
   const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:8080';
 
   return {
-    plugins: [
-      react(),
-      // Gzip compression for production
-      compression({
-        algorithm: 'gzip',
-        ext: '.gz',
-      }),
-      // Brotli compression for production (better compression ratio)
-      compression({
-        algorithm: 'brotliCompress',
-        ext: '.br',
-      }),
-    ],
+    plugins: [react()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
@@ -77,65 +64,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      target: 'modules',
+      target: 'esnext',
       outDir: 'build',
-      sourcemap: false, // Disable sourcemaps for production to reduce bundle size
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            // Core React libraries - cached separately
-            if (id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/react/') ||
-              id.includes('node_modules/scheduler')) {
-              return 'react-vendor';
-            }
-            // State management
-            if (id.includes('@reduxjs/toolkit') || id.includes('react-redux') || id.includes('immer')) {
-              return 'redux-vendor';
-            }
-            // Data fetching
-            if (id.includes('@tanstack/react-query') || id.includes('@tanstack/query-core')) {
-              return 'query-vendor';
-            }
-            // Routing
-            if (id.includes('react-router')) {
-              return 'router-vendor';
-            }
-            // Form handling
-            if (id.includes('react-hook-form') || id.includes('@hookform')) {
-              return 'form-vendor';
-            }
-            // Validation
-            if (id.includes('node_modules/zod')) {
-              return 'zod-vendor';
-            }
-            // Date utilities
-            if (id.includes('date-fns') || id.includes('react-day-picker')) {
-              return 'date-vendor';
-            }
-            // NOTE: recharts, d3-*, and victory-vendor are intentionally NOT included in manual chunks
-            // due to complex internal circular dependencies that cause "Cannot access X before initialization" errors.
-            // Let Rollup handle these automatically.
-
-            // Icons
-            if (id.includes('lucide-react')) {
-              return 'icons-vendor';
-            }
-            // All Radix UI components
-            if (id.includes('@radix-ui')) {
-              return 'ui-vendor';
-            }
-            // HTTP client
-            if (id.includes('axios')) {
-              return 'http-vendor';
-            }
-            // Other utilities
-            if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
-              return 'utils-vendor';
-            }
-          },
-        },
-      },
     },
     server: {
       port,

@@ -11,12 +11,16 @@ import {
     ResponsiveContainer,
     Legend,
 } from "recharts";
+import { usePreferences } from "@/shared/contexts";
+import { formatMoney, convertToDisplayCurrency } from "@/shared/lib";
 
 // TODO: Replace with API data when available
 const COST_DISTRIBUTION: any[] = [];
 const MONTHLY_COSTS: any[] = [];
 
 export function CostTab() {
+    const { preferences } = usePreferences();
+
     return (
         <div className="space-y-6">
             <div>
@@ -46,7 +50,9 @@ export function CostTab() {
                                 ))}
                             </Pie>
                             <RechartsTooltip
-                                formatter={(value: number) => `₫${(value / 1000000).toFixed(1)}M`}
+                                formatter={(value: number) =>
+                                    formatMoney(convertToDisplayCurrency(value, preferences.currency), preferences.currency, preferences.locale)
+                                }
                             />
                         </PieChart>
                     </ResponsiveContainer>
@@ -69,7 +75,7 @@ export function CostTab() {
                                         {item.percentage}%
                                     </span>
                                     <span className="text-xs text-muted-foreground">
-                                        ₫{(item.value / 1000000).toFixed(1)}M
+                                        {formatMoney(convertToDisplayCurrency(item.value, preferences.currency), preferences.currency, preferences.locale)}
                                     </span>
                                 </div>
                             </div>
@@ -89,7 +95,9 @@ export function CostTab() {
                             />
                             <YAxis tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} />
                             <RechartsTooltip
-                                formatter={(value: number) => `₫${(value / 1000000).toFixed(1)}M`}
+                                formatter={(value: number) =>
+                                    formatMoney(convertToDisplayCurrency(value, preferences.currency), preferences.currency, preferences.locale)
+                                }
                             />
                             <Legend />
                             <Bar dataKey="seeds" stackId="a" fill="var(--chart-1)" />
@@ -104,6 +112,3 @@ export function CostTab() {
         </div>
     );
 }
-
-
-

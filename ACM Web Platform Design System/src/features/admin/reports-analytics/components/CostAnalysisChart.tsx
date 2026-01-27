@@ -1,6 +1,13 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { usePreferences } from '@/shared/contexts';
+import {
+    convertCostPerKg,
+    convertWeight,
+    formatMoney,
+    getWeightUnitLabel,
+} from '@/shared/lib';
 import type { CostReport } from '@/services/api.admin';
 
 interface CostAnalysisChartProps {
@@ -9,12 +16,16 @@ interface CostAnalysisChartProps {
 }
 
 export const CostAnalysisChart: React.FC<CostAnalysisChartProps> = ({ data, isLoading }) => {
+    const { preferences } = usePreferences();
+    const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+    const formatNumber = (value: number) => new Intl.NumberFormat(preferences.locale).format(value);
+
     // Transform data for the chart
     const chartData = data.map(item => ({
         name: item.seasonName || `Season ${item.seasonId}`,
         expense: Number(item.totalExpense) || 0,
-        costPerKg: Number(item.costPerKg) || 0,
-        yield: Number(item.totalYieldKg) || 0,
+        costPerUnit: convertCostPerKg(Number(item.costPerKg) || 0, preferences.weightUnit),
+        yield: convertWeight(Number(item.totalYieldKg) || 0, preferences.weightUnit),
     }));
 
     if (isLoading) {
@@ -70,12 +81,19 @@ export const CostAnalysisChart: React.FC<CostAnalysisChartProps> = ({ data, isLo
                             yAxisId="right"
                             orientation="right"
                             tick={{ fontSize: 12 }}
-                            tickFormatter={(value) => `${value.toLocaleString()}/kg`}
+                            tickFormatter={(value) => `${formatNumber(value as number)}/${unitLabel}`}
                         />
                         <Tooltip
                             formatter={(value: number, name: string) => {
-                                if (name === 'expense') return [`${value.toLocaleString()} VND`, 'Total Expense'];
-                                if (name === 'costPerKg') return [`${value.toLocaleString()} VND/kg`, 'Cost per Kg'];
+                                if (name === 'expense') {
+                                    return [formatMoney(value, preferences.currency, preferences.locale), 'Total Expense'];
+                                }
+                                if (name === 'costPerUnit') {
+                                    return [
+                                        `${formatMoney(value, preferences.currency, preferences.locale)}/${unitLabel}`,
+                                        `Cost per ${unitLabel}`
+                                    ];
+                                }
                                 return [value, name];
                             }}
                         />
@@ -89,8 +107,8 @@ export const CostAnalysisChart: React.FC<CostAnalysisChartProps> = ({ data, isLo
                         />
                         <Bar
                             yAxisId="right"
-                            dataKey="costPerKg"
-                            name="Cost/Kg"
+                            dataKey="costPerUnit"
+                            name={`Cost/${unitLabel}`}
                             fill="#3B82F6"
                             radius={[4, 4, 0, 0]}
                         />

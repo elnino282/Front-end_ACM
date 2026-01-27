@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react';
-import { CheckCircle2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { usePreferences } from "@/shared/contexts";
+import { convertWeightToKg, getWeightUnitLabel } from "@/shared/lib";
 import {
   Dialog,
   DialogContent,
@@ -8,17 +11,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import type { Season } from '../types';
+} from "@/shared/ui";
+import { CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { Season } from "../types";
 
 interface CompleteSeasonDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   season: Season | null;
-  onConfirm: (data: { endDate: string; actualYieldKg?: number; forceComplete?: boolean }) => void;
+  onConfirm: (data: {
+    endDate: string;
+    actualYieldKg?: number;
+    forceComplete?: boolean;
+  }) => void;
   isSubmitting?: boolean;
 }
 
@@ -29,22 +35,29 @@ export function CompleteSeasonDialog({
   onConfirm,
   isSubmitting = false,
 }: CompleteSeasonDialogProps) {
-  const [endDate, setEndDate] = useState('');
-  const [actualYieldKg, setActualYieldKg] = useState('');
+  const { preferences } = usePreferences();
+  const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+  const weightStep = preferences.weightUnit === "G" ? "1" : "0.01";
+  const [endDate, setEndDate] = useState("");
+  const [actualYieldKg, setActualYieldKg] = useState("");
   const [forceComplete, setForceComplete] = useState(false);
 
   useEffect(() => {
     if (!open) return;
-    setEndDate('');
-    setActualYieldKg('');
+    setEndDate("");
+    setActualYieldKg("");
     setForceComplete(false);
   }, [open, season?.id]);
 
-  const actualYieldValue =
-    actualYieldKg === '' ? null : parseFloat(actualYieldKg);
+  const actualYieldInput =
+    actualYieldKg === "" ? null : parseFloat(actualYieldKg);
   const hasValidYield =
-    actualYieldValue === null ||
-    (!Number.isNaN(actualYieldValue) && actualYieldValue >= 0);
+    actualYieldInput === null ||
+    (!Number.isNaN(actualYieldInput) && actualYieldInput >= 0);
+  const actualYieldValue =
+    actualYieldInput === null
+      ? null
+      : convertWeightToKg(actualYieldInput, preferences.weightUnit);
 
   const canSubmit = Boolean(endDate) && hasValidYield && !isSubmitting;
 
@@ -84,12 +97,12 @@ export function CompleteSeasonDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="actualYieldKg">Actual Yield (kg)</Label>
+            <Label htmlFor="actualYieldKg">Actual Yield ({unitLabel})</Label>
             <Input
               id="actualYieldKg"
               type="number"
               min="0"
-              step="0.1"
+              step={weightStep}
               value={actualYieldKg}
               onChange={(e) => setActualYieldKg(e.target.value)}
               placeholder="e.g., 5200"
@@ -126,13 +139,10 @@ export function CompleteSeasonDialog({
             disabled={!canSubmit}
             className="bg-primary hover:bg-primary/90 text-white acm-rounded-sm"
           >
-            {isSubmitting ? 'Completing...' : 'Complete Season'}
+            {isSubmitting ? "Completing..." : "Complete Season"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-
-

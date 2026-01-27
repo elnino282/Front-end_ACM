@@ -1,5 +1,7 @@
 import { TrendingUp, DollarSign, CheckCircle2, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { usePreferences } from '@/shared/contexts';
+import { formatMoney, formatWeight, convertToDisplayCurrency } from '@/shared/lib';
 import { Season } from '../types';
 
 interface SeasonKPICardsProps {
@@ -7,6 +9,16 @@ interface SeasonKPICardsProps {
 }
 
 export function SeasonKPICards({ season }: SeasonKPICardsProps) {
+  const { preferences } = usePreferences();
+  const yieldValue = season.yieldPerHa ?? null;
+  const yieldLabel = yieldValue == null
+    ? '-'
+    : `${formatWeight(yieldValue, preferences.weightUnit, preferences.locale)}/ha`;
+  const costPerHa = season.actualCost / season.linkedPlots / 2.5;
+  const costPerHaLabel = Number.isFinite(costPerHa)
+    ? formatMoney(convertToDisplayCurrency(costPerHa, preferences.currency), preferences.currency, preferences.locale)
+    : '-';
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
       <Card className="border-border acm-rounded-lg acm-card-shadow">
@@ -16,10 +28,10 @@ export function SeasonKPICards({ season }: SeasonKPICardsProps) {
             <TrendingUp className="w-4 h-4 text-primary" />
           </div>
           <div className="numeric text-2xl text-foreground">
-            {season.yieldPerHa !== null ? season.yieldPerHa.toFixed(1) : '—'}
+            {yieldLabel}
           </div>
           {season.yieldPerHa && (
-            <div className="text-xs text-primary mt-1">tons/ha</div>
+            <div className="text-xs text-primary mt-1">per hectare</div>
           )}
         </CardContent>
       </Card>
@@ -31,9 +43,9 @@ export function SeasonKPICards({ season }: SeasonKPICardsProps) {
             <DollarSign className="w-4 h-4 text-secondary" />
           </div>
           <div className="numeric text-2xl text-foreground">
-            ${(season.actualCost / season.linkedPlots / 2.5).toFixed(0)}
+            {costPerHaLabel}
           </div>
-          <div className="text-xs text-muted-foreground mt-1">USD</div>
+          <div className="text-xs text-muted-foreground mt-1">per hectare</div>
         </CardContent>
       </Card>
 
@@ -78,6 +90,7 @@ export function SeasonKPICards({ season }: SeasonKPICardsProps) {
     </div>
   );
 }
+
 
 
 

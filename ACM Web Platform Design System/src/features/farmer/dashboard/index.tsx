@@ -1,22 +1,24 @@
-import { Calendar, Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import { WeatherWidget } from "@/features/farmer/weather-widget";
-import { useFarmerDashboard } from "./hooks/useFarmerDashboard";
+import { useI18n } from "@/hooks/useI18n";
+import { AlertCircle, Calendar, Loader2 } from "lucide-react";
+import { IncidentAlerts } from "./components/IncidentAlerts";
+import { LowStockInventory } from "./components/LowStockInventory";
 import { PerformanceKPICards } from "./components/PerformanceKPICards";
+import { PlotStatusMap } from "./components/PlotStatusMap";
+import { QuickNavGrid } from "./components/QuickNavGrid";
+import { RecentActivityTimeline } from "./components/RecentActivityTimeline";
 import { TodaysTasksTable } from "./components/TodaysTasksTable";
 import { UpcomingTasksChart } from "./components/UpcomingTasksChart";
-import { PlotStatusMap } from "./components/PlotStatusMap";
-import { LowStockInventory } from "./components/LowStockInventory";
-import { IncidentAlerts } from "./components/IncidentAlerts";
-import { RecentActivityTimeline } from "./components/RecentActivityTimeline";
+import { useFarmerDashboard } from "./hooks/useFarmerDashboard";
 
 /**
  * FarmerDashboard Component
@@ -30,6 +32,7 @@ import { RecentActivityTimeline } from "./components/RecentActivityTimeline";
  * - Colocation: Related code grouped together
  */
 export function FarmerDashboard() {
+  const { t } = useI18n();
   const {
     selectedSeason,
     setSelectedSeason,
@@ -63,7 +66,7 @@ export function FarmerDashboard() {
       <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-          <p className="text-muted-foreground">Loading dashboard...</p>
+          <p className="text-muted-foreground">{t('dashboard.loading')}</p>
         </div>
       </div>
     );
@@ -75,15 +78,15 @@ export function FarmerDashboard() {
       <div className="min-h-screen bg-background pb-20 flex items-center justify-center p-6">
         <Alert variant="destructive" className="max-w-md">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Failed to Load Dashboard</AlertTitle>
+          <AlertTitle>{t('dashboard.error.title')}</AlertTitle>
           <AlertDescription>
-            Unable to load seasons data. Please check your connection and try again.
+            {t('dashboard.error.description')}
             <br />
             <button
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
             >
-              Retry
+              {t('common.retry')}
             </button>
           </AlertDescription>
         </Alert>
@@ -107,16 +110,18 @@ export function FarmerDashboard() {
           <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
             <Calendar className="w-20 h-20 text-primary opacity-40" />
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-semibold text-foreground">No Seasons Available</h2>
+              <h2 className="text-2xl font-semibold text-foreground">
+                {t('dashboard.empty.title')}
+              </h2>
               <p className="text-muted-foreground max-w-md">
-                You haven't created any seasons yet. Create your first season to start managing your farm activities.
+                {t('dashboard.empty.description')}
               </p>
             </div>
             <button
-              onClick={() => window.location.href = '/farmer/seasons'}
+              onClick={() => (window.location.href = "/farmer/seasons")}
               className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
             >
-              Create Your First Season
+              {t('dashboard.empty.createSeason')}
             </button>
           </div>
         </div>
@@ -139,12 +144,14 @@ export function FarmerDashboard() {
         {(plotsError || tasksError || incidentsError || logsError) && (
           <Alert variant="destructive" className="mb-6">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Some data failed to load</AlertTitle>
+            <AlertTitle>{t('dashboard.dataLoadError')}</AlertTitle>
             <AlertDescription>
-              {plotsError && <div>• Plots: {plotsError.message}</div>}
-              {tasksError && <div>• Tasks: {tasksError.message}</div>}
-              {incidentsError && <div>• Incidents: {incidentsError.message}</div>}
-              {logsError && <div>• Activity logs: {logsError.message}</div>}
+              {plotsError && <div>• {t('plots.title')}: {plotsError.message}</div>}
+              {tasksError && <div>• {t('nav.tasks')}: {tasksError.message}</div>}
+              {incidentsError && (
+                <div>• {t('nav.incidents')}: {incidentsError.message}</div>
+              )}
+              {logsError && <div>• {t('nav.fieldLogs')}: {logsError.message}</div>}
             </AlertDescription>
           </Alert>
         )}
@@ -169,13 +176,15 @@ export function FarmerDashboard() {
           </CardContent>
         </Card>
 
+        {/* Quick Navigation Grid */}
+        <QuickNavGrid />
+
         <div className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-6">
           {/* Left Column - 70% */}
           <div className="space-y-6">
-
             {/* Performance Overview - KPI Cards */}
-            <PerformanceKPICards 
-              selectedSeason={selectedSeason} 
+            <PerformanceKPICards
+              selectedSeason={selectedSeason}
               overview={overview}
               isLoading={isDataLoading}
             />
@@ -185,7 +194,9 @@ export function FarmerDashboard() {
               <div className="bg-card rounded-xl p-6 border border-border">
                 <div className="flex items-center gap-2 mb-4">
                   <Loader2 className="w-4 h-4 animate-spin text-secondary" />
-                  <span className="text-sm text-muted-foreground">Loading tasks...</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('tasks.loading')}
+                  </span>
                 </div>
               </div>
             ) : (
@@ -207,7 +218,9 @@ export function FarmerDashboard() {
               <div className="bg-card rounded-xl p-6 border border-border">
                 <div className="flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-secondary" />
-                  <span className="text-sm text-muted-foreground">Loading plots...</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('common.loadingPlots')}
+                  </span>
                 </div>
               </div>
             ) : (
@@ -222,7 +235,9 @@ export function FarmerDashboard() {
               <div className="bg-card rounded-xl p-6 border border-border">
                 <div className="flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-secondary" />
-                  <span className="text-sm text-muted-foreground">Loading incidents...</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('incidents.loading')}
+                  </span>
                 </div>
               </div>
             ) : (
@@ -240,19 +255,20 @@ export function FarmerDashboard() {
           <div className="bg-card rounded-xl p-6 border border-border mt-6">
             <div className="flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-secondary" />
-              <span className="text-sm text-muted-foreground">Loading activity logs...</span>
+              <span className="text-sm text-muted-foreground">
+                {t('common.loadingActivityLogs')}
+              </span>
             </div>
           </div>
         ) : (
-          <RecentActivityTimeline
-            activities={activities}
-            getActivityIcon={getActivityIcon}
-          />
+          <div id="recent-activity">
+            <RecentActivityTimeline
+              activities={activities}
+              getActivityIcon={getActivityIcon}
+            />
+          </div>
         )}
       </div>
     </div>
   );
 }
-
-
-

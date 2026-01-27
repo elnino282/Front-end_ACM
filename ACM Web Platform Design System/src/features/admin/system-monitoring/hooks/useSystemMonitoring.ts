@@ -1,23 +1,23 @@
 // Custom hook for System Monitoring business logic and state management
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import type {
-    DateRange,
-    LogLevel,
-    AlertSeverity,
-    Alert,
-    LogEntry,
-    DownloadConfig,
-    IncidentForm,
-} from '../types';
 import {
-    INITIAL_ALERTS,
-    LOG_ENTRIES,
+    LOG_LEVEL_BADGE_COLORS,
+    PLACEHOLDER_ALERTS,
+    PLACEHOLDER_LOG_ENTRIES,
     SEVERITY_BADGE_COLORS,
     STATUS_BADGE_COLORS,
-    LOG_LEVEL_BADGE_COLORS,
 } from '../constants';
+import type {
+    Alert,
+    AlertSeverity,
+    DateRange,
+    DownloadConfig,
+    IncidentForm,
+    LogEntry,
+    LogLevel,
+} from '../types';
 
 export function useSystemMonitoring() {
     // UI state
@@ -60,7 +60,8 @@ export function useSystemMonitoring() {
     });
 
     // Alerts state
-    const [alerts, setAlerts] = useState<Alert[]>(INITIAL_ALERTS);
+    // TODO: Replace with real API data
+    const [alerts, setAlerts] = useState<Alert[]>(PLACEHOLDER_ALERTS);
 
     // Alert action handler
     const handleAlertAction = (alertId: string, action: 'acknowledge' | 'resolve') => {
@@ -131,8 +132,9 @@ export function useSystemMonitoring() {
     };
 
     // Filtered logs computation
+    // TODO: Replace with real API data
     const filteredLogs = useMemo(() => {
-        return LOG_ENTRIES.filter((log) => {
+        return PLACEHOLDER_LOG_ENTRIES.filter((log) => {
             const matchesService = serviceFilter === 'all' || log.service === serviceFilter;
             const matchesLevel = logLevelFilter === 'all' || log.level === logLevelFilter;
             const matchesUser = userFilter === 'all' || log.user === userFilter;

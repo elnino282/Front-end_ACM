@@ -1,6 +1,6 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Badge, Skeleton } from '@/shared/ui';
-import { useNavigate } from 'react-router-dom';
 import type { Plot } from '@/entities/plot';
+import { Badge, Skeleton, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui';
+import { useNavigate } from 'react-router-dom';
 
 interface FarmPlotsTableProps {
     plots: Plot[];
@@ -105,7 +105,7 @@ export function FarmPlotsTable({ plots, isLoading = false }: FarmPlotsTableProps
                         <TableRow
                             key={plot.id}
                             className="cursor-pointer hover:bg-gray-50"
-                            onClick={() => navigate(`/farmer/plots/${plot.id}`)}
+                            onClick={() => navigate(`/farmer/plots?plotId=${plot.id}`)}
                         >
                             <TableCell className="font-medium">
                                 {plot.plotName}

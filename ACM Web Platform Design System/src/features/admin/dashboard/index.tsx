@@ -7,6 +7,7 @@ import { RiskySeasonsTable } from './components/RiskySeasonsTable';
 import { InventoryHealthCards } from './components/InventoryHealthCards';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/shared/lib';
+import { useI18n } from '@/hooks/useI18n';
 import {
   PieChart,
   Pie,
@@ -27,6 +28,7 @@ import {
  * - Inventory health with expiry warnings
  */
 export function AdminDashboard() {
+  const { t } = useI18n();
   const {
     isLoading,
     isError,
@@ -35,7 +37,6 @@ export function AdminDashboard() {
     kpiMetrics,
     charts,
     risks,
-    inventory,
     refetch,
   } = useAdminDashboard();
 
@@ -50,9 +51,9 @@ export function AdminDashboard() {
       <div className="p-6 max-w-[1600px] mx-auto">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error loading dashboard</AlertTitle>
+          <AlertTitle>{t('admin.dashboard.error.title')}</AlertTitle>
           <AlertDescription className="mt-2">
-            {error?.message || 'Failed to load dashboard data'}
+            {error?.message || t('admin.dashboard.error.description')}
             <Button
               variant="outline"
               size="sm"
@@ -60,7 +61,7 @@ export function AdminDashboard() {
               onClick={() => refetch()}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
-              Retry
+              {t('common.retry')}
             </Button>
           </AlertDescription>
         </Alert>
@@ -74,13 +75,13 @@ export function AdminDashboard() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold mb-1"><b>Admin Dashboard</b></h1>
+            <h1 className="text-2xl font-bold mb-1"><b>{t('admin.dashboard.title')}</b></h1>
             {isFetching && (
               <RefreshCw className="h-4 w-4 text-muted-foreground animate-spin" />
             )}
           </div>
           <p className="text-muted-foreground">
-            Real-time platform monitoring • Auto-updates every 30s
+            {t('admin.dashboard.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -90,11 +91,11 @@ export function AdminDashboard() {
             disabled={isFetching}
           >
             <RefreshCw className={cn('h-4 w-4 mr-2', isFetching && 'animate-spin')} />
-            Refresh
+            {t('common.refresh')}
           </Button>
           <Button className="bg-[#2563EB] hover:bg-[#1E40AF]">
             <BarChart3 className="w-4 h-4 mr-2" />
-            Export Report
+            {t('admin.dashboard.exportReport')}
           </Button>
         </div>
       </div>
@@ -194,7 +195,7 @@ export function AdminDashboard() {
       {/* Risky Seasons & Inventory Health */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RiskySeasonsTable seasons={risks} />
-        <InventoryHealthCards items={inventory} />
+        <InventoryHealthCards />
       </div>
     </div>
   );

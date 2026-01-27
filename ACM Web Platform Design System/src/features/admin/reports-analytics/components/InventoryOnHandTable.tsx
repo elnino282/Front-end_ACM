@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { usePreferences } from '@/shared/contexts';
+import { convertWeight, getWeightUnitLabel } from '@/shared/lib';
 import type { InventoryOnHandReport } from '@/services/api.admin';
 
 interface InventoryOnHandTableProps {
@@ -11,6 +13,12 @@ interface InventoryOnHandTableProps {
 }
 
 export const InventoryOnHandTable: React.FC<InventoryOnHandTableProps> = ({ data, isLoading }) => {
+    const { preferences } = usePreferences();
+    const unitLabel = getWeightUnitLabel(preferences.weightUnit);
+    const formatNumber = (value: number) => new Intl.NumberFormat(preferences.locale).format(value);
+    const formatQuantity = (valueKg: number) =>
+        formatNumber(convertWeight(valueKg, preferences.weightUnit));
+
     if (isLoading) {
         return (
             <Card className="col-span-full">
@@ -86,7 +94,7 @@ export const InventoryOnHandTable: React.FC<InventoryOnHandTableProps> = ({ data
                             <TableHead>Warehouse</TableHead>
                             <TableHead>Farm</TableHead>
                             <TableHead className="text-right">Total Lots</TableHead>
-                            <TableHead className="text-right">Quantity On-Hand</TableHead>
+                            <TableHead className="text-right">Quantity On-Hand ({unitLabel})</TableHead>
                             <TableHead className="text-right">Expired</TableHead>
                             <TableHead className="text-right">Expiring Soon</TableHead>
                         </TableRow>
@@ -98,7 +106,7 @@ export const InventoryOnHandTable: React.FC<InventoryOnHandTableProps> = ({ data
                                 <TableCell>{item.farmName || '-'}</TableCell>
                                 <TableCell className="text-right">{item.totalLots}</TableCell>
                                 <TableCell className="text-right font-mono">
-                                    {Number(item.totalQuantityOnHand).toLocaleString()}
+                                    {formatQuantity(Number(item.totalQuantityOnHand))}
                                 </TableCell>
                                 <TableCell className="text-right">
                                     {item.expiredLots > 0 ? (
@@ -122,7 +130,7 @@ export const InventoryOnHandTable: React.FC<InventoryOnHandTableProps> = ({ data
                         <TableRow className="bg-muted/50 font-semibold">
                             <TableCell colSpan={2}>Total</TableCell>
                             <TableCell className="text-right">{totals.totalLots}</TableCell>
-                            <TableCell className="text-right font-mono">{totals.totalQuantity.toLocaleString()}</TableCell>
+                            <TableCell className="text-right font-mono">{formatQuantity(totals.totalQuantity)}</TableCell>
                             <TableCell className="text-right">{totals.expiredLots}</TableCell>
                             <TableCell className="text-right">{totals.expiringSoonLots}</TableCell>
                         </TableRow>

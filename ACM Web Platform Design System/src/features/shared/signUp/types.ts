@@ -6,6 +6,7 @@
 import { z } from 'zod';
 
 const PHONE_PATTERN = /^[0-9+\-\s()]*$/;
+const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,64}$/;
 
 export const UserRoleSchema = z.enum(['FARMER', 'BUYER'], {
   errorMap: () => ({ message: 'Please select your role' }),
@@ -23,7 +24,13 @@ export const SignUpFormSchema = z
         message: 'Please enter a valid phone number',
       }),
     role: UserRoleSchema,
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(64, 'Password must be at most 64 characters')
+      .refine((value) => PASSWORD_PATTERN.test(value), {
+        message: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)',
+      }),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
     termsAccepted: z.boolean().refine((value) => value, {
       message: 'You must accept the terms and conditions',

@@ -42,7 +42,7 @@ const transformApiToFeature = (api: ApiSeason, cropMap: Map<number, string>): Se
     actualYieldKg: api.actualYieldKg ?? null,
     notes: api.notes ?? null,
     yieldPerHa: api.actualYieldKg ?? api.expectedYieldKg ?? null,
-    budgetTotal: 0,
+    budgetTotal: api.budgetAmount ?? 0,
     actualCost: 0,
     status: api.status ?? 'PLANNED',
     onTimePercentage: 100,
@@ -338,20 +338,21 @@ export function useSeasonManagement() {
       {
         onSuccess: () => {
           if (data.currentPlantCount !== undefined) {
-            updateMutation.mutate({
-              id: numId,
-              data: {
-                seasonName: actionSeason.name,
-                startDate: data.actualStartDate || actionSeason.startDate,
-                currentPlantCount: data.currentPlantCount,
-                plannedHarvestDate: actionSeason.plannedHarvestDate ?? undefined,
-                endDate: actionSeason.endDate ?? undefined,
-                expectedYieldKg: actionSeason.expectedYieldKg ?? undefined,
-                actualYieldKg: actionSeason.actualYieldKg ?? undefined,
-                notes: actionSeason.notes ?? undefined,
-                varietyId: actionSeason.varietyId ?? undefined,
-              },
-            });
+                updateMutation.mutate({
+                  id: numId,
+                  data: {
+                    seasonName: actionSeason.name,
+                    startDate: data.actualStartDate || actionSeason.startDate,
+                    currentPlantCount: data.currentPlantCount,
+                    plannedHarvestDate: actionSeason.plannedHarvestDate ?? undefined,
+                    endDate: actionSeason.endDate ?? undefined,
+                    expectedYieldKg: actionSeason.expectedYieldKg ?? undefined,
+                    actualYieldKg: actionSeason.actualYieldKg ?? undefined,
+                    budgetAmount: actionSeason.budgetTotal,
+                    notes: actionSeason.notes ?? undefined,
+                    varietyId: actionSeason.varietyId ?? undefined,
+                  },
+                });
           }
           setStartSeasonOpen(false);
           setActionSeason(null);
@@ -475,6 +476,7 @@ export function useSeasonManagement() {
     totalPages,
     paginatedSeasons,
     filteredSeasons,
+    seasons,
 
     deleteDialogOpen,
     setDeleteDialogOpen,

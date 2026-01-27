@@ -1,6 +1,17 @@
 import { z } from 'zod';
 import { DateSchema } from '@/shared/api/types';
 
+const NumericSchema = z.preprocess((value) => {
+    if (value === null || value === undefined || value === '') return undefined;
+    if (typeof value === 'string') {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : value;
+    }
+    return value;
+}, z.number());
+
+const OptionalNumericSchema = NumericSchema.optional();
+
 // ═══════════════════════════════════════════════════════════════
 // SEASON STATUS ENUM
 // ═══════════════════════════════════════════════════════════════
@@ -56,6 +67,7 @@ export const SeasonSchema = z.object({
     currentPlantCount: z.number().int().min(0).optional(),
     expectedYieldKg: z.number().optional().nullable(),
     actualYieldKg: z.number().optional().nullable(),
+    budgetAmount: NumericSchema.optional().nullable(),
     notes: z.string().optional().nullable(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
@@ -90,6 +102,7 @@ export const SeasonCreateRequestSchema = z.object({
     endDate: DateSchema.optional(),
     initialPlantCount: z.number().int().min(1, 'Initial plant count must be at least 1'),
     expectedYieldKg: z.number().optional(),
+    budgetAmount: OptionalNumericSchema,
     notes: z.string().optional(),
 });
 
@@ -108,6 +121,7 @@ export const SeasonUpdateRequestSchema = z.object({
     currentPlantCount: z.number().int().min(1, 'Current plant count must be at least 1'),
     expectedYieldKg: z.number().optional(),
     actualYieldKg: z.number().optional(),
+    budgetAmount: OptionalNumericSchema,
     notes: z.string().optional(),
 });
 
@@ -161,7 +175,7 @@ export const MySeasonSchema = z.object({
     startDate: z.string().optional().nullable(),
     endDate: z.string().optional().nullable(),
     status: z.string().optional().nullable(),
+    budgetAmount: NumericSchema.optional().nullable(),
 });
 
 export type MySeason = z.infer<typeof MySeasonSchema>;
-

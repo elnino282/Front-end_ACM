@@ -1,7 +1,10 @@
-import { Buyer, KYCDocument, AuditLog } from './types';
+import { AuditLog, Buyer, KYCDocument } from './types';
 
-// Mock Buyer Data
-export const INITIAL_BUYERS: Buyer[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from buyer management endpoint
+ */
+export const PLACEHOLDER_BUYERS: Buyer[] = [
     {
         id: '1',
         companyName: 'Fresh Harvest Co.',
@@ -74,8 +77,11 @@ export const INITIAL_BUYERS: Buyer[] = [
     },
 ];
 
-// Mock KYC Documents
-export const KYC_DOCUMENTS: KYCDocument[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from KYC documents endpoint
+ */
+export const PLACEHOLDER_KYC_DOCUMENTS: KYCDocument[] = [
     {
         id: '1',
         type: 'Business Registration',
@@ -99,8 +105,11 @@ export const KYC_DOCUMENTS: KYCDocument[] = [
     },
 ];
 
-// Mock Audit Logs
-export const AUDIT_LOGS: AuditLog[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from audit logs endpoint
+ */
+export const PLACEHOLDER_AUDIT_LOGS: AuditLog[] = [
     {
         id: '1',
         action: 'Account Created',

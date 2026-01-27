@@ -2,22 +2,22 @@
 
 import {
     Activity,
+    BarChart2,
     Database,
     HardDrive,
-    Zap,
-    BarChart2,
     Server,
+    Zap,
 } from 'lucide-react';
 import type {
-    KPIMetric,
     Alert,
-    LogEntry,
-    PerformanceDataPoint,
-    SlowPageDataPoint,
-    ErrorRateDataPoint,
     AlertSeverity,
     AlertStatus,
+    ErrorRateDataPoint,
+    KPIMetric,
+    LogEntry,
     LogLevel,
+    PerformanceDataPoint,
+    SlowPageDataPoint,
 } from './types';
 
 // KPI Metrics with sparkline data
@@ -96,8 +96,11 @@ export const KPI_METRICS: KPIMetric[] = [
     },
 ];
 
-// Initial alerts data
-export const INITIAL_ALERTS: Alert[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from alerting service
+ */
+export const PLACEHOLDER_ALERTS: Alert[] = [
     {
         id: '1',
         time: '2025-11-11 14:32',
@@ -173,8 +176,11 @@ export const ERROR_RATE_DATA: ErrorRateDataPoint[] = [
     { service: 'Other', value: 3, color: '#6B7280' },
 ];
 
-// Log entries
-export const LOG_ENTRIES: LogEntry[] = [
+/**
+ * @deprecated PLACEHOLDER DATA - Do not use in production
+ * TODO: Replace with real API data from logging service
+ */
+export const PLACEHOLDER_LOG_ENTRIES: LogEntry[] = [
     {
         id: '1',
         time: '2025-11-11 14:32:15',

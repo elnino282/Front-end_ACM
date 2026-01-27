@@ -4,7 +4,7 @@ import type { AgriAlert } from "./types";
  * API Configuration
  */
 export const API_CONFIG = {
-    WEATHER_API_KEY: "7ad902a7acdf44d791675824251212",
+    WEATHER_API_KEY: import.meta.env.VITE_WEATHER_API_KEY || "",
     WEATHER_API_BASE_URL: "https://api.weatherapi.com/v1",
     DEFAULT_LOCATION: "My Farm Location",
     AUTOCOMPLETE_DEBOUNCE_MS: 300,

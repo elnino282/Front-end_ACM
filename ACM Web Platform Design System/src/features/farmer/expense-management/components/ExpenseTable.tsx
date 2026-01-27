@@ -36,12 +36,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Expense } from "../types";
 import { CATEGORY_COLORS } from "../constants";
+import { usePreferences } from "@/shared/contexts";
+import { formatMoney, convertToDisplayCurrency } from "@/shared/lib";
 
 interface ExpenseTableProps {
     filteredExpenses: Expense[];
     totalExpenses: number;
     handleEditExpense: (expense: Expense) => void;
-    handleDeleteExpense: (id: string) => void;
+    handleDeleteExpense: (expense: Expense) => void;
+    handleViewExpense: (expense: Expense) => void;
+    onAddExpense?: () => void;
 }
 
 export function ExpenseTable({
@@ -49,35 +53,31 @@ export function ExpenseTable({
     totalExpenses,
     handleEditExpense,
     handleDeleteExpense,
+    handleViewExpense,
+    onAddExpense,
 }: ExpenseTableProps) {
+    const { preferences } = usePreferences();
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "paid":
+            case "PAID":
                 return (
                     <Badge className="bg-primary/10 text-primary border-primary/20">
                         <CheckCircle2 className="w-3 h-3 mr-1" />
                         Paid
                     </Badge>
                 );
-            case "unpaid":
+            case "UNPAID":
                 return (
                     <Badge className="bg-destructive/10 text-destructive border-destructive/20">
                         <AlertCircle className="w-3 h-3 mr-1" />
                         Unpaid
                     </Badge>
                 );
-            case "pending":
+            case "PENDING":
                 return (
                     <Badge className="bg-accent/10 text-foreground border-accent/20">
                         <Clock className="w-3 h-3 mr-1" />
                         Pending
-                    </Badge>
-                );
-            case "recorded":
-                return (
-                    <Badge className="bg-secondary/10 text-secondary border-secondary/20">
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Recorded
                     </Badge>
                 );
             default:
@@ -104,7 +104,9 @@ export function ExpenseTable({
                     </p>
                 </div>
                 <Badge className="bg-muted text-foreground border-border">
-                    <span className="numeric">Total: ${totalAmount.toLocaleString()}</span>
+                    <span className="numeric">
+                        Total: {formatMoney(convertToDisplayCurrency(totalAmount, preferences.currency), preferences.currency, preferences.locale)}
+                    </span>
                 </Badge>
             </div>
 
@@ -132,6 +134,13 @@ export function ExpenseTable({
                                     <AlertCircle className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
                                     <p>No expenses found</p>
                                     <p className="text-sm mt-1">Try adjusting your filters</p>
+                                    {onAddExpense && (
+                                        <div className="mt-4">
+                                            <Button variant="outline" onClick={onAddExpense}>
+                                                Add Expense
+                                            </Button>
+                                        </div>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -186,11 +195,11 @@ export function ExpenseTable({
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right numeric text-foreground">
-                                        ${expense.amount.toLocaleString()}
+                                        {formatMoney(convertToDisplayCurrency(expense.amount, preferences.currency), preferences.currency, preferences.locale)}
                                     </TableCell>
                                     <TableCell>{getStatusBadge(expense.status)}</TableCell>
                                     <TableCell className="text-center">
-                                        {expense.attachment ? (
+                                        {expense.attachmentUrl ? (
                                             <TooltipProvider>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
@@ -198,17 +207,18 @@ export function ExpenseTable({
                                                             variant="ghost"
                                                             size="sm"
                                                             className="h-8 w-8 p-0 hover:bg-primary/10"
+                                                            onClick={() => window.open(expense.attachmentUrl, "_blank")}
                                                         >
                                                             <Paperclip className="w-4 h-4 text-primary" />
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p className="text-xs">{expense.attachment}</p>
+                                                        <p className="text-xs">{expense.attachmentName ?? "Receipt"}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
                                         ) : (
-                                            <span className="text-xs text-muted-foreground">—</span>
+                                            <span className="text-xs text-muted-foreground">-</span>
                                         )}
                                     </TableCell>
                                     <TableCell>
@@ -229,17 +239,26 @@ export function ExpenseTable({
                                                     <Edit className="w-4 h-4 mr-2" />
                                                     Edit
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onClick={() => handleViewExpense(expense)}
+                                                >
                                                     <Eye className="w-4 h-4 mr-2" />
                                                     View Details
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    disabled={!expense.attachmentUrl}
+                                                    onClick={() => {
+                                                        if (expense.attachmentUrl) {
+                                                            window.open(expense.attachmentUrl, "_blank");
+                                                        }
+                                                    }}
+                                                >
                                                     <Receipt className="w-4 h-4 mr-2" />
                                                     Download Receipt
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem
-                                                    onClick={() => handleDeleteExpense(expense.id)}
+                                                    onClick={() => handleDeleteExpense(expense)}
                                                     className="text-destructive"
                                                 >
                                                     <Trash2 className="w-4 h-4 mr-2" />
@@ -257,6 +276,3 @@ export function ExpenseTable({
         </div>
     );
 }
-
-
-

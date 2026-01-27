@@ -1,23 +1,24 @@
-import { Eye, ChevronRight, Droplets } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useI18n } from "@/hooks/useI18n";
+import { ChevronRight, Droplets, Eye } from "lucide-react";
 import { Task } from "../types";
 
 interface TodaysTasksTableProps {
@@ -41,14 +42,16 @@ export function TodaysTasksTable({
   toggleTask,
   getStatusBadge,
 }: TodaysTasksTableProps) {
+  const { t } = useI18n();
+
   return (
     <Card className="border-border rounded-2xl shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Today's Tasks</CardTitle>
+            <CardTitle>{t('dashboard.todaysTasks.title')}</CardTitle>
             <CardDescription>
-              Manage and track your daily activities
+              {t('dashboard.todaysTasks.subtitle')}
             </CardDescription>
           </div>
           <Badge className="bg-secondary/10 text-secondary border-secondary/20 px-3 py-1">
@@ -62,13 +65,13 @@ export function TodaysTasksTable({
             <TableHeader>
               <TableRow className="bg-muted">
                 <TableHead className="w-12"></TableHead>
-                <TableHead>Task</TableHead>
-                <TableHead>Plot</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Assignee</TableHead>
-                <TableHead>Due</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
+                <TableHead>{t('tasks.table.title')}</TableHead>
+                <TableHead>{t('tasks.table.plot')}</TableHead>
+                <TableHead>{t('tasks.table.type')}</TableHead>
+                <TableHead>{t('tasks.table.assignee')}</TableHead>
+                <TableHead>{t('tasks.table.dueDate')}</TableHead>
+                <TableHead>{t('tasks.table.status')}</TableHead>
+                <TableHead className="w-24">{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
