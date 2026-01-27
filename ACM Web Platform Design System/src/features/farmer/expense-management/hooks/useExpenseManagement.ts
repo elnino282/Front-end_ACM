@@ -239,6 +239,18 @@ export function useExpenseManagement() {
             return;
         }
 
+        // Validation: Date cannot be in the future
+        const expenseDate = new Date(formData.date);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999); // End of today
+        if (expenseDate > today) {
+            setShowValidationErrors(true);
+            toast.error("Invalid date", {
+                description: "Expense date cannot be in the future.",
+            });
+            return;
+        }
+
         const selectedSeasonId = formData.linkedSeasonId ?? seasonId;
         if (!selectedSeasonId) {
             setShowValidationErrors(true);
@@ -294,6 +306,25 @@ export function useExpenseManagement() {
             toast.success(selectedExpense ? "Expense Updated" : "Expense Added", {
                 description: `${formData.description || formData.category} has been recorded.`,
             });
+
+            // Budget warning: Check if spending exceeds 80% after this expense
+            if (!selectedExpense && budgetAmount && budgetAmount > 0) {
+                const newTotal = totalExpenses + amount;
+                const newUsagePercent = (newTotal / budgetAmount) * 100;
+                
+                if (newUsagePercent >= 100) {
+                    toast.warning("Budget Exceeded!", {
+                        description: `You have exceeded your season budget. Current spending: ${newUsagePercent.toFixed(1)}% of budget.`,
+                        duration: 6000,
+                    });
+                } else if (newUsagePercent >= 80) {
+                    toast.warning("Budget Warning", {
+                        description: `You have used ${newUsagePercent.toFixed(1)}% of your season budget. Consider reviewing your expenses.`,
+                        duration: 5000,
+                    });
+                }
+            }
+
             setIsAddExpenseOpen(false);
             setShowValidationErrors(false);
             resetForm();
@@ -316,6 +347,8 @@ export function useExpenseManagement() {
         refetch,
         refetchTracker,
         resetForm,
+        budgetAmount,
+        totalExpenses,
     ]);
 
     const handleEditExpense = (expense: Expense) => {

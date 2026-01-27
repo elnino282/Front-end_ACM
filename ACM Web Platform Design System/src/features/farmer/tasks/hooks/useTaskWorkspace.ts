@@ -184,8 +184,20 @@ export function useTaskWorkspace() {
   const handleSelectAll = useCallback((checked: boolean) => setSelectedTasks(checked ? filteredTasks.map(t => t.id) : []), [filteredTasks]);
   const handleSelectTask = useCallback((taskId: string, checked: boolean) => setSelectedTasks(prev => checked ? [...prev, taskId] : prev.filter(id => id !== taskId)), []);
   const handleReassign = useCallback(() => { toast.success(`${selectedTasks.length} tasks reassigned`); setReassignOpen(false); setSelectedTasks([]); }, [selectedTasks]);
-  const handleCreateTask = useCallback((data: { title: string; plannedDate: string; dueDate: string; description?: string }) => {
-    if (!seasonId) {
+  const handleCreateTask = useCallback((data: { 
+    title: string; 
+    plannedDate: string; 
+    dueDate: string; 
+    description?: string;
+    seasonId?: number;
+    plot?: string;
+    taskType?: string;
+    assignee?: string;
+  }) => {
+    // Use seasonId from dialog data if provided, otherwise fall back to context
+    const effectiveSeasonId = data.seasonId ?? seasonId;
+    
+    if (!effectiveSeasonId) {
       toast.error('Select a season', { description: 'Pick a season to create tasks.' });
       return;
     }

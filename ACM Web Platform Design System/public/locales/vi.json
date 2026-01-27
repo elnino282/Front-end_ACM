@@ -515,17 +515,36 @@
       "completing": "Đang hoàn thành...",
       "completionDateLabel": "Ngày hoàn thành",
       "createTitle": "Tạo công việc",
+      "createDescription": "Thêm công việc mới vào không gian làm việc",
       "editTitle": "Chỉnh sửa công việc",
       "deleteTitle": "Xóa công việc",
-      "deleteDescription": "Bạn có chắc chắn muốn xóa công việc này? Hành động này không thể hoàn tác."
+      "deleteDescription": "Bạn có chắc chắn muốn xóa \"{{taskName}}\"? Hành động này không thể hoàn tác."
     },
     "form": {
       "completionDate": "Ngày hoàn thành",
       "title": "Tiêu đề",
+      "titlePlaceholder": "VD: Tưới tiêu Thửa A3",
       "description": "Mô tả",
       "assignee": "Người thực hiện",
       "dueDate": "Hạn chót",
-      "priority": "Độ ưu tiên"
+      "priority": "Độ ưu tiên",
+      "selectSeason": "Chọn mùa vụ",
+      "selectType": "Chọn loại",
+      "selectAssignee": "Chọn người thực hiện",
+      "plotFromSeason": "Tự động điền từ mùa vụ",
+      "notesPlaceholder": "Chi tiết công việc bổ sung..."
+    },
+    "types": {
+      "irrigation": "Tưới tiêu",
+      "fertilizing": "Bón phân",
+      "spraying": "Phun thuốc",
+      "scouting": "Thăm đồng",
+      "harvesting": "Thu hoạch"
+    },
+    "validation": {
+      "titleRequired": "Tiêu đề công việc là bắt buộc",
+      "seasonRequired": "Mùa vụ là bắt buộc",
+      "dueDateRequired": "Hạn chót là bắt buộc"
     },
     "completing": "Đang hoàn thành..."
   },

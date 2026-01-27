@@ -82,9 +82,9 @@ export const taskApi = {
 
     /**
      * Delete task
-     * DELETE /api/v1/tasks/{id}
+     * DELETE /api/v1/workspace/tasks/{id}
      */
     delete: async (id: number): Promise<void> => {
-        await httpClient.delete(`/api/v1/tasks/${id}`);
+        await httpClient.delete(`/api/v1/workspace/tasks/${id}`);
     },
 };

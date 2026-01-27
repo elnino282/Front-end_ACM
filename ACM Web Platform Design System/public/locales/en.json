@@ -424,23 +424,19 @@
       "deleteError": "Failed to delete season"
     },
     "table": {
-      "name": "Name",
+      "name": "Season Name",
       "farm": "Farm",
       "plot": "Plot",
       "crop": "Crop",
       "startDate": "Start Date",
       "endDate": "End Date",
       "status": "Status",
+      "expectedYield": "Expected Yield",
       "actions": "Actions"
     },
     "empty": {
       "title": "No Seasons Found",
       "description": "Create your first season to start managing your farm activities."
-    },
-    "actions": {
-      "start": "Start",
-      "complete": "Complete",
-      "cancel": "Cancel"
     },
     "dialog": {
       "createTitle": "Create Season",
@@ -458,17 +454,6 @@
       "cancelTitle": "Cancel Season",
       "cancelDescription": "Are you sure you want to cancel this season? This action cannot be undone.",
       "cancelConfirm": "Cancel Season"
-    },
-    "table": {
-      "name": "Season Name",
-      "farm": "Farm",
-      "plot": "Plot",
-      "crop": "Crop",
-      "startDate": "Start Date",
-      "endDate": "End Date",
-      "status": "Status",
-      "expectedYield": "Expected Yield",
-      "actions": "Actions"
     }
   },
   "tasks": {
@@ -534,17 +519,36 @@
       "completing": "Completing...",
       "completionDateLabel": "Completion Date",
       "createTitle": "Create Task",
+      "createDescription": "Add a new task to the workspace",
       "editTitle": "Edit Task",
       "deleteTitle": "Delete Task",
-      "deleteDescription": "Are you sure you want to delete this task? This action cannot be undone."
+      "deleteDescription": "Are you sure you want to delete \"{{taskName}}\"? This action cannot be undone."
     },
     "form": {
       "completionDate": "Completion Date",
       "title": "Title",
+      "titlePlaceholder": "e.g., Irrigate Plot A3",
       "description": "Description",
       "assignee": "Assignee",
       "dueDate": "Due Date",
-      "priority": "Priority"
+      "priority": "Priority",
+      "selectSeason": "Select season",
+      "selectType": "Select type",
+      "selectAssignee": "Select assignee",
+      "plotFromSeason": "Auto-filled from season",
+      "notesPlaceholder": "Additional task details..."
+    },
+    "types": {
+      "irrigation": "Irrigation",
+      "fertilizing": "Fertilizing",
+      "spraying": "Spraying",
+      "scouting": "Scouting",
+      "harvesting": "Harvesting"
+    },
+    "validation": {
+      "titleRequired": "Task title is required",
+      "seasonRequired": "Season is required",
+      "dueDateRequired": "Due date is required"
     },
     "completing": "Completing..."
   },

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Edit, Trash2, Check, MoreVertical, MapPin, Clock, Paperclip } from 'lucide-react';
 import { useDrag } from 'react-dnd';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useI18n } from '@/hooks/useI18n';
 import type { Task } from '../types';
 import { TASK_TYPES } from '../constants';
 
@@ -18,6 +30,8 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onDelete }: TaskCardProps) {
+  const { t } = useI18n();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [{ isDragging }, drag] = useDrag({
     type: 'TASK',
     item: { id: task.id },
@@ -57,12 +71,35 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
               <Check className="w-4 h-4 mr-2" />
               Complete
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer text-destructive" onClick={() => onDelete(task.id)}>
+            <DropdownMenuItem className="cursor-pointer text-destructive" onClick={() => setDeleteDialogOpen(true)}>
               <Trash2 className="w-4 h-4 mr-2" />
-              Delete
+              {t('common.delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent className="acm-rounded-sm">
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('tasks.dialog.deleteTitle')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('tasks.dialog.deleteDescription', { taskName: task.title })}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="acm-rounded-sm">{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction
+                className="acm-rounded-sm bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => {
+                  onDelete(task.id);
+                  setDeleteDialogOpen(false);
+                }}
+              >
+                {t('common.delete')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       <div className="space-y-2">
