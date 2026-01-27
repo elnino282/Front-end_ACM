@@ -529,6 +529,7 @@
       "dueDate": "Hạn chót",
       "priority": "Độ ưu tiên",
       "selectSeason": "Chọn mùa vụ",
+      "selectPlot": "Chọn thửa đất",
       "selectType": "Chọn loại",
       "selectAssignee": "Chọn người thực hiện",
       "plotFromSeason": "Tự động điền từ mùa vụ",
@@ -1230,10 +1231,12 @@
       "title": "Hỏi đáp nông nghiệp",
       "description": "Đặt câu hỏi ngắn gọn, có bối cảnh để nhận tư vấn chính xác hơn.",
       "sendHint": "Enter để gửi, Shift + Enter để xuống dòng",
-      "placeholder": "Nhập câu hỏi của bạn..."
+      "placeholder": "Nhập câu hỏi của bạn...",
+      "analyzing": "Đang phân tích..."
     },
     "context": {
       "title": "Thông tin mùa vụ",
+      "label": "Bối cảnh",
       "description": "Bổ sung bối cảnh để AI tư vấn sát thực tế hơn.",
       "placeholder": "Ví dụ: Lúa, giai đoạn đẻ nhánh, đất thịt nhẹ, có tưới nhỏ giọt..."
     },

@@ -29,7 +29,7 @@ export function AiAssistantPage() {
         t('ai.quickPrompts.yellowLeaves'),
         t('ai.quickPrompts.tomatoWatering'),
         t('ai.quickPrompts.leafRoller'),
-        t('ai.quickPrompts.npkFertilizer'),
+        t('ai.quickPrompts.cornFertilizer'),
         t('ai.quickPrompts.acidSoil'),
         t('ai.quickPrompts.watermelonHarvest'),
     ], [t]);
@@ -44,12 +44,12 @@ export function AiAssistantPage() {
             value: t('ai.contextTemplates.vegetables.value'),
         },
         {
-            label: t('ai.contextTemplates.coffee.label'),
-            value: t('ai.contextTemplates.coffee.value'),
+            label: t('ai.contextTemplates.coffeeFlowering.label'),
+            value: t('ai.contextTemplates.coffeeFlowering.value'),
         },
         {
-            label: t('ai.contextTemplates.fruitTree.label'),
-            value: t('ai.contextTemplates.fruitTree.value'),
+            label: t('ai.contextTemplates.fruitTrees.label'),
+            value: t('ai.contextTemplates.fruitTrees.value'),
         },
     ], [t]);
 

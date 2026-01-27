@@ -533,6 +533,7 @@
       "dueDate": "Due Date",
       "priority": "Priority",
       "selectSeason": "Select season",
+      "selectPlot": "Select plot",
       "selectType": "Select type",
       "selectAssignee": "Select assignee",
       "plotFromSeason": "Auto-filled from season",
@@ -1229,10 +1230,12 @@
       "title": "Agricultural Q&A",
       "description": "Ask concise questions with context for more accurate advice.",
       "sendHint": "Press Enter to send, Shift + Enter for new line",
-      "placeholder": "Enter your question..."
+      "placeholder": "Enter your question...",
+      "analyzing": "Analyzing..."
     },
     "context": {
       "title": "Season Information",
+      "label": "Context",
       "description": "Add context for more relevant AI advice.",
       "placeholder": "Example: Rice, tillering stage, light clay soil, drip irrigation..."
     },

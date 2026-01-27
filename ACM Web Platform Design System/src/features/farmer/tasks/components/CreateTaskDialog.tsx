@@ -17,8 +17,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useSeason } from "@/shared/contexts/SeasonContext";
+import { usePlots } from "@/entities/plot";
 import { useI18n } from "@/hooks/useI18n";
 
 interface CreateTaskDialogProps {
@@ -47,21 +48,19 @@ export function CreateTaskDialog({
 }: CreateTaskDialogProps) {
   const { t } = useI18n();
   const { seasons, activeSeasons, selectedSeasonId } = useSeason();
+  const { data: plotsData } = usePlots();
 
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [notes, setNotes] = useState("");
   const [selectedSeason, setSelectedSeason] = useState<string>("");
+  const [selectedPlot, setSelectedPlot] = useState<string>("");
   const [taskType, setTaskType] = useState("");
   const [assignee, setAssignee] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Get plot name from selected season
-  const plotFromSeason = useMemo(() => {
-    if (!selectedSeason) return "";
-    const season = seasons.find((s) => s.id === Number(selectedSeason));
-    return season?.plotName || "";
-  }, [selectedSeason, seasons]);
+  // Get available plots from API - plotsData is an array directly (PlotArrayResponse)
+  const availablePlots = plotsData ?? [];
 
   // Reset form when dialog closes
   useEffect(() => {
@@ -70,6 +69,7 @@ export function CreateTaskDialog({
       setDueDate("");
       setNotes("");
       setSelectedSeason("");
+      setSelectedPlot("");
       setTaskType("");
       setAssignee("");
       setErrors({});
@@ -104,13 +104,18 @@ export function CreateTaskDialog({
   const handleSubmit = () => {
     if (!validateForm()) return;
 
+    // Get plot name from selected plot ID
+    const plotName = selectedPlot 
+      ? availablePlots.find(p => String(p.id) === selectedPlot)?.plotName 
+      : undefined;
+
     onCreateTask({
       title: title.trim(),
       plannedDate: dueDate,
       dueDate,
       description: notes.trim() || undefined,
       seasonId: selectedSeason ? Number(selectedSeason) : undefined,
-      plot: plotFromSeason || undefined,
+      plot: plotName || undefined,
       taskType: taskType || undefined,
       assignee: assignee || undefined,
     });
@@ -163,16 +168,21 @@ export function CreateTaskDialog({
             )}
           </div>
 
-          {/* Plot (auto-filled from season) */}
+          {/* Plot Selector */}
           <div className="space-y-2">
             <Label>{t("tasks.table.plot", "Plot")}</Label>
-            <Input
-              value={plotFromSeason}
-              readOnly
-              disabled
-              placeholder={t("tasks.form.plotFromSeason", "Auto-filled from season")}
-              className="border-border acm-rounded-sm bg-muted"
-            />
+            <Select value={selectedPlot} onValueChange={setSelectedPlot}>
+              <SelectTrigger className="border-border acm-rounded-sm">
+                <SelectValue placeholder={t("tasks.form.selectPlot", "Select plot")} />
+              </SelectTrigger>
+              <SelectContent>
+                {availablePlots.map((plot) => (
+                  <SelectItem key={plot.id} value={String(plot.id)}>
+                    {plot.plotName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Task Type */}
