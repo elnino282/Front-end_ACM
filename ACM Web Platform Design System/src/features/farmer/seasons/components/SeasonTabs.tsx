@@ -3,6 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Season, Activity } from '../types';
+import { TaskModule } from '@/features/farmer/tasks';
+import { ExpenseModule } from '@/features/farmer/expense-management';
+import { FieldLogModule } from '@/pages/farmer/FieldLogsPage';
+import { HarvestModule } from '@/features/farmer/harvests';
 
 interface SeasonTabsProps {
   season: Season;
@@ -23,9 +27,11 @@ export function SeasonTabs({ season, activeTab, setActiveTab, activities }: Seas
         <CardHeader className="border-b border-border">
           <TabsList className="bg-muted">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="tasks">Tasks</TabsTrigger>
+            <TabsTrigger value="field-logs">Field Logs</TabsTrigger>
+            <TabsTrigger value="expenses">Expenses</TabsTrigger>
+            <TabsTrigger value="harvest">Harvest</TabsTrigger>
             <TabsTrigger value="plots">Linked Plots</TabsTrigger>
-            <TabsTrigger value="tasks">Tasks Summary</TabsTrigger>
-            <TabsTrigger value="budget">Budget & Expenses</TabsTrigger>
             <TabsTrigger value="incidents">Incidents</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
           </TabsList>
@@ -75,42 +81,19 @@ export function SeasonTabs({ season, activeTab, setActiveTab, activities }: Seas
           </TabsContent>
 
           <TabsContent value="tasks" className="mt-0">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Task Completion</span>
-                <span className="numeric text-sm text-foreground">
-                  {season.tasksCompleted} / {season.tasksTotal}
-                </span>
-              </div>
-              <Progress
-                value={(season.tasksCompleted / season.tasksTotal) * 100}
-              />
-            </div>
+            <TaskModule seasonId={season.id} />
           </TabsContent>
 
-          <TabsContent value="budget" className="mt-0">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm text-muted-foreground">Budget Total</Label>
-                  <div className="mt-1 text-foreground numeric">
-                    ${season.budgetTotal.toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-sm text-muted-foreground">Actual Cost</Label>
-                  <div className="mt-1 text-foreground numeric">
-                    ${season.actualCost.toLocaleString()}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Label className="text-sm text-muted-foreground mb-2 block">Budget Usage</Label>
-                <Progress
-                  value={(season.actualCost / season.budgetTotal) * 100}
-                />
-              </div>
-            </div>
+          <TabsContent value="field-logs" className="mt-0">
+            <FieldLogModule seasonId={season.id} />
+          </TabsContent>
+
+          <TabsContent value="expenses" className="mt-0">
+            <ExpenseModule seasonId={season.id} />
+          </TabsContent>
+
+          <TabsContent value="harvest" className="mt-0">
+            <HarvestModule seasonId={season.id} />
           </TabsContent>
 
           <TabsContent value="incidents" className="mt-0">

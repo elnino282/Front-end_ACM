@@ -2,23 +2,23 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useI18n } from "@/hooks/useI18n";
 import { BackButton } from "@/shared/ui";
 import {
-    Archive,
-    Ban,
-    Calendar,
-    CheckCircle2,
-    Download,
-    Edit,
-    HelpCircle,
-    Play,
-    Plus,
+  Archive,
+  Ban,
+  Calendar,
+  CheckCircle2,
+  Download,
+  Edit,
+  HelpCircle,
+  Play,
+  Plus,
 } from "lucide-react";
 import { Season, SeasonStatus } from "../types";
 
@@ -30,6 +30,7 @@ interface SeasonHeaderProps {
   onBack: () => void;
   onEdit?: () => void;
   onStartSeason?: (season: Season) => void;
+  onHarvest?: (season: Season) => void;
   onCompleteSeason?: (season: Season) => void;
   onCancelSeason?: (season: Season) => void;
   onArchiveSeason?: (season: Season) => void;
@@ -46,6 +47,7 @@ export function SeasonHeader({
   onBack,
   onEdit,
   onStartSeason,
+  onHarvest,
   onCompleteSeason,
   onCancelSeason,
   onArchiveSeason,
@@ -54,7 +56,7 @@ export function SeasonHeader({
   formatDateRange,
 }: SeasonHeaderProps) {
   const { t } = useI18n();
-  
+
   if (viewMode === "detail" && selectedSeason) {
     const canStart = selectedSeason.status === "PLANNED";
     const canComplete = selectedSeason.status === "ACTIVE";
@@ -109,6 +111,15 @@ export function SeasonHeader({
                   <Edit className="w-4 h-4 mr-2" />
                   {t('seasons.actions.edit')}
                 </Button>
+                {canComplete && onHarvest && (
+                  <Button
+                    onClick={() => onHarvest(selectedSeason)}
+                    className="bg-primary hover:bg-primary/90 text-white acm-rounded-sm acm-button-shadow"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Harvest
+                  </Button>
+                )}
                 {canStart && onStartSeason && (
                   <Button
                     variant="outline"

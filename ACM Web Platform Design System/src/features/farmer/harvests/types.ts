@@ -56,5 +56,18 @@ export interface SummaryStats {
     premiumGradePercentage: number;
 }
 
-
-
+export const INITIAL_FORM_DATA: HarvestFormData = {
+    batchId: "",
+    date: "",
+    quantity: "",
+    grade: "A",
+    moisture: "",
+    season: "",
+    plot: "",
+    crop: "",
+    status: "stored",
+    notes: "",
+    purity: "",
+    foreignMatter: "",
+    brokenGrains: "",
+};

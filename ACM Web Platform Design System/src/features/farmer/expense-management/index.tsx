@@ -21,7 +21,11 @@ import { UpcomingPayables } from "./components/UpcomingPayables";
 import { useExpenseManagement } from "./hooks/useExpenseManagement";
 import type { Expense } from "./types";
 
-export function ExpenseManagement() {
+interface ExpenseModuleProps {
+    seasonId: string | number;
+}
+
+export function ExpenseModule({ seasonId }: ExpenseModuleProps) {
     const [searchParams, setSearchParams] = useSearchParams();
     const {
         activeTab,
@@ -75,9 +79,8 @@ export function ExpenseManagement() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const qParam = searchParams.get("q") ?? "";
-    const seasonIdParam = Number(searchParams.get("seasonId"));
     const expenseIdParam = Number(searchParams.get("expenseId"));
-    const parsedSeasonId = Number.isFinite(seasonIdParam) ? seasonIdParam : null;
+    const parsedSeasonId = Number(seasonId);
     const parsedExpenseId = Number.isFinite(expenseIdParam) ? expenseIdParam : null;
 
     const handleDetailOpenChange = (open: boolean) => {
@@ -98,7 +101,7 @@ export function ExpenseManagement() {
     }, [qParam, searchQuery, setSearchQuery]);
 
     useEffect(() => {
-        if (!parsedSeasonId) return;
+        if (!Number.isFinite(parsedSeasonId)) return;
         if (selectedSeason === String(parsedSeasonId)) return;
         setSelectedSeason(String(parsedSeasonId));
     }, [parsedSeasonId, selectedSeason, setSelectedSeason]);
@@ -113,41 +116,40 @@ export function ExpenseManagement() {
     }, [parsedExpenseId, detailExpense?.id, expenses]);
 
     return (
-        <PageContainer>
-            <Card className="mb-6 border border-border rounded-xl shadow-sm">
-                <CardContent className="px-6 py-4">
-                    <PageHeader
-                        className="mb-0"
-                        icon={<DollarSign className="w-8 h-8" />}
-                        title={t('expenses.pageTitle')}
-                        subtitle={t('expenses.subtitle')}
-                        actions={
-                            <>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setIsRemindersOpen(true)}
-                                >
-                                    <Bell className="w-4 h-4 mr-2" />
-                                    {t('expenses.reminders')}
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={handleExportExpenses}
-                                >
-                                    <Download className="w-4 h-4 mr-2" />
-                                    {t('expenses.export')}
-                                </Button>
-                                <Button
-                                    onClick={handleOpenAddExpense}
-                                >
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    {t('expenses.createButton')}
-                                </Button>
-                            </>
-                        }
-                    />
-                </CardContent>
-            </Card>
+        <div className="space-y-6">
+            <div className="flex justify-between items-center bg-card border border-border rounded-xl p-4 shadow-sm mb-6">
+                <div>
+                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                        <DollarSign className="w-5 h-5 text-emerald-600" />
+                        {t('expenses.pageTitle')}
+                    </h2>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsRemindersOpen(true)}
+                        size="sm"
+                    >
+                        <Bell className="w-4 h-4 mr-2" />
+                        {t('expenses.reminders')}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={handleExportExpenses}
+                        size="sm"
+                    >
+                        <Download className="w-4 h-4 mr-2" />
+                        {t('expenses.export')}
+                    </Button>
+                    <Button
+                        onClick={handleOpenAddExpense}
+                        size="sm"
+                    >
+                        <Plus className="w-4 h-4 mr-2" />
+                        {t('expenses.createButton')}
+                    </Button>
+                </div>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
                 <div className="space-y-6">
@@ -296,6 +298,6 @@ export function ExpenseManagement() {
                 }}
                 isLoading={isDeleting}
             />
-        </PageContainer>
+        </div>
     );
 }

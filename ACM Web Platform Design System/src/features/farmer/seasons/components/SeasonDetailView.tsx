@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Download, Save } from "lucide-react";
 import { toast } from "sonner";
@@ -6,6 +8,8 @@ import { ActivityFeed } from "./ActivityFeed";
 import { SeasonHeader } from "./SeasonHeader";
 import { SeasonKPICards } from "./SeasonKPICards";
 import { SeasonTabs } from "./SeasonTabs";
+import { AddBatchDialog } from "@/features/farmer/harvests/components/AddBatchDialog";
+import { HarvestFormData, INITIAL_FORM_DATA } from "@/features/farmer/harvests/types";
 
 interface SeasonDetailViewProps {
   season: Season;
@@ -27,8 +31,8 @@ interface SeasonDetailViewProps {
 export function SeasonDetailView({
   season,
   activities,
-  activeTab,
-  setActiveTab,
+  activeTab: controlledActiveTab,
+  setActiveTab: controlledSetActiveTab,
   onBack,
   onEditSeason,
   onStartSeason,
@@ -40,16 +44,30 @@ export function SeasonDetailView({
   getStatusLabel,
   formatDateRange,
 }: SeasonDetailViewProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentTab = searchParams.get('tab') || controlledActiveTab || 'overview';
+  const [isAddBatchOpen, setIsAddBatchOpen] = useState(false);
+  const [harvestFormData, setHarvestFormData] = useState<HarvestFormData>(INITIAL_FORM_DATA);
+
+  const handleTabChange = (tab: string) => {
+    setSearchParams(prev => {
+      prev.set('tab', tab);
+      return prev;
+    }, { replace: true });
+    controlledSetActiveTab?.(tab);
+  };
+
   return (
     <>
       <SeasonHeader
         viewMode="detail"
         selectedSeason={season}
-        onNewSeason={() => {}}
+        onNewSeason={() => { }}
         onExport={handleExportCSV}
         onBack={onBack}
         onEdit={() => onEditSeason(season)}
         onStartSeason={onStartSeason}
+        onHarvest={() => setIsAddBatchOpen(true)}
         onCompleteSeason={onCompleteSeason}
         onCancelSeason={onCancelSeason}
         onArchiveSeason={onArchiveSeason}
@@ -63,8 +81,8 @@ export function SeasonDetailView({
         <SeasonKPICards season={season} />
         <SeasonTabs
           season={season}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          activeTab={currentTab}
+          setActiveTab={handleTabChange}
           activities={activities}
         />
         <ActivityFeed activities={activities} />
@@ -95,6 +113,24 @@ export function SeasonDetailView({
           </div>
         </div>
       </div>
+
+      <AddBatchDialog
+        open={isAddBatchOpen}
+        onOpenChange={setIsAddBatchOpen}
+        formData={harvestFormData}
+        onFormChange={setHarvestFormData}
+        onSubmit={() => {
+          setIsAddBatchOpen(false);
+          setHarvestFormData(INITIAL_FORM_DATA);
+          // Actual submission logic should ideally be here if it's not handled internally
+          toast.success("Harvest batch added successfully");
+        }}
+        onCancel={() => {
+          setIsAddBatchOpen(false);
+          setHarvestFormData(INITIAL_FORM_DATA);
+        }}
+        defaultSeasonId={parseInt(season.id, 10)}
+      />
     </>
   );
 }

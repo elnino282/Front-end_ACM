@@ -6,13 +6,26 @@ import { Plus, Wheat } from "lucide-react";
 
 interface HarvestHeaderProps {
     onAddBatch: () => void;
+    isEmbedded?: boolean;
 }
 
 export function HarvestHeader({
     onAddBatch,
+    isEmbedded,
 }: HarvestHeaderProps) {
     const { t } = useI18n();
-    
+
+    if (isEmbedded) {
+        return (
+            <div className="flex justify-end mb-4">
+                <Button onClick={onAddBatch} variant="default" className="bg-primary hover:bg-primary/90 text-white shadow-sm">
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('harvests.createButton')}
+                </Button>
+            </div>
+        );
+    }
+
     return (
         <Card className="mb-6 border border-border rounded-xl shadow-sm">
             <CardContent className="px-6 py-4">

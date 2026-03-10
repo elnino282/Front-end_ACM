@@ -37,6 +37,7 @@ interface CreateTaskDialogProps {
   }) => void;
   uniquePlots: string[];
   uniqueAssignees: string[];
+  defaultSeasonId?: number;
 }
 
 export function CreateTaskDialog({
@@ -45,6 +46,7 @@ export function CreateTaskDialog({
   onCreateTask,
   uniquePlots,
   uniqueAssignees,
+  defaultSeasonId,
 }: CreateTaskDialogProps) {
   const { t } = useI18n();
   const { seasons, activeSeasons, selectedSeasonId } = useSeason();
@@ -75,11 +77,13 @@ export function CreateTaskDialog({
       setErrors({});
     } else {
       // Pre-select the currently active season if available
-      if (selectedSeasonId) {
+      if (defaultSeasonId) {
+        setSelectedSeason(String(defaultSeasonId));
+      } else if (selectedSeasonId) {
         setSelectedSeason(String(selectedSeasonId));
       }
     }
-  }, [open, selectedSeasonId]);
+  }, [open, selectedSeasonId, defaultSeasonId]);
 
   // Validate form before submission
   const validateForm = () => {
@@ -105,8 +109,8 @@ export function CreateTaskDialog({
     if (!validateForm()) return;
 
     // Get plot name from selected plot ID
-    const plotName = selectedPlot 
-      ? availablePlots.find(p => String(p.id) === selectedPlot)?.plotName 
+    const plotName = selectedPlot
+      ? availablePlots.find(p => String(p.id) === selectedPlot)?.plotName
       : undefined;
 
     onCreateTask({

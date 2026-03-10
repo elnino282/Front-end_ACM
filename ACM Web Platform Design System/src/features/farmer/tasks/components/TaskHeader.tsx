@@ -9,24 +9,27 @@ interface TaskHeaderProps {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
   onCreateTask: () => void;
+  isEmbedded?: boolean;
 }
 
-export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHeaderProps) {
+export function TaskHeader({ viewMode, onViewModeChange, onCreateTask, isEmbedded }: TaskHeaderProps) {
   const { t } = useI18n();
-  
+
   return (
     <Card className="border border-border rounded-xl shadow-sm">
       <CardContent className="px-6 py-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2 leading-tight">
-              <ClipboardList className="w-6 h-6 text-emerald-600" />
-              {t('tasks.pageTitle')}
-            </h1>
-            <p className="text-sm text-slate-600 mt-1">
-              {t('tasks.subtitle')}
-            </p>
-          </div>
+          {!isEmbedded && (
+            <div className="flex-shrink-0">
+              <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2 leading-tight">
+                <ClipboardList className="w-6 h-6 text-emerald-600" />
+                {t('tasks.pageTitle')}
+              </h1>
+              <p className="text-sm text-slate-600 mt-1">
+                {t('tasks.subtitle')}
+              </p>
+            </div>
+          )}
 
           <div className="flex items-center gap-3 flex-shrink-0">
             {/* View Switch */}
@@ -38,11 +41,10 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
                       variant={viewMode === 'board' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => onViewModeChange('board')}
-                      className={`acm-rounded-sm ${
-                        viewMode === 'board'
+                      className={`acm-rounded-sm ${viewMode === 'board'
                           ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                           : 'hover:bg-muted/50'
-                      }`}
+                        }`}
                     >
                       <Columns3 className="w-4 h-4" />
                     </Button>
@@ -58,11 +60,10 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
                       variant={viewMode === 'list' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => onViewModeChange('list')}
-                      className={`acm-rounded-sm ${
-                        viewMode === 'list'
+                      className={`acm-rounded-sm ${viewMode === 'list'
                           ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                           : 'hover:bg-muted/50'
-                      }`}
+                        }`}
                     >
                       <List className="w-4 h-4" />
                     </Button>
@@ -78,11 +79,10 @@ export function TaskHeader({ viewMode, onViewModeChange, onCreateTask }: TaskHea
                       variant={viewMode === 'calendar' ? 'default' : 'ghost'}
                       size="sm"
                       onClick={() => onViewModeChange('calendar')}
-                      className={`acm-rounded-sm ${
-                        viewMode === 'calendar'
+                      className={`acm-rounded-sm ${viewMode === 'calendar'
                           ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                           : 'hover:bg-muted/50'
-                      }`}
+                        }`}
                     >
                       <CalendarDays className="w-4 h-4" />
                     </Button>

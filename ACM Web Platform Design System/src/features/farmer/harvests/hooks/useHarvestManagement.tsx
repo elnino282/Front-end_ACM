@@ -18,27 +18,13 @@ import type {
   ChartDataPoint,
   SummaryStats,
 } from "../types";
+import { INITIAL_FORM_DATA } from "../types";
 import {
   GRADE_DISTRIBUTION_COLORS,
   GRADE_POINTS_MAP,
   PLANNED_YIELD,
 } from "../constants";
 
-const INITIAL_FORM_DATA: HarvestFormData = {
-  batchId: "",
-  date: "",
-  quantity: "",
-  grade: "A",
-  moisture: "",
-  season: "",
-  plot: "",
-  crop: "",
-  status: "stored",
-  notes: "",
-  purity: "",
-  foreignMatter: "",
-  brokenGrains: "",
-};
 
 const transformApiToFeature = (h: ApiHarvest): HarvestBatch => ({
   id: String(h.id),
@@ -55,7 +41,7 @@ const transformApiToFeature = (h: ApiHarvest): HarvestBatch => ({
   notes: h.note ?? undefined,
 });
 
-export function useHarvestManagement() {
+export function useHarvestManagement(overrideSeasonId?: number) {
   const seasonContext = useOptionalSeason();
   const weightUnit = useWeightUnit();
 
@@ -67,16 +53,18 @@ export function useHarvestManagement() {
   const [formData, setFormData] = useState<HarvestFormData>(INITIAL_FORM_DATA);
 
   // Determine the seasonId to use for API calls:
-  // 1. If a specific season is selected from dropdown (not "all"), use that
-  // 2. Otherwise fallback to context's selectedSeasonId
-  // 3. Default to undefined (fetch all) if neither available
+  // 1. If overrideSeasonId is provided and valid, use it
+  // 2. If a specific season is selected from dropdown (not "all"), use that
+  // 3. Otherwise fallback to context's selectedSeasonId
+  // 4. Default to undefined (fetch all) if neither available
   const effectiveSeasonId = useMemo((): number | undefined => {
+    if (typeof overrideSeasonId === 'number' && overrideSeasonId > 0) return overrideSeasonId;
     if (selectedSeason !== "all") {
       const parsed = parseInt(selectedSeason, 10);
       if (!isNaN(parsed) && parsed > 0) return parsed;
     }
     return seasonContext?.selectedSeasonId ?? undefined;
-  }, [selectedSeason, seasonContext?.selectedSeasonId]);
+  }, [overrideSeasonId, selectedSeason, seasonContext?.selectedSeasonId]);
 
   // Fetch harvests: use useAllFarmerHarvests which supports optional seasonId filter
   const harvestParams = useMemo(
@@ -142,8 +130,8 @@ export function useHarvestManagement() {
       lotsCount === 0
         ? "0.0"
         : (
-            filteredBatches.reduce((s, b) => s + b.moisture, 0) / lotsCount
-          ).toFixed(1),
+          filteredBatches.reduce((s, b) => s + b.moisture, 0) / lotsCount
+        ).toFixed(1),
     [filteredBatches, lotsCount]
   );
   const yieldVsPlan = useMemo(
@@ -209,8 +197,8 @@ export function useHarvestManagement() {
       premiumGradePercentage:
         batches.length > 0
           ? (batches.filter((b) => b.grade === "Premium").length /
-              batches.length) *
-            100
+            batches.length) *
+          100
           : 0,
     }),
     [batches]

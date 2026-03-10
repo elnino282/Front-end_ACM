@@ -17,9 +17,7 @@ import { HarvestManagement } from '@/features/farmer/harvests';
 import { PlotManagement } from '@/features/farmer/plots';
 import { SeasonManagement } from '@/features/farmer/seasons';
 import { Documents } from '@/features/farmer/documents';
-import { ExpenseManagement } from '@/features/farmer/expense-management';
 import { Reports } from '@/features/farmer/reports';
-import { TaskWorkspace } from '@/features/farmer/tasks';
 import { FarmerProfile } from '@/features/farmer/profile';
 import { FarmerPreferences } from '@/features/farmer/preferences';
 import { FarmsListPage, FarmDetailPage } from '@/features/farmer/farm-management';
@@ -100,14 +98,14 @@ export function AppRoutes() {
         {/* Other Farmer Features */}
         <Route path="plots" element={<PlotManagement />} />
         <Route path="seasons" element={<SeasonManagement />} />
-        <Route path="tasks" element={<TaskWorkspace />} />
+        <Route path="tasks" element={<Navigate to="/farmer/seasons" replace />} />
         <Route path="crops" element={<CropManagement />} />
-        <Route path="expenses" element={<ExpenseManagement />} />
-        <Route path="harvest" element={<HarvestManagement />} />
+        <Route path="expenses" element={<Navigate to="/farmer/seasons" replace />} />
+        <Route path="harvest" element={<Navigate to="/farmer/seasons" replace />} />
         <Route path="suppliers-supplies" element={<SuppliersSuppliesPage />} />
         <Route path="reports" element={<Reports />} />
         <Route path="documents" element={<Documents />} />
-        <Route path="field-logs" element={<FieldLogsPage />} />
+        <Route path="field-logs" element={<Navigate to="/farmer/seasons" replace />} />
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="incidents" element={<IncidentsPage />} />
         <Route path="notifications" element={<NotificationsPage />} />

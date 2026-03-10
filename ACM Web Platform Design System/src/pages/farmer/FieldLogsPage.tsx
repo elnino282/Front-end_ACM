@@ -58,17 +58,24 @@ const selectTriggerClass =
 // FIELD LOGS PAGE
 // ═══════════════════════════════════════════════════════════════
 
-export function FieldLogsPage() {
+interface FieldLogModuleProps {
+    seasonId: string | number;
+}
+
+export function FieldLogModule({ seasonId }: FieldLogModuleProps) {
     const { t } = useI18n();
-    
+
+    // Explicit season override
+    const explicitSeasonId = Number(seasonId);
+
     // State
-    const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
+    const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(explicitSeasonId);
     const [searchQuery, setSearchQuery] = useState('');
     const [typeFilter, setTypeFilter] = useState<string>('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingLog, setEditingLog] = useState<FieldLog | null>(null);
     const [deleteLogId, setDeleteLogId] = useState<number | null>(null);
-    
+
     // Form state
     const [formData, setFormData] = useState<{
         logDate: string;
@@ -79,79 +86,79 @@ export function FieldLogsPage() {
         logType: '',
         notes: '',
     });
-    
+
     // Queries
     const { data: seasons, isLoading: seasonsLoading } = useUserSeasons();
     const { data: logsData, isLoading: logsLoading, isError } = useFieldLogsBySeason(
-        selectedSeasonId ?? 0,
+        explicitSeasonId || selectedSeasonId || 0,
         {
             q: searchQuery.length >= 2 ? searchQuery : undefined,
             type: typeFilter !== 'all' ? typeFilter : undefined,
             page: 0,
             size: 100,
         },
-        { enabled: !!selectedSeasonId }
+        { enabled: !!(explicitSeasonId || selectedSeasonId) }
     );
-    
+
     // Mutations
     const createMutation = useCreateFieldLog(selectedSeasonId ?? 0, {
         onSuccess: () => {
             toast.success(t('fieldLogs.toast.createSuccess'));
             closeModal();
         },
-        onError: (error: AxiosError<{ message?: string }>) => {
+        onError: (error: any) => {
             const message = error?.response?.data?.message || t('fieldLogs.toast.createError');
             toast.error(message);
         },
     });
-    
+
     const updateMutation = useUpdateFieldLog(selectedSeasonId ?? 0, {
         onSuccess: () => {
             toast.success(t('fieldLogs.toast.updateSuccess'));
             closeModal();
         },
-        onError: (error: AxiosError<{ message?: string }>) => {
+        onError: (error: any) => {
             const message = error?.response?.data?.message || t('fieldLogs.toast.updateError');
             toast.error(message);
         },
     });
-    
+
     const deleteMutation = useDeleteFieldLog(selectedSeasonId ?? 0, {
         onSuccess: () => {
             toast.success(t('fieldLogs.toast.deleteSuccess'));
             setDeleteLogId(null);
         },
-        onError: (error: AxiosError<{ message?: string }>) => {
+        onError: (error: any) => {
             const message = error?.response?.data?.message || t('fieldLogs.toast.deleteError');
             toast.error(message);
         },
     });
-    
+
     // Computed values
-    const selectedSeason = useMemo(() => 
+    const selectedSeason = useMemo(() =>
         seasons?.find(s => s.seasonId === selectedSeasonId),
         [seasons, selectedSeasonId]
     );
-    
+
     const logs = logsData?.items ?? [];
-    
+
     const summaryStats = useMemo(() => {
         if (!logs.length) return { total: 0, latestDate: null, commonType: null };
-        
+
         const typeCounts: Record<string, number> = {};
         let latestDate = logs[0]?.logDate;
-        
+
         logs.forEach(log => {
             typeCounts[log.logType] = (typeCounts[log.logType] || 0) + 1;
             if (log.logDate > latestDate) latestDate = log.logDate;
         });
-        
+
         const commonType = Object.entries(typeCounts)
             .sort((a, b) => b[1] - a[1])[0]?.[0];
-        
+
         return { total: logs.length, latestDate, commonType };
     }, [logs]);
-    
+
     // Handlers
     const openCreateModal = () => {
         setEditingLog(null);
@@ -162,7 +169,7 @@ export function FieldLogsPage() {
         });
         setIsModalOpen(true);
     };
-    
+
     const openEditModal = (log: FieldLog) => {
         setEditingLog(log);
         setFormData({
@@ -172,29 +179,29 @@ export function FieldLogsPage() {
         });
         setIsModalOpen(true);
     };
-    
+
     const closeModal = () => {
         setIsModalOpen(false);
         setEditingLog(null);
         setFormData({ logDate: '', logType: '', notes: '' });
     };
-    
+
     const handleSubmit = () => {
         if (!formData.logDate || !formData.logType) {
             toast.error('Please fill in required fields');
             return;
         }
-        
+
         // Validate date within season range
         if (selectedSeason) {
             const logDate = new Date(formData.logDate);
             const startDate = selectedSeason.startDate ? new Date(selectedSeason.startDate) : null;
-            const endDate = selectedSeason.endDate 
-                ? new Date(selectedSeason.endDate) 
-                : selectedSeason.plannedHarvestDate 
-                    ? new Date(selectedSeason.plannedHarvestDate) 
+            const endDate = selectedSeason.endDate
+                ? new Date(selectedSeason.endDate)
+                : selectedSeason.plannedHarvestDate
+                    ? new Date(selectedSeason.plannedHarvestDate)
                     : null;
-            
+
             if (startDate && logDate < startDate) {
                 toast.error(`Log date must be on or after season start date (${selectedSeason.startDate})`);
                 return;
@@ -204,64 +211,62 @@ export function FieldLogsPage() {
                 return;
             }
         }
-        
+
         const payload: FieldLogCreateRequest = {
             logDate: formData.logDate,
             logType: formData.logType,
             notes: formData.notes || undefined,
         };
-        
+
         if (editingLog) {
             updateMutation.mutate({ id: editingLog.id, data: payload });
         } else {
             createMutation.mutate(payload);
         }
     };
-    
+
     const handleDelete = () => {
         if (deleteLogId) {
             deleteMutation.mutate(deleteLogId);
         }
     };
-    
+
     const getLogTypeConfig = (type: string) => {
         return LOG_TYPES.find(t => t.value === type) ?? { label: type, color: 'bg-gray-100 text-gray-800' };
     };
-    
+
     const formatDate = (dateStr: string | null | undefined) => {
         if (!dateStr) return '-';
         return new Date(dateStr).toLocaleDateString('vi-VN');
     };
-    
+
     const formatDateTime = (dateStr: string | null | undefined) => {
         if (!dateStr) return '-';
         return new Date(dateStr).toLocaleString('vi-VN');
     };
 
     return (
-        <PageContainer>
-            <Card className="mb-6 border border-border rounded-xl shadow-sm">
-                <CardContent className="px-6 py-4">
-                    <PageHeader
-                        className="mb-0"
-                        icon={<FileText className="w-8 h-8" />}
-                        title={t('fieldLogs.title')}
-                        subtitle={t('fieldLogs.subtitle')}
-                        actions={
-                            <Button 
-                                onClick={openCreateModal}
-                                disabled={!selectedSeasonId}
-                                variant="accent"
-                                className="text-white hover:opacity-90"
-                                style={{ background: 'linear-gradient(135deg, #2F9E44 0%, #1a7a30 100%)' }}
-                            >
-                                <Plus className="w-4 h-4 mr-2" />
-                                {t('fieldLogs.createButton')}
-                            </Button>
-                        }
-                    />
-                </CardContent>
-            </Card>
+        <div className="space-y-6">
+            <div className="flex justify-between items-center bg-card border border-border rounded-xl p-4 shadow-sm mb-6">
+                <div>
+                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-emerald-600" />
+                        {t('fieldLogs.title')}
+                    </h2>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Button
+                        onClick={openCreateModal}
+                        disabled={!explicitSeasonId && !selectedSeasonId}
+                        variant="accent"
+                        className="text-white hover:opacity-90"
+                        style={{ background: 'linear-gradient(135deg, #2F9E44 0%, #1a7a30 100%)' }}
+                    >
+                        <Plus className="w-4 h-4 mr-2" />
+                        {t('fieldLogs.createButton')}
+                    </Button>
+                </div>
+            </div>
 
             {/* Filters */}
             <Card className="mb-6 border border-border rounded-xl shadow-sm">
@@ -293,9 +298,9 @@ export function FieldLogsPage() {
                                 value={selectedSeasonId?.toString() ?? ''}
                                 onValueChange={(value) => setSelectedSeasonId(Number(value))}
                             >
-                            <SelectTrigger className="rounded-xl border-border w-[180px]">
-                                <SelectValue placeholder={t('fieldLogs.selectSeason')} />
-                            </SelectTrigger>
+                                <SelectTrigger className="rounded-xl border-border w-[180px]">
+                                    <SelectValue placeholder={t('fieldLogs.selectSeason')} />
+                                </SelectTrigger>
                                 <SelectContent>
                                     {seasons?.map((season) => (
                                         <SelectItem key={season.seasonId} value={season.seasonId.toString()}>
@@ -311,9 +316,9 @@ export function FieldLogsPage() {
                             </Select>
 
                             <Select value={typeFilter} onValueChange={setTypeFilter}>
-                            <SelectTrigger className="rounded-xl border-border w-[180px]" disabled={!selectedSeasonId}>
-                                <SelectValue placeholder={t('fieldLogs.allTypes')} />
-                            </SelectTrigger>
+                                <SelectTrigger className="rounded-xl border-border w-[180px]" disabled={!selectedSeasonId}>
+                                    <SelectValue placeholder={t('fieldLogs.allTypes')} />
+                                </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">{t('fieldLogs.allTypes')}</SelectItem>
                                     {LOG_TYPES.map((type) => (
@@ -350,8 +355,8 @@ export function FieldLogsPage() {
                         <Card>
                             <CardContent className="px-6 py-4">
                                 <div className="text-2xl font-bold">
-                                    {summaryStats.commonType 
-                                        ? getLogTypeConfig(summaryStats.commonType).label 
+                                    {summaryStats.commonType
+                                        ? getLogTypeConfig(summaryStats.commonType).label
                                         : '-'}
                                 </div>
                                 <div className="text-sm text-muted-foreground">{t('fieldLogs.summary.commonType')}</div>
@@ -448,7 +453,7 @@ export function FieldLogsPage() {
                             {editingLog ? t('fieldLogs.dialog.editTitle') : t('fieldLogs.dialog.createTitle')}
                         </DialogTitle>
                         <DialogDescription>
-                            {editingLog 
+                            {editingLog
                                 ? t('fieldLogs.dialog.editDescription')
                                 : t('fieldLogs.dialog.createDescription')}
                         </DialogDescription>
@@ -474,8 +479,8 @@ export function FieldLogsPage() {
                             <Label htmlFor="logType">
                                 {t('fieldLogs.form.logType')} <span className="text-destructive">*</span>
                             </Label>
-                            <Select 
-                                value={formData.logType} 
+                            <Select
+                                value={formData.logType}
                                 onValueChange={(value) => setFormData({ ...formData, logType: value })}
                             >
                                 <SelectTrigger className={selectTriggerClass}>
@@ -500,7 +505,7 @@ export function FieldLogsPage() {
                                 rows={4}
                             />
                         </div>
-                        
+
                         {/* Inventory integration hint for FERTILIZE/SPRAY */}
                         {(formData.logType === 'FERTILIZE' || formData.logType === 'SPRAY') && (
                             <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -514,7 +519,7 @@ export function FieldLogsPage() {
                         <Button variant="outline" onClick={closeModal}>
                             {t('common.cancel')}
                         </Button>
-                        <Button 
+                        <Button
                             onClick={handleSubmit}
                             disabled={createMutation.isPending || updateMutation.isPending}
                             variant="accent"
@@ -551,6 +556,6 @@ export function FieldLogsPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </PageContainer>
+        </div>
     );
 }

@@ -34,6 +34,7 @@ interface AddBatchDialogProps {
     onFormChange: (data: HarvestFormData) => void;
     onSubmit: () => void;
     onCancel: () => void;
+    defaultSeasonId?: number | string;
 }
 
 export function AddBatchDialog({
@@ -43,6 +44,7 @@ export function AddBatchDialog({
     onFormChange,
     onSubmit,
     onCancel,
+    defaultSeasonId,
 }: AddBatchDialogProps) {
     const { preferences } = usePreferences();
     const weightUnitLabel = getWeightUnitLabel(preferences.weightUnit);

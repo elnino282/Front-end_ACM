@@ -20,7 +20,13 @@ import {
 } from "@/components/ui/select";
 import { useSeasons } from "@/entities/season";
 
-export function HarvestManagement() {
+interface HarvestModuleProps {
+  seasonId: string | number;
+}
+
+export function HarvestModule({ seasonId }: HarvestModuleProps) {
+  const explicitSeasonId = Number(seasonId);
+
   // Fetch real seasons from API
   const { data: seasonsData } = useSeasons();
   const seasonOptions = useMemo(() => {
@@ -72,13 +78,21 @@ export function HarvestManagement() {
     handleQuickAction,
     handleExport,
     handlePrint,
-  } = useHarvestManagement();
+  } = useHarvestManagement(explicitSeasonId); // Assume hook accepts default/explicit seasonId or we scope locally
+
   const [searchQuery, setSearchQuery] = useState("");
   const filteredBySearch = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
-    if (!normalizedQuery) return filteredBatches;
 
-    return filteredBatches.filter((batch) => {
+    // Explicitly scope by seasonId here
+    let scopedBatches = filteredBatches;
+    if (Number.isFinite(explicitSeasonId)) {
+      scopedBatches = scopedBatches.filter(b => b.season === String(explicitSeasonId));
+    }
+
+    if (!normalizedQuery) return scopedBatches;
+
+    return scopedBatches.filter((batch) => {
       const haystack = [
         batch.batchId,
         batch.crop,
@@ -94,7 +108,7 @@ export function HarvestManagement() {
 
       return haystack.includes(normalizedQuery);
     });
-  }, [filteredBatches, searchQuery]);
+  }, [filteredBatches, searchQuery, explicitSeasonId]);
 
   const handleDrawerAction = (action: string, batch: typeof selectedBatch) => {
     if (!batch) return;
@@ -111,28 +125,29 @@ export function HarvestManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-[1920px] mx-auto p-6">
-        <HarvestHeader
-          onAddBatch={() => {
-            resetForm();
-            setIsAddBatchOpen(true);
-          }}
-        />
+    <div className="space-y-6">
+      <HarvestHeader
+        onAddBatch={() => {
+          resetForm();
+          setIsAddBatchOpen(true);
+        }}
+        isEmbedded={true}
+      />
 
-        <Card className="mb-6 border border-border rounded-xl shadow-sm">
-          <CardContent className="px-6 py-4">
-            <div className="flex flex-wrap items-center justify-start gap-4">
-              <div className="relative w-[320px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search batches..."
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  className="pl-10 rounded-xl border-border focus:border-primary"
-                />
-              </div>
-
+      <Card className="mb-6 border border-border rounded-xl shadow-sm">
+        <CardContent className="px-6 py-4">
+          <div className="flex flex-wrap items-center justify-start gap-4">
+            <div className="relative w-[320px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search batches..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="pl-10 rounded-xl border-border focus:border-primary"
+              />
+            </div>
+            {/* Omit season selector if forced to one season, or keep disabled */}
+            {!Number.isFinite(explicitSeasonId) && (
               <Select value={selectedSeason} onValueChange={setSelectedSeason}>
                 <SelectTrigger className="rounded-xl border-border w-[180px]">
                   <SelectValue placeholder="All Seasons" />
@@ -145,42 +160,42 @@ export function HarvestManagement() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        <HarvestKPICards
-          totalHarvested={totalHarvested}
-          lotsCount={lotsCount}
-          avgGrade={avgGrade}
-          avgMoisture={avgMoisture}
-          yieldVsPlan={yieldVsPlan}
-        />
-
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
-          <div className="space-y-6">
-            <HarvestTable
-              batches={filteredBySearch}
-              totalBatches={filteredBatches.length}
-              onViewDetails={handleViewDetails}
-              onDeleteBatch={handleDeleteBatch}
-              onExport={handleExport}
-              onPrint={handlePrint}
-              getStatusBadge={getStatusBadge}
-              getGradeBadge={getGradeBadge}
-            />
-
-            <HarvestCharts
-              dailyTrend={dailyTrend}
-              gradeDistribution={gradeDistribution}
-            />
+            )}
           </div>
+        </CardContent>
+      </Card>
 
-          <QuickActionsPanel
-            onQuickAction={handleQuickAction}
-            summaryStats={summaryStats}
+      <HarvestKPICards
+        totalHarvested={totalHarvested}
+        lotsCount={lotsCount}
+        avgGrade={avgGrade}
+        avgMoisture={avgMoisture}
+        yieldVsPlan={yieldVsPlan}
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
+        <div className="space-y-6">
+          <HarvestTable
+            batches={filteredBySearch}
+            totalBatches={filteredBySearch.length}
+            onViewDetails={handleViewDetails}
+            onDeleteBatch={handleDeleteBatch}
+            onExport={handleExport}
+            onPrint={handlePrint}
+            getStatusBadge={getStatusBadge}
+            getGradeBadge={getGradeBadge}
+          />
+
+          <HarvestCharts
+            dailyTrend={dailyTrend}
+            gradeDistribution={gradeDistribution}
           />
         </div>
+
+        <QuickActionsPanel
+          onQuickAction={handleQuickAction}
+          summaryStats={summaryStats}
+        />
       </div>
 
       <AddBatchDialog
@@ -193,6 +208,7 @@ export function HarvestManagement() {
           setIsAddBatchOpen(false);
           resetForm();
         }}
+        defaultSeasonId={explicitSeasonId}
       />
 
       <HarvestDetailsDrawer
