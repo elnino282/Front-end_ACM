@@ -1,138 +1,42 @@
-# ================================
 # Dependencies
-# ================================
 node_modules/
-.pnp/
+.pnp
 .pnp.js
 
-# ================================
-# Build & Distribution
-# ================================
-build/
+# Build outputs
 dist/
-out/
-*.local
+build/
 
-# ================================
-# Testing
-# ================================
-coverage/
-*.lcov
-.nyc_output/
+# Environment variables (including API keys/secrets)
+.env
+.env.*
+*.env
+*.env.*
+!.env.example
+!.env.*.example
+!.env.template
+!.env.*.template
+!.env.sample
+!.env.*.sample
 
-# ================================
-# IDE & Editors
-# ================================
+# Editor directories and files
 .idea/
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
+.vscode/
 *.swp
 *.swo
 *~
-*.sublime-workspace
-*.sublime-project
 
-# ================================
-# OS Generated Files
-# ================================
+# OS files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-Desktop.ini
 
-# ================================
-# Environment & Secrets
-# ================================
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env*.local
-*.pem
-*.key
-
-# ================================
-# Logs & Debug
-# ================================
-logs/
-*.log
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-# ================================
-# Vite
-# ================================
-*.local
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# Testing
+coverage/
 
-# ================================
 # TypeScript
-# ================================
 *.tsbuildinfo
-
-# ================================
-# Caching
-# ================================
-.cache/
-.parcel-cache/
-.eslintcache
-.stylelintcache
-*.cache
-
-# ================================
-# Vercel
-# ================================
-.vercel/
-
-# ================================
-# Docker
-# ================================
-.docker/
-
-# ================================
-# Temporary Files
-# ================================
-tmp/
-temp/
-*.tmp
-*.temp
-*.bak
-*.backup
-
-# ================================
-# Optional npm cache directory
-# ================================
-.npm/
-
-# ================================
-# Package manager lock files (optional - uncomment if using different package managers)
-# ================================
-# yarn.lock
-# pnpm-lock.yaml
-
-# ================================
-# Miscellaneous
-# ================================
-*.gz
-*.zip
-*.tar.gz
-*.rar
-
-# Storybook builds (if used)
-storybook-static/
-
-# PWA files
-sw.*
-workbox-*

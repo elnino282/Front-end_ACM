@@ -1,0 +1,29 @@
+{
+  "status": 200,
+  "code": "SUCCESS",
+  "message": "OK",
+  "result": [
+    {
+      "seasonId": 31,
+      "seasonName": "Mua 31",
+      "startDate": "2025-01-10",
+      "fdnTotal": 65,
+      "fdnMineral": 50,
+      "fdnOrganic": 15,
+      "nue": 48,
+      "nOutput": 37,
+      "yield": 5.8
+    },
+    {
+      "seasonId": 32,
+      "seasonName": "Mua 32",
+      "startDate": "2025-06-01",
+      "fdnTotal": 68,
+      "fdnMineral": 54,
+      "fdnOrganic": 14,
+      "nue": 46,
+      "nOutput": 39,
+      "yield": 6
+    }
+  ]
+}

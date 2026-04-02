@@ -1,0 +1,256 @@
+.product-warehouse-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.product-warehouse-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.summary-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: #15803d;
+}
+
+.summary-label {
+  margin: 0;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.summary-value {
+  margin: 0.25rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.product-warehouse-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.product-warehouse-toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  min-width: 180px;
+  flex: 1 1 180px;
+}
+
+.control-group label {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.control-group select,
+.control-group input,
+.control-group textarea {
+  width: 100%;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+}
+
+.control-group--search {
+  min-width: 260px;
+  flex: 2 1 260px;
+}
+
+.product-warehouse-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.product-warehouse-tabs .tab {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  border-radius: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.product-warehouse-tabs .tab.active {
+  background: #15803d;
+  border-color: #15803d;
+  color: #fff;
+}
+
+.product-warehouse-content {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  background: hsl(var(--background));
+  padding: 1rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.product-warehouse-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.product-warehouse-table th,
+.product-warehouse-table td {
+  border-bottom: 1px solid hsl(var(--border));
+  text-align: left;
+  vertical-align: top;
+  padding: 0.625rem 0.5rem;
+}
+
+.product-warehouse-table th {
+  background: hsl(var(--muted));
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.loading-state,
+.empty-state,
+.error-state {
+  border: 1px dashed hsl(var(--border));
+  border-radius: 0.625rem;
+  padding: 1.25rem;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+}
+
+.error-state {
+  color: #b91c1c;
+}
+
+.empty-state.small {
+  padding: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.pagination {
+  margin-top: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.625rem;
+}
+
+.pagination button {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  padding: 0.375rem 0.625rem;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.traceability-panel {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.625rem;
+  padding: 0.875rem;
+  background: hsl(var(--background));
+}
+
+.traceability-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.traceability-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.traceability-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.traceability-grid p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.traceability-subtitle {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.dialog-content-grid {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.dialog-content-grid input,
+.dialog-content-grid select,
+.dialog-content-grid textarea {
+  width: 100%;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.dialog-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.warehouse-form-error {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 0.5rem;
+  padding: 0.625rem;
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 1024px) {
+  .product-warehouse-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .traceability-grid {
+    grid-template-columns: 1fr;
+  }
+}

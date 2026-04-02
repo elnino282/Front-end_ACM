@@ -1,0 +1,176 @@
+{
+  "status": 200,
+  "code": "SUCCESS",
+  "message": "OK",
+  "result": {
+    "scope": "field",
+    "entityId": "22",
+    "seasonId": 33,
+    "calculationMode": "hybrid_estimated",
+    "confidence": 0.72,
+    "sustainableScore": {
+      "value": 64,
+      "label": "Fair",
+      "components": {
+        "dependency": 28
+      },
+      "weights": {
+        "dependency": 0.3
+      }
+    },
+    "fdn": {
+      "total": 72,
+      "mineral": 60,
+      "organic": 12,
+      "level": "high",
+      "status": "estimated",
+      "thresholdSource": "config_default_v1",
+      "lowMaxExclusive": 40,
+      "mediumMaxExclusive": 70,
+      "mineralHighMin": 60,
+      "explanation": "FDN is above configured medium threshold (70%)."
+    },
+    "nue": 43,
+    "nOutput": 41,
+    "nSurplus": 36,
+    "currentSeason": {
+      "seasonName": "Mua 33",
+      "cropName": "Lua",
+      "dayCount": 55,
+      "stage": "ACTIVE"
+    },
+    "yield": {
+      "estimated": 6.2,
+      "unit": "t/ha"
+    },
+    "inputsBreakdown": {
+      "mineralFertilizerN": 60,
+      "organicFertilizerN": 12,
+      "biologicalFixationN": 8,
+      "irrigationWaterN": 6,
+      "atmosphericDepositionN": 5,
+      "seedImportN": 0,
+      "soilLegacyN": 0,
+      "controlSupplyN": null
+    },
+    "unit": "kg N/ha/season",
+    "dataQuality": [
+      {
+        "source": "MINERAL_FERTILIZER",
+        "method": "measured",
+        "confidence": 1
+      }
+    ],
+    "dataQualitySummary": {
+      "overallConfidence": 0.72,
+      "measuredInputCount": 1,
+      "estimatedInputCount": 3,
+      "missingInputCount": 1,
+      "unavailableInputCount": 0,
+      "summary": "Overall confidence 72%; 1 measured, 3 estimated/mixed, 1 missing inputs."
+    },
+    "missingInputs": [
+      "CONTROL_SUPPLY"
+    ],
+    "notes": [
+      "Scientific formula based calculation."
+    ],
+    "recommendations": [
+      "Measure irrigation-water nitrogen before changing mineral inputs."
+    ],
+    "recommendationSource": "product_rule_config_v1",
+    "sustainableScoreMetric": {
+      "value": 64,
+      "unit": "%",
+      "status": "estimated",
+      "confidence": 0.72,
+      "calculationMode": "hybrid_estimated",
+      "assumptions": [
+        "Rule based interpolation"
+      ],
+      "missingInputs": [
+        "CONTROL_SUPPLY"
+      ]
+    },
+    "fdnTotalMetric": {
+      "value": 72,
+      "unit": "%",
+      "status": "estimated",
+      "confidence": 0.72,
+      "calculationMode": "hybrid_estimated",
+      "assumptions": [
+        "Rule based interpolation"
+      ],
+      "missingInputs": [
+        "CONTROL_SUPPLY"
+      ]
+    },
+    "fdnMineralMetric": {
+      "value": 60,
+      "unit": "%",
+      "status": "measured",
+      "confidence": 1,
+      "calculationMode": "explicit_budget",
+      "assumptions": [],
+      "missingInputs": []
+    },
+    "fdnOrganicMetric": {
+      "value": 12,
+      "unit": "%",
+      "status": "estimated",
+      "confidence": 0.72,
+      "calculationMode": "hybrid_estimated",
+      "assumptions": [],
+      "missingInputs": []
+    },
+    "nueMetric": {
+      "value": 43,
+      "unit": "%",
+      "status": "estimated",
+      "confidence": 0.72,
+      "calculationMode": "hybrid_estimated",
+      "assumptions": [],
+      "missingInputs": []
+    },
+    "nOutputMetric": {
+      "value": 41,
+      "unit": "kg N/ha/season",
+      "status": "estimated",
+      "confidence": 0.72,
+      "calculationMode": "hybrid_estimated",
+      "assumptions": [],
+      "missingInputs": []
+    },
+    "nSurplusMetric": {
+      "value": 36,
+      "unit": "kg N/ha/season",
+      "status": "estimated",
+      "confidence": 0.72,
+      "calculationMode": "hybrid_estimated",
+      "assumptions": [],
+      "missingInputs": []
+    },
+    "estimatedYieldMetric": {
+      "value": 6.2,
+      "unit": "t/ha",
+      "status": "estimated",
+      "confidence": 0.72,
+      "calculationMode": "hybrid_estimated",
+      "assumptions": [],
+      "missingInputs": []
+    },
+    "historicalTrend": [
+      {
+        "seasonId": 32,
+        "seasonName": "Mua 32",
+        "startDate": "2025-06-01",
+        "fdnTotal": 68,
+        "fdnMineral": 54,
+        "fdnOrganic": 14,
+        "nue": 46,
+        "nOutput": 39,
+        "yield": 6
+      }
+    ]
+  }
+}

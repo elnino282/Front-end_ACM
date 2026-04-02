@@ -1,0 +1,44 @@
+{
+  "status": 200,
+  "code": "SUCCESS",
+  "message": "OK",
+  "result": {
+    "items": [
+      {
+        "fieldId": 22,
+        "fieldName": "Field A",
+        "farmId": 7,
+        "farmName": "Farm 7",
+        "geometry": null,
+        "center": null,
+        "cropName": "Lua",
+        "seasonName": "Mua 33",
+        "fdnLevel": "high",
+        "fdnTotal": null,
+        "fdnMineral": null,
+        "fdnOrganic": null,
+        "nue": null,
+        "confidence": 0.55,
+        "calculationMode": "hybrid_estimated",
+        "thresholdSource": "config_default_v1",
+        "recommendationSource": "product_rule_config_v1",
+        "missingInputs": [
+          "MINERAL_FERTILIZER"
+        ],
+        "inputsBreakdown": {
+          "mineralFertilizerN": null,
+          "organicFertilizerN": null,
+          "biologicalFixationN": null,
+          "irrigationWaterN": null,
+          "atmosphericDepositionN": null,
+          "seedImportN": null,
+          "soilLegacyN": null,
+          "controlSupplyN": null
+        },
+        "recommendations": [
+          "Collect measured fertilizer records first."
+        ]
+      }
+    ]
+  }
+}

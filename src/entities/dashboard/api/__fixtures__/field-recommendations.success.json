@@ -1,0 +1,23 @@
+{
+  "status": 200,
+  "code": "SUCCESS",
+  "message": "OK",
+  "result": {
+    "fieldId": 22,
+    "seasonId": 33,
+    "fdnTotal": 72,
+    "fdnMineral": 60,
+    "nue": 43,
+    "confidence": 0.72,
+    "fdnLevel": "high",
+    "thresholdSource": "config_default_v1",
+    "recommendationSource": "product_rule_config_v1",
+    "calculationMode": "hybrid_estimated",
+    "missingInputs": [
+      "IRRIGATION_WATER"
+    ],
+    "recommendations": [
+      "Measure irrigation-water nitrogen before changing mineral inputs."
+    ]
+  }
+}

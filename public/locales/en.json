@@ -1,0 +1,1564 @@
+{
+  "common": {
+    "appName": "ACM Platform",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "none": "None",
+    "noData": "No data available",
+    "optional": "optional",
+    "required": "required",
+    "and": "and",
+    "ok": "OK",
+    "retry": "Retry",
+    "tryAgain": "Try Again",
+    "update": "Update",
+    "actions": "Actions",
+    "view": "View",
+    "add": "Add",
+    "remove": "Remove",
+    "start": "Start",
+    "complete": "Complete",
+    "status": "Status",
+    "name": "Name",
+    "description": "Description",
+    "type": "Type",
+    "date": "Date",
+    "from": "From",
+    "to": "To",
+    "notes": "Notes",
+    "noDataFound": "No data found",
+    "stockIn": "Stock IN",
+    "reset": "Reset",
+    "underConstruction": "This view is under construction.",
+    "inbox": "Inbox",
+    "notification": "Notification",
+    "noMessage": "No message provided.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "loadingPlots": "Loading plots...",
+    "loadingActivityLogs": "Loading activity logs...",
+    "clearAll": "Clear All",
+    "showing": "Showing",
+    "send": "Send",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "creating": "Creating...",
+    "updating": "Updating...",
+    "loadingAddress": "Loading address...",
+    "cancelled": "Cancelled",
+    "processing": "Processing...",
+    "error": {
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred. Please try again."
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "adminDashboard": "Admin Dashboard",
+    "farms": "Farms & Plots",
+    "seasons": "Seasons",
+    "tasks": "Tasks Workspace",
+    "fieldLogs": "Field Logs",
+    "expenses": "Expenses",
+    "harvest": "Harvest",
+    "suppliersSupplies": "Suppliers & Supplies",
+    "laborManagement": "Labor Management",
+    "inventory": "Supply Warehouse",
+    "productWarehouse": "Product Warehouse",
+    "documents": "Documents",
+    "incidents": "Incidents",
+    "notifications": "Notifications",
+    "aiAssistant": "AI Assistant",
+    "alertsCenter": "Alerts Center",
+    "usersRoles": "Users & Roles",
+    "cropsVarieties": "Crops & Varieties",
+    "reports": "Reports",
+    "marketplace": "Marketplace",
+    "orders": "My Orders",
+    "traceability": "Traceability",
+    "progress": "Progress",
+    "payroll": "Payroll",
+    "settings": "Settings",
+    "collapse": "Collapse"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "preferences": "Preferences",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language",
+    "languageEnglish": "English",
+    "languageVietnamese": "Vietnamese",
+    "signOut": "Sign out"
+  },
+  "portal": {
+    "admin": "Admin Portal",
+    "farmer": "Farmer Portal",
+    "buyer": "Buyer Portal",
+    "employee": "Employee Portal"
+  },
+  "header": {
+    "aiAssistant": "AI Assistant",
+    "notifications": "Notifications"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "View and manage your notifications",
+    "markAllRead": "Mark all read",
+    "description": "Alerts and warnings from the system",
+    "justNow": "Just now",
+    "noNotifications": "No notifications yet",
+    "inbox": "Inbox",
+    "filters": {
+      "unread": "Unread",
+      "all": "All"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign In",
+      "subtitle": "Enter your email and password to sign in!",
+      "email": "Email",
+      "password": "Password",
+      "emailPlaceholder": "mail@acmplatform.com",
+      "passwordPlaceholder": "Min. 8 characters",
+      "keepLoggedIn": "Keep me logged in",
+      "forgotPassword": "Forget password?",
+      "signInButton": "Sign In",
+      "signingIn": "Signing In...",
+      "notRegistered": "Not registered yet?",
+      "createAccount": "Create an Account",
+      "orSignInWith": "or sign in with",
+      "continueWithGoogle": "Continue with Google",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "signUp": {
+      "title": "Create Account",
+      "subtitle": "Enter your details to create your account",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "john.doe@example.com",
+      "phoneNumber": "Phone Number",
+      "phoneNumberPlaceholder": "+84 123 456 789",
+      "phonePlaceholder": "+84 123 456 789",
+      "password": "Password",
+      "passwordPlaceholder": "Abc@1234 (uppercase, lowercase, number, special)",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "role": "Role",
+      "iAmA": "I am a",
+      "selectRole": "Select your role",
+      "roleFarmer": "Farmer",
+      "roleBuyer": "Buyer",
+      "termsPrefix": "I agree to the",
+      "termsLink": "Terms and Conditions",
+      "privacyLink": "Privacy Policy",
+      "termsAgree": "I agree to the",
+      "termsAndConditions": "Terms and Conditions",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and",
+      "createAccount": "Create Account",
+      "creatingAccount": "Creating Account...",
+      "hasAccount": "Already have an account?",
+      "signUpButton": "Create Account",
+      "signingUp": "Creating Account...",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign In",
+      "orSignUpWith": "or sign up with",
+      "continueWithGoogle": "Continue with Google"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email to receive a reset link.",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "sendResetLink": "Send Reset Link",
+      "sending": "Sending...",
+      "successMessage": "If that email exists, we sent a reset link. Please check your inbox.",
+      "backToSignIn": "Back to Sign In",
+      "rememberedPassword": "Remembered your password?"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Create a strong new password to secure your account.",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "resetButton": "Reset Password",
+      "resetting": "Resetting...",
+      "success": "Your password has been reset. Please sign in again.",
+      "goToSignIn": "Go to Sign In",
+      "linkMissing": "Reset link is missing or invalid.",
+      "linkInvalid": "This reset link is invalid or expired.",
+      "passwordMinLength": "Password must be at least 8 characters.",
+      "passwordsMismatch": "Passwords do not match."
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "description": "Enter your current password and choose a new secure password.",
+      "currentPassword": "Current Password",
+      "currentPasswordPlaceholder": "Enter your current password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "changeButton": "Change Password",
+      "changing": "Changing...",
+      "requirements": {
+        "title": "Password requirements:",
+        "minLength": "At least 8 characters",
+        "uppercase": "At least one uppercase letter",
+        "lowercase": "At least one lowercase letter",
+        "number": "At least one number"
+      },
+      "toast": {
+        "success": "Password changed successfully!",
+        "successDesc": "Your password has been updated.",
+        "error": "Failed to change password",
+        "errorDesc": "Please check your current password and try again."
+      }
+    }
+  },
+  "preferences": {
+    "title": "Preferences",
+    "unitSettings": {
+      "title": "Unit Settings",
+      "description": "Configure the units used throughout the system for displaying values.",
+      "currencyUnit": "Currency Unit",
+      "currencyDescription": "Currency used for expenses, revenues, and reports.",
+      "weightUnit": "Weight Unit",
+      "weightDescription": "Weight unit used for harvests, yields, and inventory.",
+      "locale": "Locale",
+      "localeDescription": "Locale controls number and date formatting.",
+      "localeVietnamese": "Vietnamese (vi-VN)",
+      "localeEnglish": "English (en-US)",
+      "selectCurrency": "Select currency",
+      "selectWeight": "Select weight unit",
+      "selectLocale": "Select locale"
+    },
+    "save": "Save Preferences",
+    "saving": "Saving..."
+  },
+  "account": {
+    "locked": {
+      "title": "Account Locked",
+      "defaultMessage": "Your account has been locked. Please contact an administrator."
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "description": "Enter your current password and choose a new secure password.",
+      "currentPassword": "Current Password",
+      "currentPasswordPlaceholder": "Enter your current password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "changeButton": "Change Password",
+      "changing": "Changing...",
+      "requirements": {
+        "title": "Password requirements:",
+        "minLength": "At least 8 characters",
+        "uppercase": "At least one uppercase letter",
+        "lowercase": "At least one lowercase letter",
+        "number": "At least one number"
+      },
+      "toast": {
+        "success": "Password changed successfully!",
+        "successDesc": "Your password has been updated.",
+        "error": "Failed to change password",
+        "errorDesc": "Please check your current password and try again."
+      }
+    }
+  },
+  "currency": {
+    "VND": "VND - Vietnamese Dong",
+    "USD": "USD - US Dollar"
+  },
+  "weight": {
+    "KG": "Kilogram (kg)",
+    "G": "Gram (g)",
+    "TON": "Ton (ton)"
+  },
+  "toast": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "preferencesUpdated": "Preferences updated",
+    "preferencesUpdatedDesc": "Your display settings have been saved.",
+    "preferencesError": "Failed to update preferences",
+    "languageChanged": "Language changed",
+    "languageChangedDesc": "The interface language has been updated."
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords do not match",
+    "invalidPhone": "Please enter a valid phone number",
+    "termsRequired": "You must accept the terms and conditions"
+  },
+  "errors": {
+    "general": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "notFound": "The requested resource was not found.",
+    "serverError": "Server error. Please try again later.",
+    "loadFailed": "Failed to load data. Please try again."
+  },
+  "pagination": {
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results",
+    "noResults": "No results",
+    "rowsPerPage": "Rows per page",
+    "page": "Page",
+    "previousPage": "Previous page",
+    "nextPage": "Next page"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions",
+    "loading": "Loading dashboard...",
+    "error": {
+      "title": "Failed to Load Dashboard",
+      "description": "Unable to load seasons data. Please check your connection and try again."
+    },
+    "empty": {
+      "title": "No Seasons Available",
+      "description": "Start by creating a new season to track your crops.",
+      "createSeason": "Create Season"
+    },
+    "monitoring": "Real-time platform monitoring • Auto-updates every 30s",
+    "dataLoadError": "Some data failed to load",
+    "quickNav": {
+      "title": "Quick Navigation",
+      "tasksDesc": "View and manage all tasks",
+      "inventoryDesc": "Track stock and supplies",
+      "incidentsDesc": "View pest, disease alerts",
+      "activityDesc": "Latest actions on your farm"
+    },
+    "todaysTasks": {
+      "title": "Today's Tasks",
+      "subtitle": "Manage and track your daily activities"
+    },
+    "lowStock": {
+      "title": "Low Stock Inventory",
+      "subtitle": "Items below minimum level",
+      "orderButton": "Order Supplies"
+    },
+    "fdn": {
+      "selectSeason": "Select season",
+      "weatherSummary": "Weather summary",
+      "sustainableScoreTitle": "Sustainable Farming Score",
+      "scoreExplain": "Composite product score from dependency, efficiency, productivity, risk and confidence.",
+      "fdnTotal": "FDN Total",
+      "fdnMineral": "FDN Mineral",
+      "fdnOrganic": "Organic share",
+      "nueTitle": "NUE",
+      "nOutput": "N Output",
+      "nSurplus": "N Surplus",
+      "currentSeasonTitle": "Current Crop / Season",
+      "estimatedYieldTitle": "Estimated Yield",
+      "daysLabel": "days",
+      "notAvailable": "N/A",
+      "metricMissing": "Insufficient data",
+      "metricUnavailable": "Unavailable",
+      "metricStatus": {
+        "measured": "Measured",
+        "estimated": "Estimated",
+        "missing": "Missing",
+        "unavailable": "Unavailable"
+      },
+      "thresholdSource": "Threshold source",
+      "thresholdValues": "Thresholds",
+      "alertAndAssistantTitle": "Alert and Assistant",
+      "alertTitle": "FDN Alert Summary",
+      "whyAlert": "Why this alert",
+      "calculationMode": "Calculation mode",
+      "confidence": "Confidence",
+      "assistantTitle": "Recommended Next Actions",
+      "recommendationSource": "Recommendation source",
+      "lowConfidenceNotice": "Data confidence is low, prioritize data verification before strong fertilizer adjustments.",
+      "dataQuality": "Data Quality",
+      "dataQualityDetails": "View data quality details",
+      "noDataQuality": "No data quality details.",
+      "missingInputs": "Missing inputs",
+      "noRecommendation": "No recommendation available.",
+      "yieldMissingHint": "Add harvest records to improve yield and output metrics.",
+      "source": {
+        "mineralFertilizer": "Mineral fertilizer",
+        "organicFertilizer": "Organic fertilizer",
+        "biologicalFixation": "Biological fixation",
+        "irrigationWater": "Irrigation water",
+        "atmosphericDeposition": "Atmospheric deposition",
+        "seedImport": "Seed import",
+        "soilLegacy": "Soil legacy",
+        "controlSupply": "Control supply"
+      },
+      "inputBreakdownTitle": "Nitrogen Input Breakdown",
+      "breakdown": {
+        "mineral": "Mineral fertilizer",
+        "organic": "Organic fertilizer",
+        "fixation": "Biological fixation",
+        "irrigation": "Irrigation water",
+        "deposition": "Atmospheric deposition",
+        "seed": "Seed import",
+        "soilLegacy": "Soil legacy",
+        "controlSupply": "Control supply",
+        "nInput": "N input",
+        "emptyTitle": "Not enough input data to build nitrogen breakdown yet.",
+        "emptyHint": "Record fertilizer, irrigation-water and biological input data to unlock this panel."
+      },
+      "historyTitle": "Historical Trends",
+      "noHistory": "No historical season metrics available.",
+      "noHistoryHint": "Complete additional seasons and keep nutrient + harvest records to unlock trend analysis.",
+      "tasksTitle": "Today and Upcoming Tasks",
+      "todayTasksTitle": "Today's Tasks",
+      "upcomingTasksTitle": "Upcoming Tasks",
+      "noTodayTasks": "No tasks for today.",
+      "noUpcomingTasks": "No upcoming tasks.",
+      "map": {
+        "title": "Field Sustainability Map",
+        "farmFallback": "Farm {{id}}",
+        "filterFarm": "Filter farm",
+        "filterCrop": "Filter crop",
+        "filterAlert": "Filter alert level",
+        "allFarms": "All farms",
+        "allCrops": "All crops",
+        "allLevels": "All alert levels",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "missingKey": "Missing VITE_GOOGLE_MAPS_API_KEY.",
+        "unavailable": "Google Maps is unavailable.",
+        "missingGeometry": "{{count}} field(s) do not have boundary geometry yet and cannot be rendered on the map.",
+        "field": "Field",
+        "fdnTotal": "FDN total",
+        "fdnMineral": "FDN mineral",
+        "fdnOrganic": "FDN organic",
+        "nue": "NUE",
+        "confidence": "Confidence",
+        "inputBreakdown": "N input breakdown",
+        "assistant": "Assistant recommendations",
+        "noRecommendation": "No recommendation available.",
+        "noFieldMatch": "No field matches current filters.",
+        "noGeometryForFilters": "No field geometry available for current filters.",
+        "fallbackTitle": "Map is currently unavailable",
+        "fallbackHint": "You can still review field sustainability in list view and add missing boundaries from farm management.",
+        "manageFieldsCta": "Go to Farms & Plots",
+        "listFallbackTitle": "Field list fallback"
+      }
+    }
+  },
+  "table": {
+    "noResults": "No results found",
+    "rowsPerPage": "Rows per page",
+    "page": "Page",
+    "of": "of",
+    "selected": "selected"
+  },
+  "seasons": {
+    "title": "Seasons",
+    "pageTitle": "Seasons",
+    "subtitle": "Manage your farming seasons and track progress",
+    "createButton": "New Season",
+    "searchPlaceholder": "Search seasons...",
+    "loading": "Loading seasons...",
+    "actions": {
+      "edit": "Edit",
+      "start": "Start Season",
+      "complete": "Complete Season",
+      "cancel": "Cancel Season",
+      "archive": "Archive",
+      "export": "Export"
+    },
+    "help": "Help & Documentation",
+    "error": {
+      "title": "Failed to Load Seasons"
+    },
+    "filters": {
+      "allFarms": "All Farms",
+      "allStatuses": "All Statuses"
+    },
+    "status": {
+      "planned": "Planned",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "archived": "Archived"
+    },
+    "toast": {
+      "startSuccess": "Season started successfully",
+      "startError": "Failed to start season",
+      "completeSuccess": "Season completed successfully",
+      "completeError": "Failed to complete season",
+      "cancelSuccess": "Season cancelled successfully",
+      "cancelError": "Failed to cancel season",
+      "createSuccess": "Season created successfully",
+      "createError": "Failed to create season",
+      "updateSuccess": "Season updated successfully",
+      "updateError": "Failed to update season",
+      "deleteSuccess": "Season deleted successfully",
+      "deleteError": "Failed to delete season"
+    },
+    "table": {
+      "name": "Season Name",
+      "farm": "Farm",
+      "plot": "Plot",
+      "crop": "Crop",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Status",
+      "expectedYield": "Expected Yield",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "No Seasons Found",
+      "description": "Create your first season to start managing your farm activities."
+    },
+    "dialog": {
+      "createTitle": "Create Season",
+      "editTitle": "Edit Season",
+      "deleteTitle": "Delete Season",
+      "deleteDescription": "Are you sure you want to delete this season? This action cannot be undone.",
+      "startTitle": "Start Season",
+      "startDescription": "Are you sure you want to start this season? The season status will be changed to 'Active'.",
+      "startConfirm": "Start Season",
+      "completeTitle": "Complete Season",
+      "completeDescription": "Enter the end date to mark this season as completed.",
+      "completeConfirm": "Complete Season",
+      "completing": "Completing...",
+      "endDateLabel": "End Date",
+      "cancelTitle": "Cancel Season",
+      "cancelDescription": "Are you sure you want to cancel this season? This action cannot be undone.",
+      "cancelConfirm": "Cancel Season"
+    }
+  },
+  "tasks": {
+    "title": "Tasks",
+    "pageTitle": "Tasks",
+    "subtitle": "Manage and track all your farm tasks",
+    "createButton": "Create Task",
+    "searchPlaceholder": "Search tasks...",
+    "loading": "Loading tasks...",
+    "views": {
+      "board": "Board View",
+      "list": "List View",
+      "calendar": "Calendar View"
+    },
+    "filters": {
+      "allStatuses": "All Statuses"
+    },
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "done": "Done",
+      "overdue": "Overdue"
+    },
+    "toast": {
+      "startSuccess": "Task started successfully",
+      "startError": "Failed to start task",
+      "completeSuccess": "Task completed successfully",
+      "completeError": "Failed to complete task",
+      "createSuccess": "Task created successfully",
+      "createError": "Failed to create task",
+      "updateSuccess": "Task updated successfully",
+      "updateError": "Failed to update task",
+      "deleteSuccess": "Task deleted successfully",
+      "deleteError": "Failed to delete task"
+    },
+    "table": {
+      "title": "Title",
+      "season": "Season",
+      "plot": "Plot",
+      "type": "Type",
+      "assignee": "Assignee",
+      "plannedDate": "Planned Date",
+      "dueDate": "Due Date",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "noSeason": "No Season",
+    "actions": {
+      "start": "Start",
+      "complete": "Complete"
+    },
+    "empty": {
+      "title": "No Tasks Found",
+      "description": "Create your first task to get started with managing your farm activities."
+    },
+    "dialog": {
+      "startTitle": "Start Task",
+      "startDescription": "Are you sure you want to start this task? The task status will be changed to 'In Progress'.",
+      "startConfirm": "Start Task",
+      "completeTitle": "Complete Task",
+      "completeDescription": "Enter the completion date to mark this task as done.",
+      "completeConfirm": "Complete Task",
+      "completing": "Completing...",
+      "completionDateLabel": "Completion Date",
+      "createTitle": "Create Task",
+      "createDescription": "Add a new task to the workspace",
+      "editTitle": "Edit Task",
+      "deleteTitle": "Delete Task",
+      "deleteDescription": "Are you sure you want to delete \"{{taskName}}\"? This action cannot be undone."
+    },
+    "form": {
+      "completionDate": "Completion Date",
+      "title": "Title",
+      "titlePlaceholder": "e.g., Irrigate Plot A3",
+      "description": "Description",
+      "assignee": "Assignee",
+      "dueDate": "Due Date",
+      "priority": "Priority",
+      "selectSeason": "Select season",
+      "selectPlot": "Select plot",
+      "selectType": "Select type",
+      "selectAssignee": "Select assignee",
+      "plotFromSeason": "Auto-filled from season",
+      "notesPlaceholder": "Additional task details..."
+    },
+    "types": {
+      "irrigation": "Irrigation",
+      "fertilizing": "Fertilizing",
+      "spraying": "Spraying",
+      "scouting": "Scouting",
+      "harvesting": "Harvesting"
+    },
+    "validation": {
+      "titleRequired": "Task title is required",
+      "seasonRequired": "Season is required",
+      "dueDateRequired": "Due date is required"
+    },
+    "completing": "Completing..."
+  },
+  "inventory": {
+    "title": "Supply Warehouse",
+    "subtitle": "Manage agricultural input materials, stock movements, and on-hand quantities",
+    "warehouse": "Warehouse",
+    "loading": "Loading...",
+    "noWarehouses": "No warehouses found",
+    "location": "Location (Optional)",
+    "allLocations": "All Locations",
+    "search": "Search",
+    "searchPlaceholder": "Search by lot code or item name...",
+    "movementType": "Movement Type",
+    "allTypes": "All Types",
+    "types": {
+      "in": "IN",
+      "out": "OUT",
+      "adjust": "ADJUST"
+    },
+    "dateFrom": "From",
+    "dateTo": "To",
+    "tabs": {
+      "onHand": "On-hand Stock",
+      "movements": "Movement History"
+    },
+    "selectWarehouse": "Please select a warehouse to view inventory",
+    "noStock": "No on-hand stock found for this warehouse",
+    "loadingMovements": "Loading movement history...",
+    "noMovements": "No movements found for this warehouse",
+    "stockOut": "Stock OUT",
+    "adjustStock": "Adjust Stock",
+    "currentOnHand": "Current on-hand",
+    "seasonRequired": "Season (Required)",
+    "enterSeasonId": "Enter season ID",
+    "quantity": "Quantity",
+    "noteOptional": "Note (Optional)",
+    "noteRequired": "Note (Required)",
+    "addNote": "Add a note...",
+    "confirmStockOut": "Confirm Stock OUT",
+    "adjustmentAmount": "Adjustment (+/-)",
+    "adjustPlaceholder": "Enter positive or negative value",
+    "newOnHand": "New on-hand",
+    "adjustReason": "Reason for adjustment...",
+    "confirmAdjust": "Confirm Adjustment",
+    "validation": {
+      "seasonRequired": "Season is required for Stock OUT",
+      "quantityPositive": "Quantity must be greater than 0",
+      "quantityExceeds": "Quantity exceeds available on-hand stock",
+      "movementFailed": "Failed to record movement",
+      "noteRequired": "Note is required for ADJUST movements",
+      "adjustNotZero": "Adjustment quantity cannot be zero",
+      "negativeOnHand": "Adjustment would result in negative on-hand",
+      "adjustFailed": "Failed to record adjustment"
+    },
+    "toast": {
+      "createSuccess": "Inventory entry created",
+      "updateSuccess": "Inventory entry updated",
+      "deleteSuccess": "Inventory entry deleted",
+      "error": "An error occurred"
+    },
+    "table": {
+      "item": "Item",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "location": "Location",
+      "lastUpdated": "Last Updated",
+      "actions": "Actions",
+      "lotCode": "Lot Code",
+      "expiryDate": "Expiry Date",
+      "onHand": "On-hand",
+      "status": "Status"
+    },
+    "actions": {
+      "stockOut": "Stock OUT",
+      "adjust": "Adjust"
+    },
+    "movementsTable": {
+      "date": "Date",
+      "type": "Type",
+      "quantity": "Quantity",
+      "lotCode": "Lot Code",
+      "item": "Item",
+      "location": "Location",
+      "season": "Season",
+      "task": "Task",
+      "note": "Note"
+    }
+  },
+  "productWarehouse": {
+    "title": "Product Warehouse",
+    "subtitle": "Manage harvested products and finished goods with traceability",
+    "summary": {
+      "totalLots": "Total Lots",
+      "inStockLots": "In-stock Lots",
+      "totalOnHand": "Total On-hand"
+    },
+    "filters": {
+      "warehouse": "Warehouse",
+      "allWarehouses": "All Warehouses",
+      "location": "Location",
+      "allLocations": "All Locations",
+      "season": "Season",
+      "allSeasons": "All Seasons",
+      "farm": "Farm",
+      "allFarms": "All Farms",
+      "plot": "Plot",
+      "allPlots": "All Plots",
+      "harvestDateFrom": "Harvest Date From",
+      "harvestDateTo": "Harvest Date To",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "search": "Search",
+      "searchPlaceholder": "Search by lot code or product name"
+    },
+    "tabs": {
+      "onHand": "On-hand Stock",
+      "transactions": "Transaction History",
+      "traceability": "Traceability"
+    },
+    "table": {
+      "lotCode": "Lot Code",
+      "productName": "Product Name",
+      "variant": "Type / Variety",
+      "unit": "Unit",
+      "harvestedAt": "Harvest Date",
+      "receivedAt": "Received Date",
+      "farmPlot": "Farm / Plot",
+      "season": "Season",
+      "location": "Storage Location",
+      "quality": "Quality / Grade",
+      "onHand": "On-hand Quantity",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "transactionsTable": {
+      "createdAt": "Date",
+      "type": "Type",
+      "lotCode": "Lot Code",
+      "quantity": "Quantity",
+      "resultingOnHand": "Resulting On-hand",
+      "reference": "Reference",
+      "createdBy": "Recorded By",
+      "note": "Note"
+    },
+    "actions": {
+      "viewTraceability": "View Traceability",
+      "adjust": "Adjust Stock",
+      "stockOut": "Stock Out"
+    },
+    "traceability": {
+      "season": "Season",
+      "farmPlot": "Farm / Plot",
+      "harvestedAt": "Harvest Date",
+      "recordedBy": "Recorded By",
+      "initialQuantity": "Initial Quantity",
+      "onHandQuantity": "Current On-hand",
+      "harvestRef": "Harvest Reference",
+      "transactions": "Stock Movement Timeline"
+    },
+    "dialog": {
+      "adjustTitle": "Adjust Product Stock",
+      "adjustQuantity": "Adjustment (+/-)",
+      "adjustQuantityPlaceholder": "Example: 10 or -5",
+      "adjustNote": "Reason",
+      "adjustNotePlaceholder": "Enter reason for adjustment",
+      "adjustConfirm": "Confirm Adjustment",
+      "stockOutTitle": "Stock Out Product Lot",
+      "stockOutQuantity": "Stock Out Quantity",
+      "stockOutQuantityPlaceholder": "Enter quantity",
+      "stockOutNote": "Note",
+      "stockOutNotePlaceholder": "Optional stock-out note",
+      "stockOutConfirm": "Confirm Stock Out"
+    },
+    "validation": {
+      "adjustNotZero": "Adjustment quantity cannot be zero",
+      "adjustNoteRequired": "Reason is required for adjustment",
+      "stockOutPositive": "Stock-out quantity must be greater than 0"
+    },
+    "toast": {
+      "adjustSuccess": "Stock adjusted successfully",
+      "stockOutSuccess": "Stock-out recorded successfully",
+      "error": "An error occurred"
+    },
+    "loadingLots": "Loading product lots...",
+    "loadingTransactions": "Loading transaction history...",
+    "loadingTraceability": "Loading traceability data...",
+    "emptyLots": "No product lots found for the selected filters.",
+    "emptyTransactions": "No product warehouse transactions found.",
+    "emptyTraceability": "Select a product lot to view traceability.",
+    "errorLots": "Failed to load product lots.",
+    "errorTransactions": "Failed to load transaction history.",
+    "errorTraceability": "Failed to load traceability data."
+  },
+  "fieldLogs": {
+    "title": "Field Logs",
+    "subtitle": "Record and track field activities",
+    "createButton": "Create Log",
+    "loadingSeasons": "Loading seasons...",
+    "noSeasons": "No seasons found. Create a season first.",
+    "searchPlaceholder": "Search logs...",
+    "selectSeason": "Select a season",
+    "allTypes": "All Types",
+    "summary": {
+      "totalLogs": "Total Logs",
+      "latestDate": "Latest Activity",
+      "commonType": "Most Common Type"
+    },
+    "loading": "Loading field logs...",
+    "error": "Failed to load logs. Please try again.",
+    "empty": "No field logs found for this season.",
+    "table": {
+      "logDate": "Log Date",
+      "type": "Type",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "dialog": {
+      "editTitle": "Edit Field Log",
+      "createTitle": "Create Field Log",
+      "editDescription": "Update the field log details below.",
+      "createDescription": "Record a new field activity.",
+      "deleteTitle": "Delete Field Log",
+      "deleteDescription": "Are you sure you want to delete this field log? This action cannot be undone."
+    },
+    "form": {
+      "logDate": "Log Date",
+      "logType": "Log Type",
+      "notes": "Notes",
+      "selectType": "Select log type...",
+      "notesPlaceholder": "Add any observations or details...",
+      "tip": "Tip:",
+      "inventoryHint": "After saving, you can create a matching Stock OUT entry in Supply Warehouse to track material usage.",
+      "update": "Update",
+      "create": "Create",
+      "seasonRange": "Season range"
+    },
+    "validation": {
+      "dateAfterStart": "Log date must be on or after season start date",
+      "dateBeforeEnd": "Log date must be on or before season end date",
+      "fillRequired": "Please fill in required fields"
+    },
+    "toast": {
+      "createSuccess": "Field log created successfully",
+      "createError": "Failed to create field log",
+      "updateSuccess": "Field log updated successfully",
+      "updateError": "Failed to update field log",
+      "deleteSuccess": "Field log deleted successfully",
+      "deleteError": "Failed to delete field log",
+      "error": "An error occurred"
+    }
+  },
+  "incidents": {
+    "title": "Incidents",
+    "subtitle": "Manage farm incidents and track resolution",
+    "reportButton": "Report Incident",
+    "loadingSeasons": "Loading seasons...",
+    "noSeasons": "No seasons found. Create a season first.",
+    "selectSeason": "Select a season...",
+    "searchPlaceholder": "Search...",
+    "filters": {
+      "status": "Status",
+      "severity": "Severity",
+      "allStatuses": "All Statuses",
+      "allSeverities": "All Severities"
+    },
+    "status": {
+      "open": "Open",
+      "inProgress": "In Progress",
+      "resolved": "Resolved",
+      "cancelled": "Cancelled"
+    },
+    "severity": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "types": {
+      "pestOutbreak": "Pest Outbreak",
+      "disease": "Disease",
+      "equipmentFailure": "Equipment Failure",
+      "weatherDamage": "Weather Damage",
+      "safety": "Safety Issue",
+      "other": "Other"
+    },
+    "table": {
+      "title": "Incident List",
+      "type": "Type",
+      "severity": "Severity",
+      "status": "Status",
+      "description": "Description",
+      "deadline": "Deadline",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "loading": "Loading incidents...",
+    "empty": "No incidents found for this season.",
+    "toast": {
+      "createSuccess": "Incident reported successfully",
+      "createError": "Failed to create incident",
+      "updateSuccess": "Incident updated successfully",
+      "updateError": "Failed to update incident",
+      "resolveSuccess": "Incident resolved successfully",
+      "resolveError": "Failed to resolve incident",
+      "deleteSuccess": "Incident deleted successfully",
+      "deleteError": "Failed to delete incident",
+      "error": "An error occurred"
+    },
+    "dialog": {
+      "createTitle": "Report Incident",
+      "editTitle": "Edit Incident",
+      "deleteTitle": "Delete Incident",
+      "deleteDescription": "Are you sure you want to delete this incident? This action cannot be undone."
+    },
+    "validation": {
+      "selectSeason": "Please select a season first",
+      "fillRequired": "Please fill in all required fields",
+      "deadlinePast": "Deadline cannot be in the past",
+      "resolutionRequired": "Resolution note is required"
+    },
+    "form": {
+      "selectType": "Select type...",
+      "selectSeverity": "Select severity...",
+      "type": "Incident Type",
+      "severity": "Severity",
+      "description": "Description",
+      "deadline": "Deadline",
+      "resolutionNote": "Resolution Note"
+    }
+  },
+  "farms": {
+    "title": "Farms & Plots",
+    "subtitle": "Manage your farms and their plots",
+    "newFarmButton": "New Farm",
+    "newPlotButton": "New Plot",
+    "loading": "Loading farms...",
+    "myFarms": "My Farms",
+    "manageFarms": "Manage your farms",
+    "empty": "No farms found. Create one to get started.",
+    "tooltip": {
+      "selectFarm": "Select a farm first",
+      "createPlot": "Create a new plot",
+      "inactiveFarm": "Cannot add plot to inactive farm"
+    },
+    "toast": {
+      "loadFarmsError": "Failed to load farms",
+      "loadPlotsError": "Failed to load plots",
+      "createFarmSuccess": "Farm created successfully",
+      "createFarmError": "Failed to create farm",
+      "createPlotSuccess": "Plot created successfully",
+      "createPlotError": "Failed to create plot",
+      "updateSuccess": "Updated successfully",
+      "updateError": "Failed to update",
+      "deleteSuccess": "Deleted successfully",
+      "deleteError": "Failed to delete"
+    },
+    "dialog": {
+      "createFarmTitle": "Create Farm",
+      "editFarmTitle": "Edit Farm",
+      "deleteFarmTitle": "Delete Farm",
+      "deleteFarmDescription": "Are you sure you want to delete this farm? All plots will also be deleted.",
+      "createPlotTitle": "Create Plot",
+      "editPlotTitle": "Edit Plot",
+      "deletePlotTitle": "Delete Plot",
+      "deletePlotDescription": "Are you sure you want to delete this plot?"
+    },
+    "form": {
+      "farmName": "Farm Name",
+      "farmNamePlaceholder": "Enter farm name",
+      "location": "Location",
+      "locationPlaceholder": "Enter location",
+      "area": "Area",
+      "areaPlaceholder": "Enter area",
+      "plotName": "Plot Name",
+      "plotNamePlaceholder": "Enter plot name",
+      "soilType": "Soil Type",
+      "selectSoilType": "Select soil type"
+    }
+  },
+  "plots": {
+    "title": "Plots",
+    "subtitle": "Manage plots for this farm",
+    "loading": "Loading plots...",
+    "noFarmSelected": {
+      "title": "No Farm Selected",
+      "description": "Select a farm to view its plots"
+    },
+    "inactiveFarmWarning": "This farm is inactive. Activate it to create plots.",
+    "empty": "No plots found in this farm.",
+    "createNow": "Create one now",
+    "table": {
+      "name": "Name",
+      "area": "Area (ha)",
+      "soilType": "Soil Type",
+      "status": "Status",
+      "currentCrop": "Current Crop",
+      "plantingDate": "Planting Date"
+    }
+  },
+  "farmManagement": {
+    "title": "Farms",
+    "subtitle": "Manage your farm properties",
+    "createFarm": "Create Farm",
+    "searchPlaceholder": "Search farms...",
+    "noFarms": "No farms found",
+    "showingFarms": "Showing {{count}} farms",
+    "filters": {
+      "allStatuses": "All Statuses",
+      "allFarms": "All Farms",
+      "activeOnly": "Active Only",
+      "inactiveOnly": "Inactive Only"
+    },
+    "table": {
+      "name": "NAME",
+      "area": "AREA (HA)",
+      "address": "ADDRESS",
+      "status": "STATUS"
+    }
+  },
+  "suppliers": {
+    "title": "Suppliers & Supplies",
+    "subtitle": "Manage suppliers, items, and inventory lots",
+    "searchSuppliers": "Search suppliers...",
+    "searchSupplies": "Search supplies...",
+    "addSupplier": "Add Supplier",
+    "tabs": {
+      "suppliers": "Suppliers",
+      "items": "Supply Items",
+      "lots": "Lots"
+    },
+    "filters": {
+      "restrictedOnly": "Restricted only",
+      "allItems": "All Items",
+      "allSuppliers": "All Suppliers",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "lots": {
+      "searchPlaceholder": "Search by batch code..."
+    },
+    "validation": {
+      "confirmRestricted": "Please confirm handling of restricted supplies",
+      "confirmExpiry": "Please confirm the past expiry date",
+      "required": "This field is required",
+      "invalidEmail": "Invalid email address",
+      "invalidPhone": "Invalid phone number",
+      "invalidQuantity": "Quantity must be greater than 0",
+      "invalidPrice": "Price must be greater than 0"
+    },
+    "toast": {
+      "createSuccess": "Created successfully",
+      "updateSuccess": "Updated successfully",
+      "deleteSuccess": "Deleted successfully",
+      "error": "An error occurred"
+    },
+    "loading": "Loading suppliers...",
+    "empty": "No suppliers found",
+    "loadingItems": "Loading supply items...",
+    "noItems": "No supply items found",
+    "loadingLots": "Loading supply lots...",
+    "noLots": "No supply lots found",
+    "form": {
+      "addTitle": "Add Supplier",
+      "editTitle": "Edit Supplier",
+      "addDescription": "Enter supplier details to add a new supplier",
+      "editDescription": "Update supplier information",
+      "addButton": "Add Supplier"
+    },
+    "delete": {
+      "title": "Delete Supplier",
+      "description": "Are you sure you want to delete supplier <strong>{{name}}</strong>? This action cannot be undone."
+    },
+    "errors": {
+      "nameRequired": "Supplier name is required",
+      "saveFailed": "Failed to save supplier",
+      "deleteFailed": "Failed to delete supplier"
+    }
+  },
+  "crops": {
+    "title": "Crops",
+    "subtitle": "Manage your crop varieties and seed logs",
+    "seedLogButton": "Seed Log",
+    "phiWarningsButton": "PHI Warnings",
+    "addCropButton": "Add Crop",
+    "adding": "Adding..."
+  },
+  "expenses": {
+    "title": "Expense Management",
+    "pageTitle": "Expense Management",
+    "subtitle": "Track and manage all farm expenses",
+    "createButton": "Add Expense",
+    "reminders": "Reminders",
+    "export": "Export",
+    "searchPlaceholder": "Search expenses...",
+    "tabs": {
+      "list": "List View",
+      "analytics": "Analytics View",
+      "all": "All",
+      "byCategory": "By Category",
+      "bySeason": "By Season"
+    },
+    "toast": {
+      "createSuccess": "Expense created successfully",
+      "updateSuccess": "Expense updated successfully",
+      "deleteSuccess": "Expense deleted successfully",
+      "error": "An error occurred"
+    }
+  },
+  "harvests": {
+    "title": "Harvest Management",
+    "subtitle": "Track and manage harvest batches, quality control, and sales",
+    "createButton": "Add Single Product Harvest",
+    "toast": {
+      "createSuccess": "Harvest recorded successfully",
+      "updateSuccess": "Harvest updated successfully",
+      "deleteSuccess": "Harvest deleted successfully",
+      "error": "An error occurred"
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Access farming guides, tutorials, and resources",
+    "uploadButton": "Upload Document",
+    "toast": {
+      "uploadSuccess": "Document uploaded successfully",
+      "deleteSuccess": "Document deleted successfully",
+      "error": "An error occurred"
+    }
+  },
+  "search": {
+    "title": "Search Results",
+    "placeholder": "Search...",
+    "noResults": "No results found",
+    "types": {
+      "farms": "Farms",
+      "plots": "Plots",
+      "seasons": "Seasons",
+      "tasks": "Tasks",
+      "expenses": "Expenses",
+      "documents": "Documents",
+      "users": "Users"
+    }
+  },
+  "seasonPicker": {
+    "title": "Select Season",
+    "description": "Choose a season to view its data",
+    "noSeasonsDescription": "You don't have any seasons yet. Create your first season to get started.",
+    "activeSeasons": "Active Seasons",
+    "otherSeasons": "Other Seasons"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "subtitle": "Real-time platform monitoring • Auto-updates every 30s",
+      "error": {
+        "title": "Failed to Load Dashboard",
+        "description": "Unable to load dashboard data. Please try again."
+      },
+      "exportReport": "Export Report"
+    },
+    "profile": {
+      "title": "Admin Profile",
+      "administrator": "Administrator",
+      "notifications": {
+        "systemAlerts": {
+          "label": "Receive System Alerts",
+          "description": "Get notified about system events and updates"
+        },
+        "incidentReports": {
+          "label": "Receive Incident Reports",
+          "description": "Get immediate alerts for new incidents and issues"
+        }
+      }
+    },
+    "alerts": {
+      "title": "Alerts Center",
+      "subtitle": "Aggregate risks and notify farmers.",
+      "refreshRisks": "Refresh risks",
+      "days": "days",
+      "types": {
+        "all": "All types",
+        "inventoryExpired": "Inventory Expired",
+        "inventoryExpiring": "Inventory Expiring"
+      },
+      "severity": {
+        "all": "All severities",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      },
+      "status": {
+        "all": "All statuses",
+        "new": "New",
+        "sent": "Sent",
+        "dismissed": "Dismissed"
+      },
+      "farms": {
+        "all": "All farms"
+      },
+      "table": {
+        "severity": "Severity",
+        "farm": "Farm",
+        "title": "Title",
+        "type": "Type",
+        "created": "Created",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View",
+        "send": "Send",
+        "dismiss": "Dismiss"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "empty": "No alerts found for the current filters.",
+      "error": {
+        "title": "Failed to load alerts"
+      },
+      "detail": {
+        "title": "Alert detail",
+        "severity": "Severity",
+        "status": "Status",
+        "farm": "Farm",
+        "created": "Created",
+        "message": "Message",
+        "noMessage": "No message available.",
+        "viewSuggestedAction": "View suggested action"
+      },
+      "sendWarning": {
+        "title": "Send warning",
+        "allFarmersInFarm": "All farmers in farm",
+        "selectedFarmers": "Selected farmers",
+        "farmerIdsPlaceholder": "Enter farmer IDs, separated by commas",
+        "sending": "Sending...",
+        "sendAlert": "Send alert"
+      }
+    },
+    "users": {
+      "title": "Users & Roles",
+      "subtitle": "Manage users and their permissions",
+      "tabs": {
+        "users": "Users",
+        "roles": "Roles"
+      },
+      "searchPlaceholder": "Search users...",
+      "searchButton": "Search",
+      "addUser": "Add User",
+      "refresh": "Refresh",
+      "loading": "Loading...",
+      "tryAgain": "Try again",
+      "noUsers": "No users found",
+      "loadError": "Failed to load users",
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "status": "Status",
+        "roles": "Roles",
+        "actions": "Actions"
+      },
+      "actions": {
+        "editUser": "Edit User",
+        "warningUser": "Warning User",
+        "activateUser": "Activate User",
+        "lockUser": "Lock User",
+        "deleteUser": "Delete User"
+      },
+      "status": {
+        "active": "ACTIVE",
+        "locked": "LOCKED",
+        "inactive": "INACTIVE",
+        "pending": "PENDING"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {{current}} of {{total}}"
+      },
+      "detail": {
+        "title": "User Details",
+        "username": "Username",
+        "email": "Email",
+        "status": "Status",
+        "roles": "Roles",
+        "noRoles": "No roles assigned",
+        "roleManagement": "Role Management",
+        "addFarmerRole": "Add FARMER Role",
+        "removeFarmerRole": "Remove FARMER Role"
+      },
+      "toast": {
+        "activated": "User activated successfully",
+        "locked": "User locked successfully",
+        "statusError": "Failed to update user status",
+        "deleteSuccess": "User deleted successfully",
+        "deleteHasData": "Cannot delete: User has associated farms. Lock the user instead.",
+        "deleteFailed": "Failed to delete user",
+        "rolesUpdated": "Roles updated successfully",
+        "rolesFailed": "Failed to update roles"
+      },
+      "confirm": {
+        "delete": "Are you sure you want to delete user \"{{username}}\"?"
+      }
+    },
+    "roles": {
+      "addRole": "Add Role",
+      "refresh": "Refresh",
+      "loading": "Loading...",
+      "noRoles": "No roles found",
+      "loadError": "Failed to load roles",
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "description": "Description",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "toast": {
+        "deleteSuccess": "Role deleted successfully",
+        "deleteNotFound": "Role not found",
+        "deleteFailed": "Failed to delete role. It may be in use by users."
+      },
+      "confirm": {
+        "delete": "Are you sure you want to delete role \"{{name}}\"?"
+      }
+    },
+    "crops": {
+      "title": "Crops & Varieties",
+      "subtitle": "Manage crops and their varieties",
+      "tabs": {
+        "crops": "Crops",
+        "varieties": "Varieties"
+      },
+      "searchCrops": "Search crops...",
+      "searchVarieties": "Search varieties...",
+      "addCrop": "Add Crop",
+      "addVariety": "Add Variety",
+      "loadCropsError": "Failed to load crops",
+      "loadVarietiesError": "Failed to load varieties",
+      "count": {
+        "crop": "crop",
+        "crops": "crops",
+        "variety": "variety",
+        "varieties": "varieties"
+      },
+      "filteredFrom": "filtered from",
+      "table": {
+        "name": "Name",
+        "description": "Description",
+        "actions": "Actions"
+      },
+      "toast": {
+        "createSuccess": "Created successfully",
+        "updateSuccess": "Updated successfully",
+        "deleteSuccess": "Deleted successfully",
+        "deleteError": "Failed to delete"
+      }
+    },
+    "reports": {
+      "title": "Reports & Analytics",
+      "subtitle": "View detailed reports and analytics",
+      "tabs": {
+        "yield": "Yield",
+        "cost": "Cost",
+        "revenue": "Revenue",
+        "profit": "Profit"
+      },
+      "export": "Export",
+      "filters": {
+        "dateRange": "Date Range",
+        "farm": "Farm",
+        "season": "Season"
+      }
+    },
+    "farmers": {
+      "title": "Farmers",
+      "subtitle": "Manage farmer accounts"
+    },
+    "buyers": {
+      "title": "Buyers",
+      "subtitle": "Manage buyer accounts"
+    }
+  },
+  "buyer": {
+    "dashboard": {
+      "title": "Buyer Dashboard",
+      "description": "We are getting your buyer workspace ready. Check back soon for orders, catalogs, and procurement tools."
+    },
+    "orders": {
+      "title": "My Orders",
+      "subtitle": "View and manage your orders"
+    }
+  },
+  "ai": {
+    "assistant": {
+      "title": "AI Assistant",
+      "subtitle": "Get help with farming questions",
+      "placeholder": "Ask me anything about farming...",
+      "send": "Send",
+      "thinking": "Thinking...",
+      "error": "Failed to get response. Please try again.",
+      "reset": "Reset conversation"
+    },
+    "chat": {
+      "title": "Agricultural Q&A",
+      "description": "Ask concise questions with context for more accurate advice.",
+      "sendHint": "Press Enter to send, Shift + Enter for new line",
+      "placeholder": "Enter your question...",
+      "analyzing": "Analyzing..."
+    },
+    "context": {
+      "title": "Season Information",
+      "label": "Context",
+      "description": "Add context for more relevant AI advice.",
+      "placeholder": "Example: Rice, tillering stage, light clay soil, drip irrigation..."
+    },
+    "suggestions": {
+      "title": "Suggested Questions",
+      "description": "Click to start a conversation."
+    },
+    "scope": {
+      "title": "Note: Support Scope",
+      "description": "The assistant focuses on agriculture-related questions.",
+      "supported": "Suggests crop care, nutrition, pest control, and seasonal scheduling.",
+      "notSupported": "Does not support politics, finance, or software technology topics."
+    },
+    "quickPrompts": {
+      "yellowLeaves": "How to treat yellow leaves on rice?",
+      "tomatoWatering": "Watering schedule for flowering tomatoes?",
+      "leafRoller": "Signs and prevention of leaf roller pests?",
+      "cornFertilizer": "How often to fertilize corn with NPK?",
+      "acidSoil": "How to improve acidic soil?",
+      "watermelonHarvest": "When to harvest watermelon?"
+    },
+    "contextTemplates": {
+      "riceTillering": {
+        "label": "Rice - Tillering",
+        "value": "Rice crop, tillering stage, direct seeding 20 days ago, light clay soil."
+      },
+      "vegetables": {
+        "label": "Vegetables - Growing",
+        "value": "Leafy vegetables, outdoor planting, sandy soil, daily watering."
+      },
+      "coffeeFlowering": {
+        "label": "Coffee - Flowering",
+        "value": "Coffee plant, flowering stage, basalt red soil, drip irrigation."
+      },
+      "fruitTrees": {
+        "label": "Fruit Trees",
+        "value": "Fruit trees in year 3, currently bearing young fruit, alluvial soil."
+      }
+    }
+  },
+  "profile": {
+    "title": "Farmer Profile",
+    "editProfile": "Edit Profile",
+    "loading": "Loading profile...",
+    "userId": "User ID",
+    "joinedDate": "Joined Date",
+    "lastLogin": "Last Login",
+    "notAvailable": "Not available",
+    "farmer": "Farmer",
+    "active": "Active",
+    "inactive": "Inactive",
+    "contactInfo": {
+      "title": "Contact Information",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    },
+    "farmOverview": {
+      "title": "Farm Overview",
+      "totalFarms": "Total Farms",
+      "totalArea": "Total Area",
+      "plots": "Plots",
+      "activeSeasons": "Active Seasons",
+      "viewDetails": "View Farm Details"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "empty": "No recent activity yet."
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "taskReminders": {
+        "label": "Receive Task Reminders",
+        "description": "Get notified about upcoming tasks and deadlines"
+      },
+      "incidentAlerts": {
+        "label": "Receive Incident Alerts",
+        "description": "Get immediate alerts for farm incidents and issues"
+      }
+    },
+    "security": {
+      "title": "Security & Account",
+      "passwordSet": "Password Set",
+      "passwordRecommendation": "Recommended to update password every 3-6 months.",
+      "changePassword": "Change Password"
+    }
+  }
+}
