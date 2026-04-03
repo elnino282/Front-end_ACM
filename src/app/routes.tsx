@@ -46,6 +46,18 @@ import { EmployeePayrollPage } from '@/pages/employee/EmployeePayrollPage';
 import { EmployeeProfilePage } from '@/pages/employee/EmployeeProfilePage';
 import { EmployeeSettingsPage } from '@/pages/employee/EmployeeSettingsPage';
 
+// Buyer feature imports
+import {
+  BuyerPublicLayout,
+  BuyerLayoutSwitch,
+  ProductListView,
+  ProductDetailView,
+  CartView,
+  CheckoutView,
+  MyOrdersView,
+  OrderDetailView,
+} from '@/features/buyer';
+
 /**
  * Root redirect - redirects to sign-in or user's portal based on auth state
  */
@@ -53,7 +65,7 @@ function RootRedirect() {
   const { isAuthenticated, getUserRole } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/sign-in" replace />;
+    return <Navigate to="/shop" replace />;
   }
 
   const role = getUserRole();
@@ -65,6 +77,9 @@ function RootRedirect() {
   }
   if (role === 'employee') {
     return <Navigate to="/employee/tasks" replace />;
+  }
+  if (role === 'buyer') {
+    return <Navigate to="/shop" replace />;
   }
 
   return <Navigate to="/sign-in" replace />;
@@ -96,17 +111,48 @@ function LegacySeasonModuleRedirect({
  * - Role-based protection via ProtectedRoute
  * - Route-level ErrorBoundary for each portal
  * - SeasonProvider for farmer routes (tasks/harvests)
+ * - Public shop routes for buyer catalog (no auth required)
  */
 export function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* Public Auth Routes */}
       <Route path="/sign-in" element={<SignInPage />} />
       <Route path="/sign-up" element={<SignUpPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/signin" element={<Navigate to="/sign-in" replace />} />
       <Route path="/signup" element={<Navigate to="/sign-up" replace />} />
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SHOP — Public routes (no authentication required)
+          Uses BuyerPublicLayout: Header + Footer e-commerce style
+          ═══════════════════════════════════════════════════════════════ */}
+      <Route path="/shop" element={<BuyerPublicLayout />}>
+        <Route index element={<ProductListView />} />
+        <Route path="products/:slug" element={<ProductDetailView />} />
+        <Route path="cart" element={<CartView />} />
+      </Route>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          BUYER — Protected routes (requires buyer role)
+          Uses BuyerLayoutSwitch: toggles between PublicLayout and AppShell
+          ═══════════════════════════════════════════════════════════════ */}
+      <Route
+        path="/buyer"
+        element={
+          <ProtectedRoute requiredRole="buyer">
+            <ErrorBoundary>
+              <BuyerLayoutSwitch />
+            </ErrorBoundary>
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="orders" replace />} />
+        <Route path="orders" element={<MyOrdersView />} />
+        <Route path="orders/:id" element={<OrderDetailView />} />
+        <Route path="checkout" element={<CheckoutView />} />
+      </Route>
 
       {/* Farmer Routes - Protected with SeasonProvider and ErrorBoundary */}
       <Route
@@ -203,8 +249,8 @@ export function AppRoutes() {
       {/* Root redirect */}
       <Route path="/" element={<RootRedirect />} />
 
-      {/* Catch all - redirect to sign-in */}
-      <Route path="*" element={<Navigate to="/sign-in" replace />} />
+      {/* Catch all - redirect to shop (public landing) */}
+      <Route path="*" element={<Navigate to="/shop" replace />} />
     </Routes>
   );
 }
