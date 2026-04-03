@@ -12,6 +12,8 @@ function getDefaultPortalRoute(role: UserRole): string {
   switch (role) {
     case "employee":
       return "/employee/tasks";
+    case "buyer":
+      return "/buyer/orders";
     default:
       return `/${role}/dashboard`;
   }
