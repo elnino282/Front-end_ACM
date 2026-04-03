@@ -1,2 +1,9 @@
-// TODO: Implement MyOrdersPage component for buyer - order history and tracking
+import { MyOrdersView } from '@/features/buyer/orders';
 
+/**
+ * My Orders Page — thin page wrapper
+ * Delegates to MyOrdersView feature component
+ */
+export function MyOrdersPage() {
+  return <MyOrdersView />;
+}
