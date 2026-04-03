@@ -112,14 +112,14 @@ describe('SeasonContext', () => {
 });
 
 describe('SeasonGate route exemptions', () => {
-  const EXEMPT_ROUTES = ['/farmer/seasons', '/farmer/profile', '/farmer/settings'];
+  const EXEMPT_ROUTES = ['/farmer/dashboard', '/farmer/seasons', '/farmer/profile', '/farmer/settings', '/farmer/search'];
 
   it.each(EXEMPT_ROUTES)('should exempt route %s from season gate', (route) => {
     const isExempt = EXEMPT_ROUTES.some(r => route.startsWith(r));
     expect(isExempt).toBe(true);
   });
 
-  it.each(['/farmer/dashboard', '/farmer/expenses', '/farmer/harvest'])(
+  it.each(['/farmer/expenses', '/farmer/harvest'])(
     'should NOT exempt route %s from season gate',
     (route) => {
       const isExempt = EXEMPT_ROUTES.some(r => route.startsWith(r));

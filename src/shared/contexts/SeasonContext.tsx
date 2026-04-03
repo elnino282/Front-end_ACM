@@ -98,7 +98,7 @@ export function SeasonProvider({ children }: SeasonProviderProps) {
     }, [isLoading, selectedSeasonId, seasons]);
 
     // Flag indicating user must select a season before proceeding
-    const requiresSeasonSelection = !isLoading && selectedSeasonId === null;
+    const requiresSeasonSelection = !isLoading && selectedSeasonId === null && seasons.length > 0;
 
     // Get selected season object
     const selectedSeason = useMemo(() => {
